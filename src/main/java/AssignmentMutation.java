@@ -11,25 +11,21 @@ import org.uncommons.watchmaker.framework.EvolutionaryOperator;
 
 public class AssignmentMutation implements EvolutionaryOperator<Assignment> {
 
-    private List<Room> rooms;
-    private List<Reservation> reservations;
+    private List<Room> rooms = new ArrayList<>();
+    private List<Reservation> reservations = new ArrayList<>();
     private NumberGenerator<Probability> mutationProbability;
 
     public AssignmentMutation(List<Room> rooms, List<Reservation> reservations, Probability mutationProbability) {
-        this(rooms, reservations, (NumberGenerator) (new ConstantGenerator(mutationProbability)));
+        this(rooms, reservations, new ConstantGenerator(mutationProbability));
     }
 
     public AssignmentMutation(List<Room> rooms, List<Reservation> reservations, NumberGenerator<Probability> mutationProbability) {
 //        this.rooms = (List<Room>) ((ArrayList<Room>) rooms).clone();
 //        this.reservations = (List<Reservation>) ((ArrayList<Reservation>) reservations).clone();
-        if (this.rooms == null){
-            this.rooms = new ArrayList<>();
-        }
-        if (this.reservations == null){
-            this.reservations = new ArrayList<>();
-        }
-        rooms.stream().forEach(r->this.rooms.add(r));
-        reservations.stream().forEach(r->this.reservations.add(r));
+
+
+        this.rooms.addAll(rooms);
+        this.reservations.addAll(reservations);
 
 
         this.mutationProbability = mutationProbability;
@@ -50,14 +46,15 @@ public class AssignmentMutation implements EvolutionaryOperator<Assignment> {
 
     private Assignment mutateAssignment(Assignment oldAssignment, Random rng) {
 //        StringBuilder buffer = new StringBuilder(s);
-        Assignment newAssignment = new Assignment(oldAssignment.getRoomNo(), oldAssignment.getReservationRoomNo());
-//        for(int i = 0; i < buffer.length(); ++i) {
-        if (((Probability) this.mutationProbability.nextValue()).nextEvent(rng)) {
-//                buffer.setCharAt(i, this.alphabet[rng.nextInt(this.alphabet.length)]);
-            newAssignment.setRoomNo(rng.nextInt(this.rooms.size()-1));
-        }
-    //}
-
-        return newAssignment;
+//        Assignment newAssignment = new Assignment(oldAssignment.getRoomNo(), oldAssignment.getReservationRoomNo());
+////        for(int i = 0; i < buffer.length(); ++i) {
+//        if (((Probability) this.mutationProbability.nextValue()).nextEvent(rng)) {
+////                buffer.setCharAt(i, this.alphabet[rng.nextInt(this.alphabet.length)]);
+//            newAssignment.setRoomNo(rng.nextInt(this.rooms.size()-1));
+//        }
+//    //}
+//
+//        return newAssignment;
+        return null;
 }
 }

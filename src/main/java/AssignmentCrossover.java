@@ -46,8 +46,8 @@ public class AssignmentCrossover extends AbstractCrossover<Assignment> {
 
         }*/
         List<Assignment> result = new ArrayList(2);
-        result.add(new Assignment(a1.getRoomNo(), a2.getReservationRoomNo()));
-        result.add(new Assignment(a2.getRoomNo(), a1.getReservationRoomNo()));
+//        result.add(new Assignment(a1.getRoomNo(), a2.getReservationRoomNo()));
+//        result.add(new Assignment(a2.getRoomNo(), a1.getReservationRoomNo()));
         return result;
     }
 }

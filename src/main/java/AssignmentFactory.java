@@ -5,9 +5,7 @@ import java.util.*;
 
 public class AssignmentFactory extends AbstractCandidateFactory<Assignment> {
 
-    private List<Room> rooms;
-    private List<Reservation> reservations;
-
+    private Lobby lobby;
 
 /*
     public AssignmentFactory(char[] alphabet, int stringLength) {
@@ -16,18 +14,11 @@ public class AssignmentFactory extends AbstractCandidateFactory<Assignment> {
     }
 */
 
-    public AssignmentFactory(List<Room> rooms, List<Reservation> reservations) {
-        if (this.rooms == null){
-            this.rooms = new ArrayList<>();
+    public AssignmentFactory(Lobby lobby) {
+        if (lobby == null || !lobby.isInstanciated()) {
+            return;
         }
-        if (this.reservations == null){
-            this.reservations = new ArrayList<>();
-        }
-//        this.rooms = (List<Room>) ((ArrayList<Room>) rooms).clone();
-//        this.reservations = (List<Reservation>) ((ArrayList<Reservation>) reservations).clone();
-        rooms.stream().forEach(r->this.rooms.add(r));
-        reservations.stream().forEach(r->this.reservations.add(r));
-        System.out.println("999");
+        this.lobby = lobby;
     }
 
     public Assignment generateRandomCandidate(Random rng) {
@@ -39,14 +30,17 @@ public class AssignmentFactory extends AbstractCandidateFactory<Assignment> {
 
         return new String(chars);*/
 
-      /*  Map<Room,Reservation> assignmentSuggestion = new HashMap<>();
-        for(Room room: rooms){
-            assignmentSuggestion.put(room, reservations.get(rng.nextInt()))
-        }*/
+        Map<Room,Reservation> assignmentSuggestion = new HashMap<>();
+        // Assign random reservation for each room:
+        for(Room room: this.lobby.getAvailableRoomList()){
+            assignmentSuggestion.put(room, lobby.getRandomReservation());
+        }
 
-        int randomRoomNo = rng.nextInt(this.rooms.size()-1);
-        int randomReservationNo = rng.nextInt(this.reservations.size()-1);
-        return new Assignment(randomRoomNo, randomReservationNo);
-
+//        int randomRoomNo = rng.nextInt(this.rooms.size() - 1);
+//        int randomReservationNo = rng.nextInt(this.reservations.size() - 1);
+//        return null;
+        //return new Assignment(randomRoomNo, randomReservationNo);
+        // TODO: Make sure this is ok - assignmentSuggestion isn't canceled.
+        return new Assignment(assignmentSuggestion);
     }
 }

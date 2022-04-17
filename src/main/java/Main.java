@@ -13,6 +13,16 @@ import java.util.List;
 import java.util.Random;
 
 public class Main {
+/*    public static void main(String[] args) {
+        List<Room> rooms = new ArrayList<>();
+        List<Reservation> reservations = new ArrayList<>();
+        init(rooms, reservations);
+        // Get the singleton instance of lobby:
+        Lobby lobby = Lobby.getInstance((ArrayList<Room>) rooms, (ArrayList<Reservation>) reservations);
+        System.out.println(lobby);
+        Assignment assignment = new Assignment(lobby);
+        System.out.println(assignment);
+    }*/
     public static void main(String[] args) {
         // Create a factory to generate random 11-character Strings.
 /*
@@ -22,12 +32,16 @@ public class Main {
         }
         chars[26] = ' ';
 */
+
+
         List<Room> rooms = new ArrayList<>();
         List<Reservation> reservations = new ArrayList<>();
         init(rooms, reservations);
+        // Get the singleton instance of lobby:
+        Lobby lobby = Lobby.getInstance((ArrayList<Room>) rooms, (ArrayList<Reservation>) reservations);
 
 //        CandidateFactory<String> factory = new StringFactory(chars, 11);
-        CandidateFactory<Assignment> factory = new AssignmentFactory(rooms, reservations);
+        CandidateFactory<Assignment> factory = new AssignmentFactory(lobby);
 
         // Create a pipeline that applies cross-over then mutation.
         List<EvolutionaryOperator<Assignment>> operators = new LinkedList<>();
@@ -47,15 +61,9 @@ public class Main {
                 selection,
                 rng);
 
-        engine.addEvolutionObserver(new EvolutionObserver<Assignment>()
-        {
-            public void populationUpdate(PopulationData<? extends Assignment> data)
-            {
-                System.out.printf("Generation %d: %s\n",
-                        data.getGenerationNumber(),
-                        data.getBestCandidate());
-            }
-        });
+        engine.addEvolutionObserver(data -> System.out.printf("Generation %d: %s\n",
+                data.getGenerationNumber(),
+                data.getBestCandidate()));
 
         Assignment result = engine.evolve(10, 1, new TargetFitness(11, true));
         System.out.println(result);

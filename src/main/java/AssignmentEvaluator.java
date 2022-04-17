@@ -22,7 +22,8 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment>
 //                ++matches;
 //            }
 //        }
-        return Math.abs(candidate.getRoomNo() - candidate.getReservationRoomNo());
+        //return Math.abs(candidate.getRoomNo() - candidate.getReservationRoomNo());
+        return 0.0;
     }
 
     public boolean isNatural()

@@ -46,4 +46,11 @@ public class Reservation {
     public HashMap<Request, Boolean> getGuestsRequests() {
         return guestsRequests;
     }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "reservationNumber=" + reservationNumber +
+                '}';
+    }
 }
