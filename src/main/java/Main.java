@@ -20,7 +20,11 @@ public class Main {
         // Get the singleton instance of lobby:
         Lobby lobby = Lobby.getInstance((ArrayList<Room>) rooms, (ArrayList<Reservation>) reservations);
         System.out.println(lobby);
-        Assignment assignment = new Assignment(lobby);
+
+        CandidateFactory<Assignment> factory = new AssignmentFactory(lobby);
+        Random rng = new MersenneTwisterRNG();
+
+        Assignment assignment = factory.generateRandomCandidate(rng);
         System.out.println(assignment);
     }*/
     public static void main(String[] args) {

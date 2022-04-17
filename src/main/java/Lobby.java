@@ -56,8 +56,16 @@ public class Lobby {
         if (this.reservationArrayList.size() == 0) {
             return null;
         }
-        int rnd = getRandomNumberUsingNextInt(0, this.reservationArrayList.size() - 1);
+        int rnd = getRandomNumberUsingNextInt(0, this.reservationArrayList.size());
         return reservationArrayList.get(rnd);
+    }
+
+    public Room getRandomAvailableRoom() {
+        if (this.availableRoomList.size() == 0) {
+            return null;
+        }
+        int rnd = getRandomNumberUsingNextInt(0, this.availableRoomList.size());
+        return availableRoomList.get(rnd);
     }
 
     public ArrayList<Room> getAvailableRoomList() {

@@ -1,6 +1,4 @@
 import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory;
-
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class AssignmentFactory extends AbstractCandidateFactory<Assignment> {
@@ -30,12 +28,15 @@ public class AssignmentFactory extends AbstractCandidateFactory<Assignment> {
 
         return new String(chars);*/
 
-        Map<Room,Reservation> assignmentSuggestion = new HashMap<>();
-        // Assign random reservation for each room:
-        for(Room room: this.lobby.getAvailableRoomList()){
+        Map<Room, Reservation> assignmentSuggestion = new HashMap<>();
+        /*// Assign random reservation for each room:
+        for (Room room : this.lobby.getAvailableRoomList()) {
             assignmentSuggestion.put(room, lobby.getRandomReservation());
+        }*/
+        // Assign random room for each reservation:
+        for (Reservation reservation:lobby.getReservationArrayList()) {
+            assignmentSuggestion.put(lobby.getRandomAvailableRoom(), reservation);
         }
-
 //        int randomRoomNo = rng.nextInt(this.rooms.size() - 1);
 //        int randomReservationNo = rng.nextInt(this.reservations.size() - 1);
 //        return null;
