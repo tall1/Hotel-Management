@@ -72,8 +72,12 @@ public class Lobby {
         return availableRoomList;
     }
 
-    public void setAvailableRoomList(ArrayList<Room> availableRoomList) {
-        this.availableRoomList = availableRoomList;
+    public void addOrRemoveRoomFromAvailable(Room room) {
+        if(availableRoomList.contains(room)){
+            availableRoomList.remove(room);
+        }else{
+            availableRoomList.add(room);
+        }
     }
 
     private int getRandomNumberUsingNextInt(int min, int max) {
