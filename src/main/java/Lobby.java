@@ -1,17 +1,14 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Objects;
 import java.util.Random;
 
 public class Lobby {
     private static Lobby singleInstanceLobby = null;
-    private ArrayList<Room> roomArrayList = new ArrayList<>();
-    private ArrayList<Reservation> reservationArrayList = new ArrayList<>();
-    private ArrayList<Room> availableRoomList = new ArrayList<>();
+    private final ArrayList<Room> roomArrayList = new ArrayList<>();
+    private final ArrayList<Reservation> reservationArrayList = new ArrayList<>();
+    private final ArrayList<Room> availableRoomList = new ArrayList<>();
 
-    private Lobby(/* Load a rooms list from an XML or something */) {
-
-    }
+    // TODO: Add a constructor from an XML or something...
 
     private Lobby(ArrayList<Room> roomArrayList, ArrayList<Reservation> reservationArrayList) {
         // Note: This is not a hard copy.
@@ -19,10 +16,17 @@ public class Lobby {
         this.reservationArrayList.addAll(reservationArrayList);
         // Add references to available rooms:
         roomArrayList.forEach(r -> {
-            if (r.getAvailable()) {
+            if (r.isAvailable()) {
                 this.availableRoomList.add(r);
             }
         });
+    }
+
+    public static Lobby getInstance() {
+        if (singleInstanceLobby == null) {
+            throw new IllegalArgumentException("No instance of Lobby initiated.");
+        }
+        return singleInstanceLobby;
     }
 
     public static Lobby getInstance(ArrayList<Room> roomArrayList, ArrayList<Reservation> reservationArrayList) {
@@ -40,7 +44,7 @@ public class Lobby {
 //        return singleInstanceLobby;
 //    }
 
-    public boolean isInstanciated() {
+    public boolean isInstantiated() {
         return singleInstanceLobby != null;
     }
 
@@ -68,8 +72,12 @@ public class Lobby {
         return availableRoomList.get(rnd);
     }
 
-    public ArrayList<Room> getAvailableRoomList() {
-        return availableRoomList;
+    public Room getRandomRoom() {
+        if (this.roomArrayList.size() == 0) {
+            return null;
+        }
+        int rnd = getRandomNumberUsingNextInt(0, this.roomArrayList.size());
+        return roomArrayList.get(rnd);
     }
 
     public void addOrRemoveRoomFromAvailable(Room room) {
@@ -93,5 +101,18 @@ public class Lobby {
                 ", reservationArrayList=" + reservationArrayList +
                 ", availableRoomList=" + availableRoomList +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Lobby lobby = (Lobby) o;
+        return Objects.equals(roomArrayList, lobby.roomArrayList) && Objects.equals(reservationArrayList, lobby.reservationArrayList) && Objects.equals(availableRoomList, lobby.availableRoomList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(roomArrayList, reservationArrayList, availableRoomList);
     }
 }

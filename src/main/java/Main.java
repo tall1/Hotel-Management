@@ -2,8 +2,6 @@ import org.uncommons.maths.random.MersenneTwisterRNG;
 import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.*;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
-import org.uncommons.watchmaker.framework.operators.StringCrossover;
-import org.uncommons.watchmaker.framework.operators.StringMutation;
 import org.uncommons.watchmaker.framework.selection.RouletteWheelSelection;
 import org.uncommons.watchmaker.framework.termination.TargetFitness;
 
@@ -13,38 +11,37 @@ import java.util.List;
 import java.util.Random;
 
 public class Main {
-/*    public static void main(String[] args) {
-        List<Room> rooms = new ArrayList<>();
-        List<Reservation> reservations = new ArrayList<>();
+    private final static int numOfRooms = 20;
+    private final static int numOfReservations = 12;
+
+    /*public static void main(String[] args) {
+        ArrayList<Room> rooms = new ArrayList<>();
+        ArrayList<Reservation> reservations = new ArrayList<>();
         init(rooms, reservations);
         // Get the singleton instance of lobby:
-        Lobby lobby = Lobby.getInstance((ArrayList<Room>) rooms, (ArrayList<Reservation>) reservations);
-        System.out.println(lobby);
-
+        Lobby lobby = Lobby.getInstance(rooms, reservations);
         CandidateFactory<Assignment> factory = new AssignmentFactory(lobby);
         Random rng = new MersenneTwisterRNG();
-
-        Assignment assignment = factory.generateRandomCandidate(rng);
-        System.out.println(assignment);
-    }*/
-    public static void main(String[] args) {
-        // Create a factory to generate random 11-character Strings.
-/*
-        char[] chars = new char[27];
-        for (char c = 'A'; c <= 'Z'; c++) {
-            chars[c - 'A'] = c;
+        final int num = 5;
+        List<Assignment> assignments = new ArrayList<>(num);
+        for (int i = 0; i < num; ++i) {
+            assignments.add(factory.generateRandomCandidate(rng));
         }
-        chars[26] = ' ';
-*/
+        AssignmentCrossover assignmentCrossover = new AssignmentCrossover();
+        System.out.println("Assignment 0: " + assignments.get(0));
+        System.out.println("Assignment 1: " + assignments.get(1));
+        List<Assignment> offsprings = assignmentCrossover.mate(assignments.get(0), assignments.get(1), 4, rng);
+        System.out.println("Offspring 0: " + offsprings.get(0));
+        System.out.println("Offspring 1: " + offsprings.get(1));
+    }*/
 
-
-        List<Room> rooms = new ArrayList<>();
-        List<Reservation> reservations = new ArrayList<>();
+    public static void main(String[] args) {
+        ArrayList<Room> rooms = new ArrayList<>();
+        ArrayList<Reservation> reservations = new ArrayList<>();
         init(rooms, reservations);
         // Get the singleton instance of lobby:
-        Lobby lobby = Lobby.getInstance((ArrayList<Room>) rooms, (ArrayList<Reservation>) reservations);
+        Lobby lobby = Lobby.getInstance(rooms, reservations);
 
-//        CandidateFactory<String> factory = new StringFactory(chars, 11);
         CandidateFactory<Assignment> factory = new AssignmentFactory(lobby);
 
         // Create a pipeline that applies cross-over then mutation.
@@ -74,12 +71,11 @@ public class Main {
     }
 
     private static void init(List<Room> rooms, List<Reservation> reservations) {
-        rooms.add(new Room());
-        rooms.add(new Room());
-        rooms.add(new Room());
-        rooms.add(new Room());
-
-        reservations.add(new Reservation(3));
-        reservations.add(new Reservation(4));
+        for (int i = 0; i < Main.numOfRooms; ++i) {
+            rooms.add(new Room());
+        }
+        for (int i = 0; i < Main.numOfReservations; ++i) {
+            reservations.add(new Reservation());
+        }
     }
 }

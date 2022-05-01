@@ -1,13 +1,11 @@
-import org.uncommons.watchmaker.framework.EvolutionEngine;
-
 import java.util.HashMap;
 
 public class Reservation {
-    private final Integer requestedRoomNo;
-    private Integer reservationNumber;
+    private final Integer reservationNumber;
     private String guestName;
     private Integer guestId;
     private Integer guestsAmount;
+
     public enum Request {
         ELEVATORPROXIMITY,
         SEAVIEW,
@@ -17,14 +15,14 @@ public class Reservation {
         HIGHFLOOR,
         LOWFLOOR
     }
-    private static int reservationId = 1;
-    private HashMap<Request,Boolean> guestsRequests;
+
+    private static int reservationId = 100;
+    private HashMap<Request, Boolean> guestsRequests;
     // closed to other rooms
 
 
-    public Reservation(Integer requestedRoomNo) {
+    public Reservation() {
         this.reservationNumber = reservationId++;
-        this.requestedRoomNo = requestedRoomNo;
     }
 
     public Integer getReservationNumber() {

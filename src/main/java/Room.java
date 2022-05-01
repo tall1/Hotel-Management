@@ -22,7 +22,7 @@ public class Room {
 
     private static int counter = 1;
 
-    private int roomNumber;
+    private final int roomNumber;
     private RoomFacingDirection roomDirection;
     private RoomType roomType;
     private int roomCapacity;
@@ -37,12 +37,16 @@ public class Room {
         roomNumber = counter++;
     }
 
-    public Boolean getAvailable() {
+    public Boolean isAvailable() {
         return isAvailable;
     }
 
     public void setAvailable() {
         this.isAvailable = !this.isAvailable;
+    }
+
+    public int getRoomNumber() {
+        return roomNumber;
     }
 
     @Override
