@@ -14,7 +14,7 @@ public class Main {
     private final static int numOfRooms = 20;
     private final static int numOfReservations = 12;
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         ArrayList<Room> rooms = new ArrayList<>();
         ArrayList<Reservation> reservations = new ArrayList<>();
         init(rooms, reservations);
@@ -33,9 +33,9 @@ public class Main {
         List<Assignment> offsprings = assignmentCrossover.mate(assignments.get(0), assignments.get(1), 4, rng);
         System.out.println("Offspring 0: " + offsprings.get(0));
         System.out.println("Offspring 1: " + offsprings.get(1));
-    }*/
+    }
 
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         ArrayList<Room> rooms = new ArrayList<>();
         ArrayList<Reservation> reservations = new ArrayList<>();
         init(rooms, reservations);
