@@ -6,23 +6,17 @@ public class Reservation {
     private Integer guestId;
     private Integer guestsAmount;
 
-    public enum Request {
-        ELEVATORPROXIMITY,
-        SEAVIEW,
-        BATH,
-        BALCONY,
-        HANDICAPPED,
-        HIGHFLOOR,
-        LOWFLOOR
-    }
-
     private static int reservationId = 100;
-    private HashMap<Request, Boolean> guestsRequests;
+    private HashMap<Requests, RequestImportance> guestsRequests;
     // closed to other rooms
 
 
     public Reservation() {
         this.reservationNumber = reservationId++;
+    }
+
+    public RequestImportance getImportance(Requests request){
+        return this.guestsRequests.get(request);
     }
 
     public Integer getReservationNumber() {
@@ -41,7 +35,7 @@ public class Reservation {
         return guestsAmount;
     }
 
-    public HashMap<Request, Boolean> getGuestsRequests() {
+    public HashMap<Requests, RequestImportance> getGuestsRequests() {
         return guestsRequests;
     }
 

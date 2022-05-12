@@ -5,6 +5,9 @@ import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
 import org.uncommons.watchmaker.framework.selection.RouletteWheelSelection;
 import org.uncommons.watchmaker.framework.termination.TargetFitness;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,12 +30,33 @@ public class Main {
         for (int i = 0; i < num; ++i) {
             assignments.add(factory.generateRandomCandidate(rng));
         }
-        AssignmentCrossover assignmentCrossover = new AssignmentCrossover();
-        System.out.println("Assignment 0: " + assignments.get(0));
-        System.out.println("Assignment 1: " + assignments.get(1));
-        List<Assignment> offsprings = assignmentCrossover.mate(assignments.get(0), assignments.get(1), 4, rng);
-        System.out.println("Offspring 0: " + offsprings.get(0));
-        System.out.println("Offspring 1: " + offsprings.get(1));
+
+        //AssignmentCrossover assignmentCrossover = new AssignmentCrossover();
+        AssignmentMutation assignmentMutation = new AssignmentMutation(lobby, new Probability(1));
+//        System.out.println("Assignment 0: " + assignments.get(0));
+//        System.out.println("Assignment 1: " + assignments.get(1));
+//        List<Assignment> offsprings = assignmentCrossover.mate(assignments.get(0), assignments.get(1), 4, rng);
+//        System.out.println("Offspring 0 after crossover: " + offsprings.get(0));
+//        System.out.println("Offspring 1 after crossover: " + offsprings.get(1));
+        try {
+            FileWriter myWriter1 = new FileWriter("before.txt");
+            FileWriter myWriter2 = new FileWriter("after.txt");
+            myWriter1.write("Before mutation:");
+            for (int i = 0; i < assignments.size(); i++) {
+                myWriter1.write("Assignment " + i + ":\n" + assignments.get(i));
+            }
+            myWriter1.close();
+            assignmentMutation.apply(assignments, rng);
+            myWriter2.write("After mutation:");
+            for (int i = 0; i < assignments.size(); i++) {
+                myWriter2.write("Assignment " + i + ":\n" + assignments.get(i));
+            }
+            myWriter2.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
     }
 
     public static void main1(String[] args) {
@@ -46,7 +70,7 @@ public class Main {
 
         // Create a pipeline that applies cross-over then mutation.
         List<EvolutionaryOperator<Assignment>> operators = new LinkedList<>();
-        operators.add(new AssignmentMutation(rooms, reservations, new Probability(0.02)));
+        operators.add(new AssignmentMutation(lobby, new Probability(0.02)));
         operators.add(new AssignmentCrossover());
         EvolutionaryOperator<Assignment> pipeline
                 = new EvolutionPipeline<>(operators);
@@ -66,13 +90,13 @@ public class Main {
                 data.getGenerationNumber(),
                 data.getBestCandidate()));
 
-        Assignment result = engine.evolve(10, 1, new TargetFitness(11, true));
+        Assignment result = engine.evolve(10, 1, new TargetFitness(100 * reservations.size(), true));
         System.out.println(result);
     }
 
     private static void init(List<Room> rooms, List<Reservation> reservations) {
         for (int i = 0; i < Main.numOfRooms; ++i) {
-            rooms.add(new Room());
+            rooms.add(new Room(10,null));
         }
         for (int i = 0; i < Main.numOfReservations; ++i) {
             reservations.add(new Reservation());

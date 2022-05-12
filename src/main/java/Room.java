@@ -1,15 +1,26 @@
-
-
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Room {
-    public enum RoomFacingDirection {
+    private static int counter = 1;
+    private final int roomNumber;
+    private int roomCapacity;
+    private boolean isAvailable;
+    //private Integer availableNights; // available nights from now.
+    HashMap<Requests, Boolean> requestsMap;
+
+    //private RoomType roomType;
+    //private RoomFacingDirection roomDirection;
+
+    /*public enum RoomFacingDirection {
         North,
         South,
         West,
         East
-    }
+    }*/
 
-    public enum RoomType {
+    public enum RoomType { // Important?
         Deluxe,
         Executive,
         Club,
@@ -17,24 +28,17 @@ public class Room {
         DeluxeSuite,
         ExecutiveSuite,
         ClubSuite,
-        PresidentSuite
+        PresidentSuite;
     }
 
-    private static int counter = 1;
-
-    private final int roomNumber;
-    private RoomFacingDirection roomDirection;
-    private RoomType roomType;
-    private int roomCapacity;
-    private boolean elevatorProximity;
-    private boolean hasBathtub;
-    private boolean hasBalcony;
-    private boolean isAvailable = true;
-
-    // private Integer availableNights; // available nights from now.
-
-    public Room() {
+    public Room(int roomCapacity, Map<Requests, Boolean> requestsMap) {
         roomNumber = counter++;
+        this.roomCapacity = roomCapacity;
+        // Put requestMap in this.requests
+    }
+
+    public Boolean doesComplyWithRequest(Requests request) {
+        return this.requestsMap.get(request);
     }
 
     public Boolean isAvailable() {
@@ -47,6 +51,10 @@ public class Room {
 
     public int getRoomNumber() {
         return roomNumber;
+    }
+
+    public int getRoomCapacity() {
+        return roomCapacity;
     }
 
     @Override

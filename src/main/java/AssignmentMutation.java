@@ -11,19 +11,21 @@ import org.uncommons.watchmaker.framework.EvolutionaryOperator;
 
 public class AssignmentMutation implements EvolutionaryOperator<Assignment> {
 
-    private List<Room> rooms ;
+    private List<Room> rooms;
     private List<Reservation> reservations;
     private NumberGenerator<Probability> mutationProbability;
 
-    public AssignmentMutation(List<Room> rooms,List<Reservation> reservations, Probability mutationProbability) {
-        this(rooms,reservations, new ConstantGenerator(mutationProbability));
+    public AssignmentMutation(Lobby lobby, Probability mutationProbability) {
+        this(lobby, new ConstantGenerator(mutationProbability));
     }
 
-    public AssignmentMutation(List<Room> rooms,List<Reservation> reservations, NumberGenerator<Probability> mutationProbability) {
-        this.rooms = (List<Room>) ((ArrayList<Room>) rooms).clone();
-        this.reservations = (List<Reservation>) ((ArrayList<Reservation>) reservations).clone();
-        this.rooms.addAll(rooms);
-        this.reservations.addAll(reservations);
+    public AssignmentMutation(Lobby lobby, NumberGenerator<Probability> mutationProbability) {
+//        this.rooms = (List<Room>) ((ArrayList<Room>) rooms).clone();
+//        this.reservations = (List<Reservation>) ((ArrayList<Reservation>) reservations).clone();
+//        this.rooms.addAll(rooms);
+//        this.reservations.addAll(reservations);
+        this.rooms = lobby.getRoomArrayList();
+        this.reservations = lobby.getReservationArrayList();
         this.mutationProbability = mutationProbability;
     }
 
@@ -39,11 +41,11 @@ public class AssignmentMutation implements EvolutionaryOperator<Assignment> {
         return mutatedPopulation;
     }
 
-    private Assignment mutateAssignment(Assignment oldAssignment, Random rng) {
+    public Assignment mutateAssignment(Assignment oldAssignment, Random rng) {
         Assignment newAssignment = new Assignment(oldAssignment);
-        for(int i = 0; i < newAssignment.getAmountOfReservations(); ++i) {
+        for (int i = 0; i < newAssignment.getAmountOfReservations(); ++i) {
             if (((Probability) this.mutationProbability.nextValue()).nextEvent(rng)) {
-                newAssignment.assign(this.rooms.get(rng.nextInt(this.rooms.size()-1)), reservations.get(i));
+                newAssignment.assign(this.rooms.get(rng.nextInt(this.rooms.size() - 1)), reservations.get(i));
             }
         }
 
