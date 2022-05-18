@@ -42,28 +42,26 @@ public class Assignment {
         return this.reservationRoomHashMap.keySet();
     }
 
-    public double getMaxFitness() {
-        return 1000;
-    }
 
     public Map<Room, Integer> getAmountOfReservationsPerRoom() {
         Map<Room, Integer> roomToAmountOfReservationsMap = new HashMap<>(this.getAmountOfRooms());
-        for (Reservation reservation : this.reservationRoomHashMap.keySet()) {
+        for (Room room : this.lobby.getRoomArrayList()) {
+            roomToAmountOfReservationsMap.put(room, 0);
+        }
+        for (Reservation reservation : this.lobby.getReservationArrayList()) {
             Room room = this.reservationRoomHashMap.get(reservation);
-            if (roomToAmountOfReservationsMap.containsKey(room)) {
-                Integer currentReservationAmount = roomToAmountOfReservationsMap.get(room);
-                roomToAmountOfReservationsMap.put(room, currentReservationAmount + 1);
-            } else {
-                roomToAmountOfReservationsMap.put(room, 1);
-            }
+            Integer currentReservationAmount = roomToAmountOfReservationsMap.get(room);
+            roomToAmountOfReservationsMap.put(room, currentReservationAmount + 1);
         }
         return roomToAmountOfReservationsMap;
     }
 
-    public int getAmountOfInsufficientRooms() {
+    public int getAmountOfSufficientRooms() {
         int count = 0;
         for (Reservation reservation : this.reservationRoomHashMap.keySet()) {
-            if (this.reservationRoomHashMap.get(reservation).getRoomCapacity() < reservation.getGuestsAmount()) {
+            Room room = this.reservationRoomHashMap.get(reservation);
+            int guestsAmount = reservation.getGuestsAmount();
+            if (room.getRoomCapacity() >= guestsAmount) {
                 ++count;
             }
         }

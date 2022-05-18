@@ -45,6 +45,7 @@ public class AssignmentMutation implements EvolutionaryOperator<Assignment> {
         Assignment newAssignment = new Assignment(oldAssignment);
         for (int i = 0; i < newAssignment.getAmountOfReservations(); ++i) {
             if (((Probability) this.mutationProbability.nextValue()).nextEvent(rng)) {
+                // TODO: Set the "isAvailable" field in room.
                 newAssignment.assign(this.rooms.get(rng.nextInt(this.rooms.size() - 1)), reservations.get(i));
             }
         }

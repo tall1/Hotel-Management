@@ -7,15 +7,20 @@ public class Reservation {
     private Integer guestsAmount;
 
     private static int reservationId = 100;
-    private HashMap<Requests, RequestImportance> guestsRequests;
+    private HashMap<Request, RequestImportance> guestsRequests;
     // closed to other rooms
 
 
-    public Reservation() {
+    public Reservation(int guestsAmount) {
         this.reservationNumber = reservationId++;
+        this.guestsAmount = guestsAmount;
+        this.guestsRequests = new HashMap<>();
+        for (Request request : Request.values()) {
+            this.guestsRequests.put(request, Math.random() > 0.33 ? Math.random() > 0.5 ? RequestImportance.MUST : RequestImportance.NICE_TO_HAVE : RequestImportance.NOT_IMPORTANT);
+        }
     }
 
-    public RequestImportance getImportance(Requests request){
+    public RequestImportance getImportance(Request request) {
         return this.guestsRequests.get(request);
     }
 
@@ -35,7 +40,7 @@ public class Reservation {
         return guestsAmount;
     }
 
-    public HashMap<Requests, RequestImportance> getGuestsRequests() {
+    public HashMap<Request, RequestImportance> getGuestsRequests() {
         return guestsRequests;
     }
 

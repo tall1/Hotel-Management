@@ -1,4 +1,4 @@
-public enum Requests {
+public enum Request {
     ELEVATORPROXIMITY,
     SEAVIEW,
     BATH,

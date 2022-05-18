@@ -1,5 +1,4 @@
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Room {
@@ -8,7 +7,7 @@ public class Room {
     private int roomCapacity;
     private boolean isAvailable;
     //private Integer availableNights; // available nights from now.
-    HashMap<Requests, Boolean> requestsMap;
+    HashMap<Request, Boolean> requestsMap;
 
     //private RoomType roomType;
     //private RoomFacingDirection roomDirection;
@@ -31,13 +30,22 @@ public class Room {
         PresidentSuite;
     }
 
-    public Room(int roomCapacity, Map<Requests, Boolean> requestsMap) {
+    public Room(int roomCapacity) {
+        roomNumber = counter++;
+        this.roomCapacity = roomCapacity;
+        this.requestsMap = new HashMap<>();
+        for (Request request : Request.values()) {
+            requestsMap.put(request, Math.random() > 0.5);
+        }
+    }
+
+    public Room(int roomCapacity, Map<Request, Boolean> requestsMap) {
         roomNumber = counter++;
         this.roomCapacity = roomCapacity;
         // Put requestMap in this.requests
     }
 
-    public Boolean doesComplyWithRequest(Requests request) {
+    public Boolean doesComplyWithRequest(Request request) {
         return this.requestsMap.get(request);
     }
 

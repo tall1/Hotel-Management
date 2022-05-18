@@ -17,7 +17,7 @@ public class Main {
     private final static int numOfRooms = 20;
     private final static int numOfReservations = 12;
 
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         ArrayList<Room> rooms = new ArrayList<>();
         ArrayList<Reservation> reservations = new ArrayList<>();
         init(rooms, reservations);
@@ -30,30 +30,19 @@ public class Main {
         for (int i = 0; i < num; ++i) {
             assignments.add(factory.generateRandomCandidate(rng));
         }
-
-        AssignmentMutation assignmentMutation = new AssignmentMutation(lobby, new Probability(0.05));
-        try {
-            FileWriter myWriter1 = new FileWriter("before.txt");
-            FileWriter myWriter2 = new FileWriter("after.txt");
-            myWriter1.write("Before mutation:");
-            for (int i = 0; i < assignments.size(); i++) {
-                myWriter1.write("Assignment " + i + ":\n" + assignments.get(i));
-            }
-            myWriter1.close();
-            List<Assignment> mutated = assignmentMutation.apply(assignments, rng);
-            myWriter2.write("After mutation:");
-            for (int i = 0; i < mutated.size(); i++) {
-                myWriter2.write("Assignment " + i + ":\n" + mutated.get(i));
-            }
-            myWriter2.close();
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+        AssignmentEvaluator assignmentEvaluator = AssignmentEvaluator.getInstance(100);
+        AssignmentMutation assignmentMutation = new AssignmentMutation(lobby, new Probability(0.5));
+        List<Assignment> mutated = assignmentMutation.apply(assignments, rng);
+        int i = 0;
+        for (Assignment assignment : mutated) {
+            System.out.println("Assignment " + (i++) + ": ");
+            System.out.println("\tMax fitness = " + assignmentEvaluator.getMaxFitness(assignment));
+            System.out.println("\tFitness = " + assignmentEvaluator.getFitness(assignment, null));
         }
 
     }
 
-    public static void main1(String[] args) {
+    public static void main(String[] args) {
         ArrayList<Room> rooms = new ArrayList<>();
         ArrayList<Reservation> reservations = new ArrayList<>();
         init(rooms, reservations);
@@ -64,12 +53,12 @@ public class Main {
 
         // Create a pipeline that applies cross-over then mutation.
         List<EvolutionaryOperator<Assignment>> operators = new LinkedList<>();
-        operators.add(new AssignmentMutation(lobby, new Probability(0.02)));
+        operators.add(new AssignmentMutation(lobby, new Probability(0.2)));
         operators.add(new AssignmentCrossover());
         EvolutionaryOperator<Assignment> pipeline
                 = new EvolutionPipeline<>(operators);
 
-        FitnessEvaluator<Assignment> fitnessEvaluator = new AssignmentEvaluator();
+        AssignmentEvaluator fitnessEvaluator = AssignmentEvaluator.getInstance(100.0);
         SelectionStrategy<Object> selection = new RouletteWheelSelection();
         Random rng = new MersenneTwisterRNG();
 
@@ -80,20 +69,21 @@ public class Main {
                 selection,
                 rng);
 
-        engine.addEvolutionObserver(data -> System.out.printf("Generation %d: %s\n",
+        engine.addEvolutionObserver(data -> System.out.printf("Generation %d: %s / %s\n",
                 data.getGenerationNumber(),
-                data.getBestCandidate()));
+                fitnessEvaluator.getMaxFitness(data.getBestCandidate()),
+                fitnessEvaluator.getFitness(data.getBestCandidate(), null)));
 
-        Assignment result = engine.evolve(10, 1, new TargetFitness(100 * reservations.size(), true));
+        Assignment result = engine.evolve(50, 3, new TargetFitness(3600, true));
         System.out.println(result);
     }
 
     private static void init(List<Room> rooms, List<Reservation> reservations) {
         for (int i = 0; i < Main.numOfRooms; ++i) {
-            rooms.add(new Room(10,null));
+            rooms.add(new Room(10));
         }
         for (int i = 0; i < Main.numOfReservations; ++i) {
-            reservations.add(new Reservation());
+            reservations.add(new Reservation((int) (Math.random() * 10)));
         }
     }
 }
