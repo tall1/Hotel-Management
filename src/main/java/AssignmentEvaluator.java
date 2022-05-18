@@ -7,7 +7,10 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
     private final String targetString = "HELLO WORLD";
 
     /**
-     * Fines every unfulfilled request, according to the importance.
+     * Fines the fitness for every:
+     * 1. Room with multiple reservations.
+     * 2. Insufficient room.
+     * 3. Unfulfilled request, according to the importance.
      */
     public double getFitness(Assignment candidate
             , List<? extends Assignment> population) {
@@ -21,7 +24,7 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
             }
         }
         // Handle more guests than room capacity:
-        int amountOfInsufficientRooms = candidate.getAmountOfReservationsInInsufficientRooms();
+        int amountOfInsufficientRooms = candidate.getAmountOfInsufficientRooms();
         for (int i = 0; i < amountOfInsufficientRooms; i++) {
             // TODO: Do something to fitness..
         }

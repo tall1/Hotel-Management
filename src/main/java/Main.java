@@ -31,13 +31,7 @@ public class Main {
             assignments.add(factory.generateRandomCandidate(rng));
         }
 
-        //AssignmentCrossover assignmentCrossover = new AssignmentCrossover();
-        AssignmentMutation assignmentMutation = new AssignmentMutation(lobby, new Probability(1));
-//        System.out.println("Assignment 0: " + assignments.get(0));
-//        System.out.println("Assignment 1: " + assignments.get(1));
-//        List<Assignment> offsprings = assignmentCrossover.mate(assignments.get(0), assignments.get(1), 4, rng);
-//        System.out.println("Offspring 0 after crossover: " + offsprings.get(0));
-//        System.out.println("Offspring 1 after crossover: " + offsprings.get(1));
+        AssignmentMutation assignmentMutation = new AssignmentMutation(lobby, new Probability(0.05));
         try {
             FileWriter myWriter1 = new FileWriter("before.txt");
             FileWriter myWriter2 = new FileWriter("after.txt");
@@ -46,10 +40,10 @@ public class Main {
                 myWriter1.write("Assignment " + i + ":\n" + assignments.get(i));
             }
             myWriter1.close();
-            assignmentMutation.apply(assignments, rng);
+            List<Assignment> mutated = assignmentMutation.apply(assignments, rng);
             myWriter2.write("After mutation:");
-            for (int i = 0; i < assignments.size(); i++) {
-                myWriter2.write("Assignment " + i + ":\n" + assignments.get(i));
+            for (int i = 0; i < mutated.size(); i++) {
+                myWriter2.write("Assignment " + i + ":\n" + mutated.get(i));
             }
             myWriter2.close();
         } catch (IOException e) {

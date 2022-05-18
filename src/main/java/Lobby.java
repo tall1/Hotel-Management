@@ -81,9 +81,9 @@ public class Lobby {
     }
 
     public void addOrRemoveRoomFromAvailable(Room room) {
-        if(availableRoomList.contains(room)){
+        if (availableRoomList.contains(room)) {
             availableRoomList.remove(room);
-        }else{
+        } else {
             availableRoomList.add(room);
         }
     }
@@ -92,6 +92,14 @@ public class Lobby {
         // min - inclusive, max - exclusive
         Random random = new Random();
         return random.nextInt(max - min) + min;
+    }
+
+    public int getAmountOfRooms() {
+        return this.roomArrayList.size();
+    }
+
+    public int getAmountOfReservations() {
+        return this.reservationArrayList.size();
     }
 
     @Override
