@@ -39,10 +39,9 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
     public double getFitness(Assignment candidate
             , List<? extends Assignment> population) {
 
-
         double fitness = 0;
         // Handle multiple reservations per room:
-        Map<Room, Integer> amountOfReservationsPerRoom = candidate.getAmountOfReservationsPerRoom();
+        Map<Room, Integer> amountOfReservationsPerRoom = candidate.getAmountOfReservationsPerRoom(); // Includes reserved and unreserved rooms
         for (Integer amountOfReservations : amountOfReservationsPerRoom.values()) {
             if (amountOfReservations <= 1) {
                 fitness += this.score_levels.get(0);
@@ -50,7 +49,7 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
         }
 
         // Handle more guests than room capacity:
-        int amountOfSufficientRooms = candidate.getAmountOfSufficientRooms();
+        int amountOfSufficientRooms = candidate.getAmountOfSufficientRooms(); // Includes only reserved rooms
         fitness += amountOfSufficientRooms * this.score_levels.get(1);
 
         // Handle fulfilled requests:
