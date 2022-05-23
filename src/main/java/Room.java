@@ -4,9 +4,9 @@ import java.util.Map;
 public class Room {
     private static int counter = 1;
     private final int roomNumber;
-    private int roomCapacity;
+    private final int roomCapacity;
     private boolean isAvailable;
-    //private Integer availableNights; // available nights from now.
+
     HashMap<Request, Boolean> requestsMap;
 
     //private RoomType roomType;
@@ -27,7 +27,7 @@ public class Room {
         DeluxeSuite,
         ExecutiveSuite,
         ClubSuite,
-        PresidentSuite;
+        PresidentSuite
     }
 
     public Room(int roomCapacity) {

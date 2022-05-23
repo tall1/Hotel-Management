@@ -4,10 +4,10 @@ public class Reservation {
     private final Integer reservationNumber;
     private String guestName;
     private Integer guestId;
-    private Integer guestsAmount;
+    private final Integer guestsAmount;
 
     private static int reservationId = 100;
-    private HashMap<Request, RequestImportance> guestsRequests;
+    private final HashMap<Request, RequestImportance> guestsRequests;
     // closed to other rooms
 
 
@@ -38,10 +38,6 @@ public class Reservation {
 
     public Integer getGuestsAmount() {
         return guestsAmount;
-    }
-
-    public HashMap<Request, RequestImportance> getGuestsRequests() {
-        return guestsRequests;
     }
 
     @Override

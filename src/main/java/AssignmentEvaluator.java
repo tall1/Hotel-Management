@@ -1,31 +1,23 @@
 import org.uncommons.watchmaker.framework.FitnessEvaluator;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
     private static AssignmentEvaluator assignmentEvaluatorInstance = null;
-    private final List<Double> score_levels;
-    private final int amount_of_score_levels = 5;
 
+    final int maxFitnessPerReservation = 20;
+    final int damageForMultipleReservations = 5; // 5
+    final int damageForCapacity = 3; // 3
+    final int damageForRequest = 2; // == 12
 
-    private AssignmentEvaluator(double level_1_score) {
-        this.score_levels = new ArrayList<>(this.amount_of_score_levels);
-        double current_score = level_1_score;
-        for (int i = 0; i < amount_of_score_levels; ++i) {
-            score_levels.add(i, current_score);
-            current_score /= 2;
-        }
+    private AssignmentEvaluator() {
     }
+
 
     public static AssignmentEvaluator getInstance() {
-        return assignmentEvaluatorInstance;
-    }
-
-    public static AssignmentEvaluator getInstance(double level_1_score) {
         if (assignmentEvaluatorInstance == null) {
-            assignmentEvaluatorInstance = new AssignmentEvaluator(level_1_score);
+            assignmentEvaluatorInstance = new AssignmentEvaluator();
         }
         return assignmentEvaluatorInstance;
     }
@@ -38,25 +30,23 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
      */
     public double getFitness(Assignment candidate
             , List<? extends Assignment> population) {
+        double fitness = candidate.getAmountOfReservations() * maxFitnessPerReservation;
 
-        double fitness = 0;
-        // Handle multiple reservations per room:
         Map<Room, Integer> amountOfReservationsPerRoom = candidate.getAmountOfReservationsPerRoom(); // Includes reserved and unreserved rooms
-        for (Integer amountOfReservations : amountOfReservationsPerRoom.values()) {
-            if (amountOfReservations <= 1) {
-                fitness += this.score_levels.get(0);
-            }
-        }
-
-        // Handle more guests than room capacity:
-        int amountOfSufficientRooms = candidate.getAmountOfSufficientRooms(); // Includes only reserved rooms
-        fitness += amountOfSufficientRooms * this.score_levels.get(1);
-
-        // Handle fulfilled requests:
+        // MAIN LOOP:
         for (Reservation reservation : candidate.getReservations()) {
-            Room room = candidate.getRoomByReservation(reservation);
+            // Handle multiple reservations per room:
+            Room reservedRoom = candidate.getRoomByReservation(reservation);
+            if (amountOfReservationsPerRoom.get(reservedRoom) > 1) {
+                fitness -= damageForMultipleReservations;
+            }
+            // Handle more guests than room capacity:
+            if (reservation.getGuestsAmount() > reservedRoom.getRoomCapacity()) {
+                fitness -= damageForCapacity;
+            }
+            // Handle fulfilled requests:
             for (Request request : Request.values()) {
-                if (room.doesComplyWithRequest(request)) {
+                if (!reservedRoom.doesComplyWithRequest(request)) {
                     fitness = fitnessEvalHelper(fitness, reservation, request);
                 }
             }
@@ -64,32 +54,23 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
         return fitness;
     }
 
-    public double getMaxFitness(Assignment candidate) {
-        double maxFitness = 0;
-        maxFitness += candidate.getAmountOfRooms() * this.score_levels.get(0);
-        maxFitness += candidate.getAmountOfReservations() * this.score_levels.get(1);
-        for (Reservation reservation : candidate.getReservations()) {
-            for (Request request : Request.values()) {
-                maxFitness = fitnessEvalHelper(maxFitness, reservation, request);
-            }
-        }
-        return maxFitness;
-    }
-
     private double fitnessEvalHelper(double fitness, Reservation reservation, Request request) {
         RequestImportance importance = reservation.getImportance(request);
         switch (importance) {
             case MUST:
-                fitness += this.score_levels.get(2);
+                fitness -= damageForRequest;
                 break;
             case NICE_TO_HAVE:
-                fitness += this.score_levels.get(3);
+                fitness -= (damageForRequest - 1);
                 break;
-            case NOT_IMPORTANT:
-                fitness += this.score_levels.get(4);
+            default:
                 break;
         }
         return fitness;
+    }
+
+    public int getMaxFitness(int amountOfReservations){
+        return this.maxFitnessPerReservation * amountOfReservations;
     }
 
     public boolean isNatural() {

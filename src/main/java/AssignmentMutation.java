@@ -11,26 +11,22 @@ import org.uncommons.watchmaker.framework.EvolutionaryOperator;
 
 public class AssignmentMutation implements EvolutionaryOperator<Assignment> {
 
-    private List<Room> rooms;
-    private List<Reservation> reservations;
-    private NumberGenerator<Probability> mutationProbability;
+    private final List<Room> rooms;
+    private final List<Reservation> reservations;
+    private final NumberGenerator<Probability> mutationProbability;
 
     public AssignmentMutation(Lobby lobby, Probability mutationProbability) {
         this(lobby, new ConstantGenerator(mutationProbability));
     }
 
     public AssignmentMutation(Lobby lobby, NumberGenerator<Probability> mutationProbability) {
-//        this.rooms = (List<Room>) ((ArrayList<Room>) rooms).clone();
-//        this.reservations = (List<Reservation>) ((ArrayList<Reservation>) reservations).clone();
-//        this.rooms.addAll(rooms);
-//        this.reservations.addAll(reservations);
         this.rooms = lobby.getRoomArrayList();
         this.reservations = lobby.getReservationArrayList();
         this.mutationProbability = mutationProbability;
     }
 
     public List<Assignment> apply(List<Assignment> selectedCandidates, Random rng) {
-        List<Assignment> mutatedPopulation = new ArrayList(selectedCandidates.size());
+        List<Assignment> mutatedPopulation = new ArrayList<>(selectedCandidates.size());
         Iterator i$ = selectedCandidates.iterator();
 
         while (i$.hasNext()) {
@@ -45,8 +41,10 @@ public class AssignmentMutation implements EvolutionaryOperator<Assignment> {
         Assignment newAssignment = new Assignment(oldAssignment);
         for (int i = 0; i < newAssignment.getAmountOfReservations(); ++i) {
             if (((Probability) this.mutationProbability.nextValue()).nextEvent(rng)) {
-                // TODO: Set the "isAvailable" field in room.
-                newAssignment.assign(this.rooms.get(rng.nextInt(this.rooms.size() - 1)), reservations.get(i));
+                Reservation currentReservation = reservations.get(i);
+                Room randomRoom = this.rooms.get(rng.nextInt(this.rooms.size() - 1));
+
+                newAssignment.assign(randomRoom, currentReservation);
             }
         }
 

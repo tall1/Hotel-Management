@@ -27,7 +27,17 @@ public class Assignment {
 
     public void assign(Room room, Reservation reservation) {
         //this.roomReservationHashMap.put(room, reservation);
+        Room oldRoom = this.reservationRoomHashMap.get(reservation);
+        // Set old room availability:
+        if (getAmountOfReservationsForSpecificRoom(oldRoom) > 1) {
+            oldRoom.setAvailable();
+        }
         this.reservationRoomHashMap.put(reservation, room);
+    }
+
+    private int getAmountOfReservationsForSpecificRoom(Room room) {
+        Map<Room, Integer> map = getAmountOfReservationsPerRoom();
+        return map.get(room);
     }
 
     public int getAmountOfReservations() {
@@ -54,18 +64,6 @@ public class Assignment {
             roomToAmountOfReservationsMap.put(room, currentReservationAmount + 1);
         }
         return roomToAmountOfReservationsMap;
-    }
-
-    public int getAmountOfSufficientRooms() {
-        int count = 0;
-        for (Reservation reservation : this.reservationRoomHashMap.keySet()) {
-            Room room = this.reservationRoomHashMap.get(reservation);
-            int guestsAmount = reservation.getGuestsAmount();
-            if (room.getRoomCapacity() >= guestsAmount) {
-                ++count;
-            }
-        }
-        return count;
     }
 
     public int getLobbyHashcode() {
