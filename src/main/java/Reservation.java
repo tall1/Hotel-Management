@@ -4,25 +4,24 @@ public class Reservation {
     private final Integer reservationNumber;
     private String guestName;
     private Integer guestId;
-    private Integer guestsAmount;
-
-    public enum Request {
-        ELEVATORPROXIMITY,
-        SEAVIEW,
-        BATH,
-        BALCONY,
-        HANDICAPPED,
-        HIGHFLOOR,
-        LOWFLOOR
-    }
+    private final Integer guestsAmount;
 
     private static int reservationId = 100;
-    private HashMap<Request, Boolean> guestsRequests;
+    private final HashMap<Request, RequestImportance> guestsRequests;
     // closed to other rooms
 
 
-    public Reservation() {
+    public Reservation(int guestsAmount) {
         this.reservationNumber = reservationId++;
+        this.guestsAmount = guestsAmount;
+        this.guestsRequests = new HashMap<>();
+        for (Request request : Request.values()) {
+            this.guestsRequests.put(request, Math.random() > 0.33 ? Math.random() > 0.5 ? RequestImportance.MUST : RequestImportance.NICE_TO_HAVE : RequestImportance.NOT_IMPORTANT);
+        }
+    }
+
+    public RequestImportance getImportance(Request request) {
+        return this.guestsRequests.get(request);
     }
 
     public Integer getReservationNumber() {
@@ -39,10 +38,6 @@ public class Reservation {
 
     public Integer getGuestsAmount() {
         return guestsAmount;
-    }
-
-    public HashMap<Request, Boolean> getGuestsRequests() {
-        return guestsRequests;
     }
 
     @Override

@@ -1,15 +1,25 @@
-
-
+import java.util.HashMap;
+import java.util.Map;
 
 public class Room {
-    public enum RoomFacingDirection {
+    private static int counter = 1;
+    private final int roomNumber;
+    private final int roomCapacity;
+    private boolean isAvailable;
+
+    HashMap<Request, Boolean> requestsMap;
+
+    //private RoomType roomType;
+    //private RoomFacingDirection roomDirection;
+
+    /*public enum RoomFacingDirection {
         North,
         South,
         West,
         East
-    }
+    }*/
 
-    public enum RoomType {
+    public enum RoomType { // Important?
         Deluxe,
         Executive,
         Club,
@@ -20,21 +30,23 @@ public class Room {
         PresidentSuite
     }
 
-    private static int counter = 1;
-
-    private final int roomNumber;
-    private RoomFacingDirection roomDirection;
-    private RoomType roomType;
-    private int roomCapacity;
-    private boolean elevatorProximity;
-    private boolean hasBathtub;
-    private boolean hasBalcony;
-    private boolean isAvailable = true;
-
-    // private Integer availableNights; // available nights from now.
-
-    public Room() {
+    public Room(int roomCapacity) {
         roomNumber = counter++;
+        this.roomCapacity = roomCapacity;
+        this.requestsMap = new HashMap<>();
+        for (Request request : Request.values()) {
+            requestsMap.put(request, Math.random() > 0.5);
+        }
+    }
+
+    public Room(int roomCapacity, Map<Request, Boolean> requestsMap) {
+        roomNumber = counter++;
+        this.roomCapacity = roomCapacity;
+        // Put requestMap in this.requests
+    }
+
+    public Boolean doesComplyWithRequest(Request request) {
+        return this.requestsMap.get(request);
     }
 
     public Boolean isAvailable() {
@@ -47,6 +59,10 @@ public class Room {
 
     public int getRoomNumber() {
         return roomNumber;
+    }
+
+    public int getRoomCapacity() {
+        return roomCapacity;
     }
 
     @Override

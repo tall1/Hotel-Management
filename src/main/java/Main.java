@@ -14,27 +14,6 @@ public class Main {
     private final static int numOfRooms = 20;
     private final static int numOfReservations = 12;
 
-    /*public static void main(String[] args) {
-        ArrayList<Room> rooms = new ArrayList<>();
-        ArrayList<Reservation> reservations = new ArrayList<>();
-        init(rooms, reservations);
-        // Get the singleton instance of lobby:
-        Lobby lobby = Lobby.getInstance(rooms, reservations);
-        CandidateFactory<Assignment> factory = new AssignmentFactory(lobby);
-        Random rng = new MersenneTwisterRNG();
-        final int num = 5;
-        List<Assignment> assignments = new ArrayList<>(num);
-        for (int i = 0; i < num; ++i) {
-            assignments.add(factory.generateRandomCandidate(rng));
-        }
-        AssignmentCrossover assignmentCrossover = new AssignmentCrossover();
-        System.out.println("Assignment 0: " + assignments.get(0));
-        System.out.println("Assignment 1: " + assignments.get(1));
-        List<Assignment> offsprings = assignmentCrossover.mate(assignments.get(0), assignments.get(1), 4, rng);
-        System.out.println("Offspring 0: " + offsprings.get(0));
-        System.out.println("Offspring 1: " + offsprings.get(1));
-    }*/
-
     public static void main(String[] args) {
         ArrayList<Room> rooms = new ArrayList<>();
         ArrayList<Reservation> reservations = new ArrayList<>();
@@ -42,16 +21,17 @@ public class Main {
         // Get the singleton instance of lobby:
         Lobby lobby = Lobby.getInstance(rooms, reservations);
 
+
         CandidateFactory<Assignment> factory = new AssignmentFactory(lobby);
 
         // Create a pipeline that applies cross-over then mutation.
         List<EvolutionaryOperator<Assignment>> operators = new LinkedList<>();
-        operators.add(new AssignmentMutation(rooms, reservations, new Probability(0.02)));
+        operators.add(new AssignmentMutation(lobby, new Probability(0.2)));
         operators.add(new AssignmentCrossover());
         EvolutionaryOperator<Assignment> pipeline
                 = new EvolutionPipeline<>(operators);
 
-        FitnessEvaluator<Assignment> fitnessEvaluator = new AssignmentEvaluator();
+        AssignmentEvaluator fitnessEvaluator = AssignmentEvaluator.getInstance();
         SelectionStrategy<Object> selection = new RouletteWheelSelection();
         Random rng = new MersenneTwisterRNG();
 
@@ -62,20 +42,24 @@ public class Main {
                 selection,
                 rng);
 
-        engine.addEvolutionObserver(data -> System.out.printf("Generation %d: %s\n",
-                data.getGenerationNumber(),
-                data.getBestCandidate()));
+        int maxFitness = fitnessEvaluator.getMaxFitness(lobby.getAmountOfReservations());
 
-        Assignment result = engine.evolve(10, 1, new TargetFitness(11, true));
+        engine.addEvolutionObserver(data -> System.out.printf("Generation %d: Best candidate fitness: %s / %d\n",
+                data.getGenerationNumber(),
+                fitnessEvaluator.getFitness(data.getBestCandidate(), null),
+                maxFitness));
+
+
+        Assignment result = engine.evolve(50, 5, new TargetFitness(maxFitness, true));
         System.out.println(result);
     }
 
     private static void init(List<Room> rooms, List<Reservation> reservations) {
         for (int i = 0; i < Main.numOfRooms; ++i) {
-            rooms.add(new Room());
+            rooms.add(new Room(10));
         }
         for (int i = 0; i < Main.numOfReservations; ++i) {
-            reservations.add(new Reservation());
+            reservations.add(new Reservation((int) (Math.random() * 10)));
         }
     }
 }

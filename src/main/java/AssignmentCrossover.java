@@ -19,7 +19,7 @@ public class AssignmentCrossover extends AbstractCrossover<Assignment> {
      * 2. The two assignments are on the same Reservations list (reservation in a1 <=> reservation in a2)
      */
     protected List<Assignment> mate(Assignment a1, Assignment a2, int numberOfCrossoverPoints, Random rng) {
-        if (a1.getLobby().hashCode() != a2.getLobby().hashCode()) {
+        if (a1.getLobbyHashcode() != a2.getLobbyHashcode()) {
             throw new IllegalArgumentException("Cannot perform cross-over with different hotels.");
         }
 
