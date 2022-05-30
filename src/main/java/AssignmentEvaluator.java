@@ -11,8 +11,7 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
     final int damageForCapacity = 3; // 3
     final int damageForRequest = 2; // == 12
 
-    private AssignmentEvaluator() {
-    }
+    private AssignmentEvaluator() {}
 
 
     public static AssignmentEvaluator getInstance() {
@@ -23,7 +22,7 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
     }
 
     /**
-     * Fines the fitness for every:
+     * Finds the fitness for every:
      * 1. Room with multiple reservations.
      * 2. Insufficient room.
      * 3. Unfulfilled request, according to the importance.
@@ -44,7 +43,7 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
             if (reservation.getGuestsAmount() > reservedRoom.getRoomCapacity()) {
                 fitness -= damageForCapacity;
             }
-            // Handle fulfilled requests:
+            // Handle unfulfilled requests:
             for (Request request : Request.values()) {
                 if (!reservedRoom.doesComplyWithRequest(request)) {
                     fitness = fitnessEvalHelper(fitness, reservation, request);

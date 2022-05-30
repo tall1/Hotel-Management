@@ -7,12 +7,12 @@ public class Room {
     private final int roomCapacity;
     private boolean isAvailable;
 
-    HashMap<Request, Boolean> requestsMap;
+    private Map<Request, Boolean> requestsMap;
 
     //private RoomType roomType;
     //private RoomFacingDirection roomDirection;
 
-    /*public enum RoomFacingDirection {
+    /* public enum RoomFacingDirection {
         North,
         South,
         West,
