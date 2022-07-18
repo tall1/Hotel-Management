@@ -1,5 +1,6 @@
-package com.hotels.assignment;
+package com.hotels.assignment.evolutionary.entities;
 
+import com.hotels.assignment.Assignment;
 import com.hotels.assignment.entities.Reservation;
 import com.hotels.assignment.entities.Room;
 import org.uncommons.watchmaker.framework.operators.AbstractCrossover;

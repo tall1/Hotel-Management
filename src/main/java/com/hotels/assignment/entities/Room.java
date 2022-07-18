@@ -1,5 +1,7 @@
 package com.hotels.assignment.entities;
 
+import com.hotels.assignment.entities.enums.Request;
+
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package com.hotels.assignment.entities;
+package com.hotels.assignment.entities.enums;
 
 public enum RequestImportance {
     NOT_IMPORTANT,

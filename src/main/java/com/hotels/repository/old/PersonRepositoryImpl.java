@@ -1,7 +1,7 @@
+/*
 package com.hotels.repository;
 
-import com.hotels.entity.Person;
-import org.springframework.stereotype.Repository;
+import com.hotels.entity.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -39,21 +39,21 @@ public class PersonRepositoryImpl { // JDBC!!!
         this.con.close();
     }
 
-    public List<Person> getAll() throws SQLException {
-        List<Person> personList = new ArrayList<>();
-        Person p;
+    public List<User> getAll() throws SQLException {
+        List<User> personList = new ArrayList<>();
+        User p;
         ResultSet rs = stmt.executeQuery("select * from people");
         while (rs.next()) {
-            p = new Person(rs.getInt("id"), rs.getString("name"), rs.getInt("age"));
+            p = new User(rs.getInt("id"), rs.getString("name"), rs.getInt("age"));
             personList.add(p);
         }
         return personList;
     }
 
-    public Person getPersonById(int id) throws SQLException {
+    public User getPersonById(int id) throws SQLException {
         getPersonByIdPreparedStatement.setInt(1, id);
         ResultSet rs = getPersonByIdPreparedStatement.executeQuery();
-        Person p = new Person();
+        User p = new User();
         while (rs.next()) {
             p.setId(rs.getInt("id"));
             p.setName(rs.getString("name"));
@@ -82,3 +82,4 @@ public class PersonRepositoryImpl { // JDBC!!!
 
 
 }
+*/

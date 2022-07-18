@@ -1,10 +1,11 @@
-package com.hotels.assignment;
+package com.hotels.assignment.evolutionary.entities;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import com.hotels.assignment.Assignment;
 import com.hotels.assignment.entities.Lobby;
 import com.hotels.assignment.entities.Reservation;
 import com.hotels.assignment.entities.Room;

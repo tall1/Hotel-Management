@@ -1,5 +1,8 @@
 package com.hotels.assignment.entities;
 
+import com.hotels.assignment.entities.enums.Request;
+import com.hotels.assignment.entities.enums.RequestImportance;
+
 import java.util.HashMap;
 
 public class Reservation {
