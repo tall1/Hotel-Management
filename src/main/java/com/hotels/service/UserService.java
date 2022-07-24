@@ -1,7 +1,7 @@
 package com.hotels.service;
 
 
-import com.hotels.entity.User;
+import com.hotels.entities.userhotel.User;
 
 import java.sql.SQLException;
 import java.util.List;

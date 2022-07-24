@@ -1,6 +1,6 @@
 package com.hotels.controller;
 
-import com.hotels.entity.User;
+import com.hotels.entities.userhotel.User;
 import com.hotels.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +28,8 @@ public class UserController {
     public User getUserById(@PathVariable int id) throws SQLException {
         return userService.getUserById(id);
     }
-/*
-//    http://localhost:8080/api/v1/person/get2?id=5
+
+    /*//http://localhost:8080/api/v1/person/get2?id=5
     @GetMapping
     public User getPersonById2(int id) throws SQLException {
         return userService.getPersonById(id);

@@ -1,10 +1,10 @@
 package com.hotels.assignment.evolutionary.entities;
 
 import com.hotels.assignment.Assignment;
-import com.hotels.assignment.entities.enums.Request;
-import com.hotels.assignment.entities.enums.RequestImportance;
-import com.hotels.assignment.entities.Reservation;
-import com.hotels.assignment.entities.Room;
+import com.hotels.entities.enums.Request;
+import com.hotels.entities.enums.RequestImportance;
+import com.hotels.entities.roomreservationfeature.Reservation;
+import com.hotels.entities.roomreservationfeature.Room;
 import org.uncommons.watchmaker.framework.FitnessEvaluator;
 
 import java.util.List;

@@ -1,9 +1,9 @@
 package com.hotels.assignment.evolutionary.entities;
 
 import com.hotels.assignment.Assignment;
-import com.hotels.assignment.entities.Lobby;
-import com.hotels.assignment.entities.Reservation;
-import com.hotels.assignment.entities.Room;
+import com.hotels.entities.Lobby;
+import com.hotels.entities.roomreservationfeature.Reservation;
+import com.hotels.entities.roomreservationfeature.Room;
 import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory;
 
 import java.util.*;
@@ -27,8 +27,8 @@ public class AssignmentFactory extends AbstractCandidateFactory<Assignment> {
             room = lobby.getRandomRoom();
             assignmentSuggestion.put(reservation, room);
             // Enable multiple reservations per room:
-            if(room.isAvailable()){
-                room.setAvailable();
+            if(room.getIsAvailable()){
+                room.setIsAvailable(false);
                 lobby.addOrRemoveRoomFromAvailable(room);
             }
         }

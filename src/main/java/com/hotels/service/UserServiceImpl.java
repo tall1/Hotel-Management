@@ -1,5 +1,5 @@
 package com.hotels.service;
-import com.hotels.entity.User;
+import com.hotels.entities.userhotel.User;
 import com.hotels.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,11 +15,11 @@ public class UserServiceImpl implements UserService {
     @PostConstruct
     public void init453534(){
         // here put any after construction operations
-        System.out.println("@PostConstruct");
+        System.out.println("UserServiceImpl: @PostConstruct");
     }
     @PreDestroy
     public void  exitAll123(){
-        System.out.println("@PreDestroy");
+        System.out.println("UserServiceImpl: @PreDestroy");
     }
 
     @Autowired

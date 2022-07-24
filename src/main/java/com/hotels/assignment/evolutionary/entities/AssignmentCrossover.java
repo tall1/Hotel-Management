@@ -1,8 +1,8 @@
 package com.hotels.assignment.evolutionary.entities;
 
 import com.hotels.assignment.Assignment;
-import com.hotels.assignment.entities.Reservation;
-import com.hotels.assignment.entities.Room;
+import com.hotels.entities.roomreservationfeature.Reservation;
+import com.hotels.entities.roomreservationfeature.Room;
 import org.uncommons.watchmaker.framework.operators.AbstractCrossover;
 import java.util.*;
 

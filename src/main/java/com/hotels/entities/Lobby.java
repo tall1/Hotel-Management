@@ -1,4 +1,7 @@
-package com.hotels.assignment.entities;
+package com.hotels.entities;
+
+import com.hotels.entities.roomreservationfeature.Reservation;
+import com.hotels.entities.roomreservationfeature.Room;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -18,7 +21,7 @@ public class Lobby {
         this.reservationArrayList.addAll(reservationArrayList);
         // Add references to available rooms:
         roomArrayList.forEach(r -> {
-            if (r.isAvailable()) {
+            if (r.getIsAvailable()) {
                 this.availableRoomList.add(r);
             }
         });

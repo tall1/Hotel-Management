@@ -1,8 +1,8 @@
 package com.hotels.assignment;
 
-import com.hotels.assignment.entities.Lobby;
-import com.hotels.assignment.entities.Reservation;
-import com.hotels.assignment.entities.Room;
+import com.hotels.entities.Lobby;
+import com.hotels.entities.roomreservationfeature.Reservation;
+import com.hotels.entities.roomreservationfeature.Room;
 
 import java.util.*;
 
@@ -36,7 +36,7 @@ public class Assignment {
         Room oldRoom = this.reservationRoomHashMap.get(reservation);
         // Set old room availability:
         if (getAmountOfReservationsForSpecificRoom(oldRoom) > 1) {
-            oldRoom.setAvailable();
+            oldRoom.setIsAvailable(!oldRoom.getIsAvailable());
         }
         this.reservationRoomHashMap.put(reservation, room);
     }

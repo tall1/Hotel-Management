@@ -14,7 +14,9 @@
       <configuration>
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
-        <datasource-mapping />
+        <datasource-mapping>
+          <factory-entry name="Hotel-Management" value="6d67c2f1-f104-4824-ae71-24a033324bc9" />
+        </datasource-mapping>
         <naming-strategy-map />
       </configuration>
     </facet>
@@ -94,5 +96,6 @@
     <orderEntry type="library" name="Maven: org.uncommons.watchmaker:watchmaker-framework:0.7.1" level="project" />
     <orderEntry type="library" name="Maven: org.uncommons.maths:uncommons-maths:1.2.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.collections:google-collections:1.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.projectlombok:lombok:1.18.24" level="project" />
   </component>
 </module>

@@ -1,9 +1,9 @@
 package com.hotels;
 
 import com.hotels.assignment.*;
-import com.hotels.assignment.entities.Lobby;
-import com.hotels.assignment.entities.Reservation;
-import com.hotels.assignment.entities.Room;
+import com.hotels.entities.Lobby;
+import com.hotels.entities.roomreservationfeature.Reservation;
+import com.hotels.entities.roomreservationfeature.Room;
 import com.hotels.assignment.evolutionary.entities.AssignmentCrossover;
 import com.hotels.assignment.evolutionary.entities.AssignmentEvaluator;
 import com.hotels.assignment.evolutionary.entities.AssignmentFactory;
