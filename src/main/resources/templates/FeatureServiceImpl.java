@@ -8,7 +8,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.List;
 
-@Service
 public class FeatureServiceImpl implements FeatureService {
     private final FeatureRepository featureRepository;
 

@@ -3,6 +3,7 @@ package com.hotels.assignment.evolutionary.entities;
 import com.hotels.assignment.Assignment;
 import com.hotels.entities.enums.Request;
 import com.hotels.entities.enums.RequestImportance;
+import com.hotels.entities.roomreservationfeature.Feature;
 import com.hotels.entities.roomreservationfeature.Reservation;
 import com.hotels.entities.roomreservationfeature.Room;
 import org.uncommons.watchmaker.framework.FitnessEvaluator;
@@ -18,7 +19,8 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
     final int damageForCapacity = 3; // 3
     final int damageForRequest = 2; // == 12
 
-    private AssignmentEvaluator() {}
+    private AssignmentEvaluator() {
+    }
 
 
     public static AssignmentEvaluator getInstance() {
@@ -56,6 +58,11 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
                     fitness = fitnessEvalHelper(fitness, reservation, request);
                 }
             }
+            /*for (Feature feature : reservation.getGuestsRequestsSet()) {
+                if(!reservedRoom.getFeatures().contains(feature)){
+                    fitness = fitnessEvalHelper(fitness, reservation, feature);
+                }
+            }*/
         }
         return fitness;
     }
@@ -75,7 +82,22 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
         return fitness;
     }
 
-    public int getMaxFitness(int amountOfReservations){
+    private double fitnessEvalHelper(double fitness, Reservation reservation, Feature feature) {
+        RequestImportance importance = reservation.getImportance(feature);
+        switch (importance) {
+            case MUST:
+                fitness -= damageForRequest;
+                break;
+            case NICE_TO_HAVE:
+                fitness -= (damageForRequest - 1);
+                break;
+            default:
+                break;
+        }
+        return fitness;
+    }
+
+    public int getMaxFitness(int amountOfReservations) {
         return this.maxFitnessPerReservation * amountOfReservations;
     }
 

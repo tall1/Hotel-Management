@@ -93,6 +93,7 @@ public class Room {
         for (Request request : Request.values()) {
             requestsMap.put(request, Math.random() > 0.5);
         }
+        this.isAvailable = true;
     }
 
     public Boolean doesComplyWithRequest(Request request) {

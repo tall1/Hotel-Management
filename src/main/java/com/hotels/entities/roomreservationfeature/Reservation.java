@@ -63,4 +63,7 @@ public class Reservation {
     public RequestImportance getImportance(Request request) {
         return guestsRequests.get(request);
     }
+    public RequestImportance getImportance(Feature feature) {
+        return null;
+    }
 }
