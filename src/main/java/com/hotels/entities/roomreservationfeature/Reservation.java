@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hotels.entities.enums.Request;
 import com.hotels.entities.enums.RequestImportance;
 import com.hotels.entities.userhotel.Hotel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -16,12 +14,14 @@ import java.util.Set;
 
 @Entity
 @Table(name = "reservation")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Reservation {
     @Id
     @Column(name = "reservation_number")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Integer reservationNumber;
     @ManyToOne
     @JoinColumn(name = "hotel_id", nullable = false)
@@ -31,15 +31,17 @@ public class Reservation {
     @Column(name = "guests_amount")
     private Integer guestsAmount;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    /*@ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "reservation_feature",
             joinColumns = {@JoinColumn(name = "reservation_number")},
             inverseJoinColumns = {@JoinColumn(name = "feature_id")}
     )
     @ToString.Exclude
-    @JsonIgnore
-    private Set<Feature> guestsRequestsSet = new HashSet<>();
+    private Set<Feature> guestsRequestsSet = new HashSet<>();*/
+
+    @OneToMany(mappedBy = "reservation")
+    private Set<ReservationFeature> reservationFeatures = new HashSet<>();
 
 
     // Erase later:
@@ -64,6 +66,18 @@ public class Reservation {
         return guestsRequests.get(request);
     }
     public RequestImportance getImportance(Feature feature) {
-        return null;
+        for (ReservationFeature reservationFeature : this.reservationFeatures ) {
+            if(reservationFeature.getFeature().equals(feature)){
+                switch(reservationFeature.getImportance()){
+                    case 0:
+                        return RequestImportance.NOT_IMPORTANT;
+                    case 1:
+                        return RequestImportance.NICE_TO_HAVE;
+                    case 2:
+                        return RequestImportance.MUST;
+                }
+            }
+        }
+        return RequestImportance.NOT_IMPORTANT;
     }
 }
