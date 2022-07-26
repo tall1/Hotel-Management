@@ -13,9 +13,6 @@ public class AssignmentFactory extends AbstractCandidateFactory<Assignment> {
     private Lobby lobby;
 
     public AssignmentFactory(Lobby lobby) {
-        if (lobby == null || !lobby.isInstantiated()) {
-            return;
-        }
         this.lobby = lobby;
     }
 

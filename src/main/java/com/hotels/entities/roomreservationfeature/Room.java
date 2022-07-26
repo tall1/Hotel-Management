@@ -51,7 +51,6 @@ public class Room {
 
     // Eventually erase:
     @Transient
-    @ToString.Exclude
     @JsonIgnore
     private static int counter = 1;
     @Transient

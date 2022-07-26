@@ -84,9 +84,13 @@ public class Assignment {
 
         for (Reservation reservation : reservationList) {
             Room room = reservationRoomHashMap.get(reservation);
-            assignments.append("com.hotels.assignment.entities.Reservation: ").append(reservation.getReservationNumber()).append(" - com.hotels.assignment.entities.Room: ").append(room.getRoomNumber()).append("\n");
+            assignments.
+                    append("Reservation: ").
+                    append(reservation.getReservationNumber()).
+                    append(" - Room: ").append(room.getRoomNumber()).
+                    append("\n");
         }
-        return "com.hotels.assignment.Assignment{\n" +
+        return "Assignment{\n" +
                 assignments +
                 '}';
     }

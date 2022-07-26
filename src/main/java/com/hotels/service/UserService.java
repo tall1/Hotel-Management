@@ -1,6 +1,7 @@
 package com.hotels.service;
 
 
+import com.hotels.assignment.Assignment;
 import com.hotels.entities.userhotel.User;
 
 import java.sql.SQLException;
@@ -12,4 +13,6 @@ public interface UserService {
      void insertUser(User user) throws SQLException;
      void updateUser(User user) throws SQLException;
      void deleteUser(int id) throws SQLException;
+
+     Assignment getAssignment();
 }

@@ -1,5 +1,6 @@
 package com.hotels.controller;
 
+import com.hotels.assignment.Assignment;
 import com.hotels.entities.userhotel.User;
 import com.hotels.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,11 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/assignment")
+    public Assignment getAssignment(){
+        return userService.getAssignment();
     }
 
     @GetMapping("/")

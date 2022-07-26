@@ -8,14 +8,13 @@ import java.util.Objects;
 import java.util.Random;
 
 public class Lobby {
-    private static Lobby singleInstanceLobby = null;
     private final ArrayList<Room> roomArrayList = new ArrayList<>();
     private final ArrayList<Reservation> reservationArrayList = new ArrayList<>();
     private final ArrayList<Room> availableRoomList = new ArrayList<>();
 
     // TODO: Add a constructor from an XML or something...
 
-    private Lobby(ArrayList<Room> roomArrayList, ArrayList<Reservation> reservationArrayList) {
+    public Lobby(ArrayList<Room> roomArrayList, ArrayList<Reservation> reservationArrayList) {
         // Note: This is not a hard copy.
         this.roomArrayList.addAll(roomArrayList);
         this.reservationArrayList.addAll(reservationArrayList);
@@ -25,17 +24,6 @@ public class Lobby {
                 this.availableRoomList.add(r);
             }
         });
-    }
-
-    public static Lobby getInstance(ArrayList<Room> roomArrayList, ArrayList<Reservation> reservationArrayList) {
-        if (singleInstanceLobby == null) {
-            singleInstanceLobby = new Lobby(roomArrayList, reservationArrayList);
-        }
-        return singleInstanceLobby;
-    }
-
-    public boolean isInstantiated() {
-        return singleInstanceLobby != null;
     }
 
     public ArrayList<Room> getRoomArrayList() {
