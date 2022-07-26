@@ -25,12 +25,17 @@ public class Main {
     private final static int numOfReservations = 12;
 
     public static void main(String[] args) {
+        Main m1 = new Main();
+        Assignment assignment = m1.prepareAssignment();
+        System.out.println(assignment);
+    }
+
+    public Assignment prepareAssignment() {
         ArrayList<Room> rooms = new ArrayList<>();
         ArrayList<Reservation> reservations = new ArrayList<>();
         init(rooms, reservations);
         // Get the singleton instance of lobby:
-        Lobby lobby = Lobby.getInstance(rooms, reservations);
-
+        Lobby lobby = new Lobby(rooms, reservations);
 
         CandidateFactory<Assignment> factory = new AssignmentFactory(lobby);
 
@@ -60,8 +65,8 @@ public class Main {
                 maxFitness));
 
 
-        Assignment result = engine.evolve(50, 5, new TargetFitness(maxFitness, true));
-        System.out.println(result);
+        Assignment result = engine.evolve(50, 5, new TargetFitness(maxFitness - 40, true));
+        return result;
     }
 
     private static void init(List<Room> rooms, List<Reservation> reservations) {

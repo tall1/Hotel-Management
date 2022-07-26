@@ -1,4 +1,7 @@
 package com.hotels.service;
+
+import com.hotels.Main;
+import com.hotels.assignment.Assignment;
 import com.hotels.entities.userhotel.User;
 import com.hotels.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +15,17 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
+    @Autowired
+    private Main myMain;
+
     @PostConstruct
-    public void init453534(){
+    public void init453534() {
         // here put any after construction operations
         System.out.println("UserServiceImpl: @PostConstruct");
     }
+
     @PreDestroy
-    public void  exitAll123(){
+    public void exitAll123() {
         System.out.println("UserServiceImpl: @PreDestroy");
     }
 
@@ -27,14 +34,20 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
+    public Assignment getAssignment() {
+        Assignment assignment = myMain.prepareAssignment();
+        // Return small assignment...
+        return assignment;
+    }
+
     @Override
     public List<User> getAll() {
         return userRepository.findAll();
     }
 
     @Override
-    public User getUserById(int id)  {
-        if(userRepository.findById(id).isPresent()){
+    public User getUserById(int id) {
+        if (userRepository.findById(id).isPresent()) {
             return userRepository.findById(id).get();
         }
         return null;
@@ -46,7 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(User user){
+    public void updateUser(User user) {
         userRepository.save(user);
     }
 
