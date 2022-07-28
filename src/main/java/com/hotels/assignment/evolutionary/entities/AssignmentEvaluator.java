@@ -6,29 +6,19 @@ import com.hotels.entities.enums.RequestImportance;
 import com.hotels.entities.roomreservationfeature.Feature;
 import com.hotels.entities.roomreservationfeature.Reservation;
 import com.hotels.entities.roomreservationfeature.Room;
+import lombok.NoArgsConstructor;
 import org.uncommons.watchmaker.framework.FitnessEvaluator;
 
 import java.util.List;
 import java.util.Map;
 
+@NoArgsConstructor
 public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
-    private static AssignmentEvaluator assignmentEvaluatorInstance = null;
-
     final int maxFitnessPerReservation = 20;
     final int damageForMultipleReservations = 5; // 5
     final int damageForCapacity = 3; // 3
     final int damageForRequest = 2; // == 12
 
-    private AssignmentEvaluator() {
-    }
-
-
-    public static AssignmentEvaluator getInstance() {
-        if (assignmentEvaluatorInstance == null) {
-            assignmentEvaluatorInstance = new AssignmentEvaluator();
-        }
-        return assignmentEvaluatorInstance;
-    }
 
     /**
      * Finds the fitness for every:
@@ -97,8 +87,8 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
         return fitness;
     }
 
-    public int getMaxFitness(int amountOfReservations) {
-        return this.maxFitnessPerReservation * amountOfReservations;
+    public Double getMaxFitness(int amountOfReservations) {
+        return Double.valueOf(this.maxFitnessPerReservation * amountOfReservations);
     }
 
     public boolean isNatural() {

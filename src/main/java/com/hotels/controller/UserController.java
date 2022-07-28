@@ -19,11 +19,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/assignment")
-    public Assignment getAssignment(){
-        return userService.getAssignment();
-    }
-
     @GetMapping("/")
     public List<User> getAll() throws SQLException {
         return this.userService.getAll();

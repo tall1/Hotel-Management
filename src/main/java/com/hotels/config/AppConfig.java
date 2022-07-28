@@ -1,7 +1,7 @@
 package com.hotels.config;
 
 import com.hotels.Main;
-import com.hotels.assignment.Assignment;
+import com.hotels.service.utils.EngineProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfig {
     @Bean
     public Main myMain(){
-        return new Main();
+        return new Main(new EngineProperties());
     }
 }
