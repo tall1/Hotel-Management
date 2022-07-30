@@ -4,17 +4,18 @@ import com.hotels.entities.roomreservationfeature.Reservation;
 import com.hotels.entities.roomreservationfeature.Room;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
 public class Lobby {
-    private final ArrayList<Room> roomArrayList = new ArrayList<>();
-    private final ArrayList<Reservation> reservationArrayList = new ArrayList<>();
-    private final ArrayList<Room> availableRoomList = new ArrayList<>();
+    private final List<Room> roomArrayList = new ArrayList<>();
+    private final List<Reservation> reservationArrayList = new ArrayList<>();
+    private final List<Room> availableRoomList = new ArrayList<>();
 
     // TODO: Add a constructor from an XML or something...
 
-    public Lobby(ArrayList<Room> roomArrayList, ArrayList<Reservation> reservationArrayList) {
+    public Lobby(List<Room> roomArrayList, List<Reservation> reservationArrayList) {
         // Note: This is not a hard copy.
         this.roomArrayList.addAll(roomArrayList);
         this.reservationArrayList.addAll(reservationArrayList);
@@ -26,11 +27,11 @@ public class Lobby {
         });
     }
 
-    public ArrayList<Room> getRoomArrayList() {
+    public List<Room> getRoomArrayList() {
         return roomArrayList;
     }
 
-    public ArrayList<Reservation> getReservationArrayList() {
+    public List<Reservation> getReservationArrayList() {
         return reservationArrayList;
     }
 

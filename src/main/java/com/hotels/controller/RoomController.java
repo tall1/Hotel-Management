@@ -24,9 +24,9 @@ public class RoomController {
     }
 
 //    localhost:8080/api/v1/person/get1/5
-    @GetMapping("/{id}")
-    public Room getRoomById(@PathVariable int id) throws SQLException {
-        return roomService.getRoomById(id);
+    @GetMapping("/{roomId}")
+    public Room getRoomById(@PathVariable Integer roomId) throws SQLException {
+        return roomService.getRoomById(roomId);
     }
 
     /*//http://localhost:8080/api/v1/person/get2?id=5

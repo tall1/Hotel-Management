@@ -80,4 +80,15 @@ public class Reservation {
         }
         return RequestImportance.NOT_IMPORTANT;
     }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "reservationNumber=" + reservationNumber +
+                ", hotel=" + hotel +
+                ", guestName='" + guestName + '\'' +
+                ", guestsAmount=" + guestsAmount +
+                ", reservationFeatures=" + reservationFeatures +
+                '}';
+    }
 }

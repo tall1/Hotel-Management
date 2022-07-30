@@ -13,7 +13,6 @@ import java.util.*;
 @Table(name = "room")
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 public class Room {
     @Id
@@ -95,20 +94,24 @@ public class Room {
         this.isAvailable = true;
     }
 
+    public boolean getIsAvailable() {
+        return this.availableDate.compareTo(new Date()) >= 0;
+    }
+
     public Boolean doesComplyWithRequest(Request request) {
         return this.requestsMap.get(request);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Room room = (Room) o;
-        return id != null && Objects.equals(id, room.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    public String toString() {
+        return "Room{" +
+                "id=" + id +
+                ", roomNumber=" + roomNumber +
+                ", hotel=" + hotel +
+                ", floorNumber=" + floorNumber +
+                ", roomCapacity=" + roomCapacity +
+                ", availableDate=" + availableDate +
+                ", features=" + features +
+                '}';
     }
 }

@@ -18,15 +18,10 @@ public class EngineProperties {
     private Probability mutationProb;
     private SelectionStrategy<Object> selectionStrategy;
     private List<TerminationCondition> termCond;
-
-    // Can I send Objects from client side?
-    // How do I tell the Controller which SelectionStrategy I meant?
-
-
     public EngineProperties() {
         mutationProb = new Probability(0.2);
         this.selectionStrategy = getSelectionStrategy(2, 0.51);
-        Integer[] termConds = {1,3,5};
+        int[] termConds = {1, 3, 5};
         this.termCond = getTerminationConditions(
                 termConds,
                 5000L,
@@ -37,24 +32,20 @@ public class EngineProperties {
         );
     }
 
-    public EngineProperties(Double prob,
-                            Integer selectionStrategyInteger, Double selecDouble,
-                            Long maxDuration, // ElapsedTime
-                            Integer generationCount, // GenerationCount
-                            Integer generationLimit,
-                            Boolean naturalFitness, // Stagnation
-                            Double targetFitness, // TargetFitness
-                            Integer... termConds) {
-        mutationProb = new Probability(prob);
-        this.selectionStrategy = getSelectionStrategy(selectionStrategyInteger, selecDouble);
-        this.termCond = getTerminationConditions(
-                termConds,
-                maxDuration,
-                generationCount,
-                generationLimit,
-                naturalFitness,
-                targetFitness
-        );
+    public EngineProperties(EngineDTO eDto) {
+        mutationProb = new Probability(eDto.getMutationProb());
+        this.selectionStrategy =
+                getSelectionStrategy(
+                        eDto.getSelectionStrategy(), eDto.getSelecDouble());
+        this.termCond =
+                getTerminationConditions(
+                        eDto.getTerminationInts(),
+                        eDto.getMaxDuration(),
+                        eDto.getGenerationCount(),
+                        eDto.getGenerationLimit(),
+                        eDto.getNaturalFitness(),
+                        eDto.getTargetFitness()
+                );
     }
 
     /* SelectionStrategy Integers:
@@ -75,9 +66,9 @@ public class EngineProperties {
             case 4:
                 return new StochasticUniversalSampling();
             case 5:
-                return new TournamentSelection(new Probability(selecDouble));
+                return new TournamentSelection(new Probability(selecDouble)); // Has 2 b: 0.5 < d < 1.0
             case 6:
-                return new TruncationSelection(selecDouble);
+                return new TruncationSelection(selecDouble); // Has 2 b: 0.0 < d < 1.0
             default:
                 return new RouletteWheelSelection();
         }
@@ -91,14 +82,15 @@ public class EngineProperties {
      * 5. UserAbort
      * */
     private List<TerminationCondition> getTerminationConditions(
-            Integer[] termConds,
-            Long maxDuration, // ElapsedTime
-            Integer generationCount, // GenerationCount
-            Integer generationLimit, Boolean naturalFitness, // Stagnation
-            Double targetFitness // TargetFitness
+            int[] termConds, // Array of the termination conditions ints as described above.
+            Long maxDuration, // maxDuration for ElapsedTime.
+            Integer generationCount, // generationCount for GenerationCount.
+            Integer generationLimit, // generationLimit for GenerationCount.
+            Boolean naturalFitness, // naturalFitness for Stagnation and TargetFitness.
+            Double targetFitness // targetFitness for TargetFitness.
     ) {
         List<TerminationCondition> termList = new ArrayList<>();
-        for (Integer i : termConds) {
+        for (int i : termConds) {
             switch (i) {
                 case 1:
                     termList.add(new ElapsedTime(maxDuration));

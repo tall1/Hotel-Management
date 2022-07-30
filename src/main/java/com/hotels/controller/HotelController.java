@@ -23,10 +23,10 @@ public class HotelController {
         return this.hotelService.getAll();
     }
 
-//    localhost:8080/api/v1/person/get1/5
-    @GetMapping("/{id}")
-    public Hotel getHotelById(@PathVariable int id) throws SQLException {
-        return hotelService.getHotelById(id);
+    //    localhost:8080/api/v1/person/get1/5
+    @GetMapping("/{hotelId}")
+    public Hotel getHotelById(@PathVariable Integer hotelId) throws SQLException {
+        return hotelService.getHotelById(hotelId);
     }
 
     /*//http://localhost:8080/api/v1/person/get2?id=5

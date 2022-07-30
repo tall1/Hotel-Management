@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfig {
     @Bean
     public Main myMain(){
-        return new Main(new EngineProperties());
+        return new Main();
     }
 }

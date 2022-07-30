@@ -1,72 +1,81 @@
 package com.hotels;
 
-import com.hotels.assignment.*;
-import com.hotels.entities.Lobby;
-import com.hotels.entities.roomreservationfeature.Reservation;
-import com.hotels.entities.roomreservationfeature.Room;
+import com.hotels.assignment.Assignment;
 import com.hotels.assignment.evolutionary.entities.AssignmentCrossover;
 import com.hotels.assignment.evolutionary.entities.AssignmentEvaluator;
 import com.hotels.assignment.evolutionary.entities.AssignmentFactory;
 import com.hotels.assignment.evolutionary.entities.AssignmentMutation;
+import com.hotels.entities.Lobby;
+import com.hotels.entities.roomreservationfeature.Reservation;
+import com.hotels.entities.roomreservationfeature.Room;
+import com.hotels.repository.ReservationRepository;
+import com.hotels.repository.RoomRepository;
 import com.hotels.service.utils.EngineProperties;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 import org.uncommons.watchmaker.framework.*;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+@NoArgsConstructor
 public class Main {
-    private final EvolutionEngine<Assignment> engine;
+    @Autowired
+    ReservationRepository resRepos;
+    @Autowired
+    RoomRepository roomRepos;
 
-    private final EngineProperties ep;
+    @PostConstruct
+    public void postConstructor() {
+        // here put any after construction operations
+        System.out.println("Main: @PostConstruct");
+    }
 
-    private Lobby lobby;
-
-    private final AssignmentEvaluator fitnessEvaluator;
-
-    private final Double maxFitness;
     private final static int numOfRooms = 20;
     private final static int numOfReservations = 12;
 
     public static void main(String[] args) {
-        Main m1 = new Main(new EngineProperties());
-        Assignment assignment = m1.getAssignment();
+        Main m1 = new Main();
+        Assignment assignment = m1.getAssignment(new EngineProperties());
         System.out.println(assignment);
     }
 
-    public Main(EngineProperties ep) {
-        this.ep = ep;
-        getLobby();
+    public Assignment getAssignment(EngineProperties ep) {
+        Lobby lobby = getLobby();
         CandidateFactory<Assignment> factory = new AssignmentFactory(lobby);
-        EvolutionaryOperator<Assignment> pipeline = getPipeline(ep);
-        fitnessEvaluator = new AssignmentEvaluator();
+        EvolutionaryOperator<Assignment> pipeline = getPipeline(ep, lobby);
+        AssignmentEvaluator fitnessEvaluator = new AssignmentEvaluator();
         SelectionStrategy<Object> selection = ep.getSelectionStrategy();
         Random rng = new MersenneTwisterRNG();
 
-        this.engine = new GenerationalEvolutionEngine<>(
+        EvolutionEngine<Assignment> engine = new GenerationalEvolutionEngine<>(
                 factory,
                 pipeline,
-                this.fitnessEvaluator,
+                fitnessEvaluator,
                 selection,
                 rng);
 
-        this.maxFitness = fitnessEvaluator.getMaxFitness(
+        double maxFitness = fitnessEvaluator.getMaxFitness(
                 lobby.getAmountOfReservations() // TODO: I don't know about this. looks cumbersome.
         );
+
+        return runEngine(engine, fitnessEvaluator, maxFitness, ep);
     }
 
-    private void getLobby() {
-        ArrayList<Room> rooms = new ArrayList<>(); // TODO: Has 2 b ArrayList @ declaration?
-        ArrayList<Reservation> reservations = new ArrayList<>(); // TODO: Has 2 b ArrayList @ declaration?
+    private Lobby getLobby() {
+        List<Room> rooms = roomRepos.findRoomsByHotelId(1);
+        List<Reservation> reservations = resRepos.findReservationsByHotelId(1);
+        //init(rooms, reservations); // TODO: Need to change this to retrieve data from DB.
 
-        init(rooms, reservations); // TODO: Need to change this to retrieve data from DB.
-        this.lobby = new Lobby(rooms, reservations);
+        return new Lobby(rooms, reservations);
     }
 
-    private EvolutionaryOperator<Assignment> getPipeline(EngineProperties ep) {
+    private EvolutionaryOperator<Assignment> getPipeline(EngineProperties ep, Lobby lobby) {
         // Create a pipeline that applies cross-over then mutation.
         List<EvolutionaryOperator<Assignment>> operators = new LinkedList<>();
         operators.add(new AssignmentMutation(lobby, ep.getMutationProb()));
@@ -74,14 +83,18 @@ public class Main {
         return new EvolutionPipeline<>(operators);
     }
 
-    public Assignment getAssignment() {
+    public Assignment runEngine(
+            EvolutionEngine<Assignment> engine,
+            AssignmentEvaluator fitnessEvaluator,
+            Double maxFitness,
+            EngineProperties ep) {
         engine.addEvolutionObserver(data ->
                 System.out.printf("Generation %d: Best candidate fitness: %s / %f\n",
-                data.getGenerationNumber(),
-                fitnessEvaluator.getFitness(data.getBestCandidate(), null),
-                maxFitness));
+                        data.getGenerationNumber(),
+                        fitnessEvaluator.getFitness(data.getBestCandidate(), null),
+                        maxFitness));
 
-        TerminationCondition[] termCondArr = new TerminationCondition[ep.getTermCond().size()];
+        TerminationCondition[] termCondArr = ep.getTermCond().toArray(new TerminationCondition[0]);
         // i = population size, i1 = elitism:
         return engine.evolve(50, 5, termCondArr);
     }

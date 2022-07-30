@@ -3,12 +3,17 @@ package com.hotels.assignment;
 import com.hotels.entities.Lobby;
 import com.hotels.entities.roomreservationfeature.Reservation;
 import com.hotels.entities.roomreservationfeature.Room;
+import lombok.Getter;
+import lombok.Setter;
+
 
 import java.util.*;
 
+@Getter
+@Setter
 public class Assignment {
     private final Map<Reservation, Room> reservationRoomHashMap;
-    // private final Map<com.hotels.assignment.entities.Room, com.hotels.assignment.entities.Reservation> roomReservationHashMap;
+
     private final Lobby lobby;
 
     public Assignment(Lobby lobby, Map<Reservation, Room> reservationRoomHashMap) {
@@ -26,7 +31,6 @@ public class Assignment {
         //this.roomReservationHashMap = new HashMap<>(otherAssignment.roomReservationHashMap);
         this.reservationRoomHashMap = new HashMap<>(otherAssignment.reservationRoomHashMap);
     }
-
     public Room getRoomByReservation(Reservation reservation) {
         return this.reservationRoomHashMap.get(reservation);
     }
@@ -58,7 +62,6 @@ public class Assignment {
         return this.reservationRoomHashMap.keySet();
     }
 
-
     public Map<Room, Integer> getAmountOfReservationsPerRoom() {
         Map<Room, Integer> roomToAmountOfReservationsMap = new HashMap<>(this.getAmountOfRooms());
         for (Room room : this.lobby.getRoomArrayList()) {
@@ -71,7 +74,6 @@ public class Assignment {
         }
         return roomToAmountOfReservationsMap;
     }
-
     public int getLobbyHashcode() {
         return this.lobby.hashCode();
     }
