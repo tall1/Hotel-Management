@@ -1,6 +1,7 @@
 package com.hotels.entities.roomreservationfeature;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hotels.entities.enums.Request;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,7 +20,7 @@ public class Feature {
     @Column(name = "feature_name")
     private String featureName;
 
-    @ManyToMany(mappedBy = "features")
+    @ManyToMany(mappedBy = "featureSet")
     @JsonIgnore
     private Set<Room> rooms = new HashSet<>();
 
@@ -30,4 +31,9 @@ public class Feature {
     @OneToMany(mappedBy = "feature")
     @JsonIgnore
     private Set<ReservationFeature> reservationFeatures = new HashSet<>();
+
+    // Backward compatible:
+    @Transient
+    @JsonIgnore
+    Request reqName;
 }

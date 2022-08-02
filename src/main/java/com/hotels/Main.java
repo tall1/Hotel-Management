@@ -11,7 +11,9 @@ import com.hotels.entities.roomreservationfeature.Room;
 import com.hotels.repository.ReservationRepository;
 import com.hotels.repository.RoomRepository;
 import com.hotels.service.utils.EngineProperties;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 import org.uncommons.watchmaker.framework.*;
@@ -23,30 +25,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-@NoArgsConstructor
+
 public class Main {
-    @Autowired
-    ReservationRepository resRepos;
-    @Autowired
-    RoomRepository roomRepos;
-
-    @PostConstruct
-    public void postConstructor() {
-        // here put any after construction operations
-        System.out.println("Main: @PostConstruct");
-    }
-
     private final static int numOfRooms = 20;
     private final static int numOfReservations = 12;
 
     public static void main(String[] args) {
-        Main m1 = new Main();
-        Assignment assignment = m1.getAssignment(new EngineProperties());
+        List<Room> roomList = new ArrayList<>();
+        List<Reservation> resList = new ArrayList<>();
+        init(roomList, resList);
+        Assignment assignment = Main.getAssignment(new EngineProperties(), roomList, resList);
         System.out.println(assignment);
     }
 
-    public Assignment getAssignment(EngineProperties ep) {
-        Lobby lobby = getLobby();
+    public static Assignment getAssignment(EngineProperties ep, List<Room> roomList, List<Reservation> resList) {
+        Lobby lobby = new Lobby(roomList, resList);
         CandidateFactory<Assignment> factory = new AssignmentFactory(lobby);
         EvolutionaryOperator<Assignment> pipeline = getPipeline(ep, lobby);
         AssignmentEvaluator fitnessEvaluator = new AssignmentEvaluator();
@@ -67,15 +60,7 @@ public class Main {
         return runEngine(engine, fitnessEvaluator, maxFitness, ep);
     }
 
-    private Lobby getLobby() {
-        List<Room> rooms = roomRepos.findRoomsByHotelId(1);
-        List<Reservation> reservations = resRepos.findReservationsByHotelId(1);
-        //init(rooms, reservations); // TODO: Need to change this to retrieve data from DB.
-
-        return new Lobby(rooms, reservations);
-    }
-
-    private EvolutionaryOperator<Assignment> getPipeline(EngineProperties ep, Lobby lobby) {
+    private static EvolutionaryOperator<Assignment> getPipeline(EngineProperties ep, Lobby lobby) {
         // Create a pipeline that applies cross-over then mutation.
         List<EvolutionaryOperator<Assignment>> operators = new LinkedList<>();
         operators.add(new AssignmentMutation(lobby, ep.getMutationProb()));
@@ -83,7 +68,7 @@ public class Main {
         return new EvolutionPipeline<>(operators);
     }
 
-    public Assignment runEngine(
+    public static Assignment runEngine(
             EvolutionEngine<Assignment> engine,
             AssignmentEvaluator fitnessEvaluator,
             Double maxFitness,

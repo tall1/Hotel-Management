@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hotels.entities.enums.Request;
 import com.hotels.entities.userhotel.Hotel;
 import lombok.*;
-import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import java.util.*;
@@ -45,7 +44,7 @@ public class Room {
             inverseJoinColumns = {@JoinColumn(name = "feature_id")}
     )
     @ToString.Exclude
-    private Set<Feature> features = new HashSet<>();
+    private Set<Feature> featureSet = new HashSet<>();
 
 
     // Eventually erase:
@@ -55,7 +54,7 @@ public class Room {
     @Transient
     @ToString.Exclude
     @JsonIgnore
-    private Map<Request, Boolean> requestsMap;
+    private Map<Request, Boolean> requestsMap = new HashMap<>();
     @Transient
     @ToString.Exclude
     @JsonIgnore
@@ -87,10 +86,10 @@ public class Room {
         roomNumber = counter++;
         this.roomCapacity = roomCapacity;
         this.floorNumber = Integer.parseInt(String.valueOf(String.valueOf(roomNumber).charAt(0)));
-        this.requestsMap = new HashMap<>();
         for (Request request : Request.values()) {
             requestsMap.put(request, Math.random() > 0.5);
         }
+        this.availableDate = new Date();
         this.isAvailable = true;
     }
 
@@ -99,6 +98,19 @@ public class Room {
     }
 
     public Boolean doesComplyWithRequest(Request request) {
+        // Update requestMap to Repository if needed:
+        if (featureSet.size() > 0) {
+            // Set features in map to true:
+            for (Feature feature : featureSet) {
+                requestsMap.put(feature.getReqName(), true);
+            }
+            // Set other features to false:
+            for (Request req : Request.values()) {
+                if (!requestsMap.containsKey(req)) {
+                    requestsMap.put(req, false);
+                }
+            }
+        }
         return this.requestsMap.get(request);
     }
 
@@ -111,7 +123,7 @@ public class Room {
                 ", floorNumber=" + floorNumber +
                 ", roomCapacity=" + roomCapacity +
                 ", availableDate=" + availableDate +
-                ", features=" + features +
+                ", features=" + featureSet +
                 '}';
     }
 }

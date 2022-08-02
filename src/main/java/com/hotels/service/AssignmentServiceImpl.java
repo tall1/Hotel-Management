@@ -1,8 +1,13 @@
 package com.hotels.service;
 
 import com.hotels.Main;
+import com.hotels.assignment.Assignment;
 import com.hotels.assignment.SimpleAssignment;
+import com.hotels.entities.userhotel.User;
 import com.hotels.repository.EngineRepository;
+import com.hotels.repository.ReservationRepository;
+import com.hotels.repository.RoomRepository;
+import com.hotels.repository.UserRepository;
 import com.hotels.service.utils.EngineDTO;
 import com.hotels.service.utils.EngineProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +20,24 @@ import java.util.Optional;
 
 @Service
 public class AssignmentServiceImpl implements AssignmentService {
-    private final Main myMain;
     private final EngineRepository engineRep;
+    private final RoomRepository roomRep;
+    private final ReservationRepository resRep;
+    private final UserRepository userRep;
+
+    public AssignmentServiceImpl(
+            EngineRepository engineRep,
+            RoomRepository roomRep,
+            ReservationRepository resRep,
+            UserRepository userRep) {
+        this.engineRep = engineRep;
+        this.roomRep = roomRep;
+        this.resRep = resRep;
+        this.userRep = userRep;
+    }
 
     @Autowired
-    public AssignmentServiceImpl(Main main, EngineRepository engineRep) {
-        this.myMain = main;
-        this.engineRep = engineRep;
-    }
+
 
     @PostConstruct
     public void postConstructor() {
@@ -37,9 +52,21 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public SimpleAssignment getAssignment(Integer userId) throws SQLException {
-        Optional<EngineDTO> eDto = engineRep.findById(userId);
-        if (eDto.isPresent()) {
-            return new SimpleAssignment(this.myMain.getAssignment(new EngineProperties(eDto.get())));
+        // Retrieve User and EngineDTO:
+        Optional<EngineDTO> eDto = this.engineRep.findById(userId);
+        Optional<User> user = this.userRep.findById(userId);
+        // Check present:
+        if (eDto.isPresent() && user.isPresent()) {
+            // Retrieve EngineProps from EngineDTO
+            EngineProperties engineProps = new EngineProperties(eDto.get());
+            // Retrieve hotelID from User:
+            Integer hotelId = user.get().getHotel().getId();
+            Assignment resAsmt =
+                    Main.getAssignment(
+                            engineProps,
+                            roomRep.findRoomsByHotelId(hotelId),
+                            resRep.findReservationsByHotelId(hotelId));
+            return new SimpleAssignment(resAsmt);
         } else {
             throw new SQLException("EngineDTO not found");
         }
