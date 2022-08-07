@@ -35,33 +35,40 @@ public class AssignmentCrossover extends AbstractCrossover<Assignment> {
         final int amountOfReservations = a1.getAmountOfReservations();
         final Collection<Reservation> reservations = a1.getReservations();
 
-        // TODO: Break these steps into methods
-
-
         // Step 1: Map every reservation to a List's index:
-        HashMap<Reservation, Integer> reservationToIndexMap = new HashMap<>(amountOfReservations);
-        HashMap<Integer, Reservation> indexToReservationMap = new HashMap<>(amountOfReservations);
-        final int[] idx = {0};
-        reservations.forEach(reservation -> {
-            reservationToIndexMap.put(reservation, idx[0]);
-            indexToReservationMap.put(idx[0], reservation);
-            idx[0]++;
-        });
+        Map<Reservation, Integer> reservationToIndexMap = new HashMap<>(amountOfReservations);
+        Map<Integer, Reservation> indexToReservationMap = new HashMap<>(amountOfReservations);
+        mapEveryReservation2Index(reservations, reservationToIndexMap, indexToReservationMap);
 
         // Step 2: Map every index to a room according to a1\a2:
         List<Room> roomList1 = new ArrayList<>(amountOfReservations);
         List<Room> roomList2 = new ArrayList<>(amountOfReservations);
-        int index;
-        Room room1, room2;
-        for (Reservation reservation : reservations) {
-            index = reservationToIndexMap.get(reservation);
-            room1 = offspring1.getRoomByReservation(reservation);
-            room2 = offspring2.getRoomByReservation(reservation);
-            roomList1.add(index, room1);
-            roomList2.add(index, room2);
-        }
+        mapEveryIndex2RoomAccordingA1A2(offspring1, offspring2, reservations, reservationToIndexMap, roomList1, roomList2);
 
         // Step 3: Crossover the lists:
+        crossoverTheLists(numberOfCrossoverPoints, rng, roomList1, roomList2);
+
+        // Step 4: Insert the lists to the offspring assignments
+        insertLists2Offsprings(offspring1, offspring2, amountOfReservations, indexToReservationMap, roomList1, roomList2);
+
+        result.add(offspring1);
+        result.add(offspring2);
+        return result;
+    }
+
+    private static void insertLists2Offsprings(Assignment offspring1, Assignment offspring2, int amountOfReservations, Map<Integer, Reservation> indexToReservationMap, List<Room> roomList1, List<Room> roomList2) {
+        Reservation reservation;
+        Room room1, room2;
+        for (int i = 0; i < amountOfReservations; i++) {
+            reservation = indexToReservationMap.get(i);
+            room1 = roomList1.get(i);
+            room2 = roomList2.get(i);
+            offspring1.assign(room1, reservation);
+            offspring2.assign(room2, reservation);
+        }
+    }
+
+    private static void crossoverTheLists(int numberOfCrossoverPoints, Random rng, List<Room> roomList1, List<Room> roomList2) {
         for (int i = 0; i < numberOfCrossoverPoints; ++i) {
             int max = Math.min(roomList1.size(), roomList2.size());
             if (max > 1) {
@@ -74,19 +81,26 @@ public class AssignmentCrossover extends AbstractCrossover<Assignment> {
                 }
             }
         }
+    }
 
-        // Step 4: Insert the lists to the offspring assignments
-        Reservation reservation;
-        for (int i = 0; i < amountOfReservations; i++) {
-            reservation = indexToReservationMap.get(i);
-            room1 = roomList1.get(i);
-            room2 = roomList2.get(i);
-            offspring1.assign(room1, reservation);
-            offspring2.assign(room2, reservation);
+    private static void mapEveryIndex2RoomAccordingA1A2(Assignment offspring1, Assignment offspring2, Collection<Reservation> reservations, Map<Reservation, Integer> reservationToIndexMap, List<Room> roomList1, List<Room> roomList2) {
+        int index;
+        Room room1, room2;
+        for (Reservation reservation : reservations) {
+            index = reservationToIndexMap.get(reservation);
+            room1 = offspring1.getRoomByReservation(reservation);
+            room2 = offspring2.getRoomByReservation(reservation);
+            roomList1.add(index, room1);
+            roomList2.add(index, room2);
         }
+    }
 
-        result.add(offspring1);
-        result.add(offspring2);
-        return result;
+    private static void mapEveryReservation2Index(Collection<Reservation> reservations, Map<Reservation, Integer> reservationToIndexMap, Map<Integer, Reservation> indexToReservationMap) {
+        final int[] idx = {0};
+        reservations.forEach(reservation -> {
+            reservationToIndexMap.put(reservation, idx[0]);
+            indexToReservationMap.put(idx[0], reservation);
+            idx[0]++;
+        });
     }
 }

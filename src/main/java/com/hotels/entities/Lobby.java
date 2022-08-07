@@ -13,8 +13,6 @@ public class Lobby {
     private final List<Reservation> reservationArrayList = new ArrayList<>();
     private final List<Room> availableRoomList = new ArrayList<>();
 
-    // TODO: Add a constructor from an XML or something...
-
     public Lobby(List<Room> roomArrayList, List<Reservation> reservationArrayList) {
         // Note: This is not a hard copy.
         this.roomArrayList.addAll(roomArrayList);

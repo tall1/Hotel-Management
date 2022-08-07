@@ -6,8 +6,6 @@ import com.hotels.entities.roomreservationfeature.Room;
 import lombok.Getter;
 import lombok.Setter;
 
-
-import java.time.LocalDate;
 import java.util.*;
 
 @Getter
@@ -32,17 +30,7 @@ public class Assignment {
     }
 
     public void assign(Room room, Reservation reservation) {
-        Room oldRoom = this.reservationRoomHashMap.get(reservation);
-        // Set old room availability:
-        if (getAmountOfReservationsForSpecificRoom(oldRoom) > 1) {
-            oldRoom.setAvailableDate(LocalDate.now()); // TODO: Change to other reservation's checkout
-        }
         this.reservationRoomHashMap.put(reservation, room);
-    }
-
-    private int getAmountOfReservationsForSpecificRoom(Room room) {
-        Map<Room, Integer> map = getAmountOfReservationsPerRoom();
-        return map.get(room);
     }
 
     public int getAmountOfReservations() {
