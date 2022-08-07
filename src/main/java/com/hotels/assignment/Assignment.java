@@ -32,11 +32,6 @@ public class Assignment {
     }
 
     public void assign(Room room, Reservation reservation) {
-        Room oldRoom = this.reservationRoomHashMap.get(reservation);
-        // Set old room availability:
-        if (getAmountOfReservationsForSpecificRoom(oldRoom) > 1) {
-            oldRoom.setAvailableDate(LocalDate.now()); // TODO: Change to other reservation's checkout
-        }
         this.reservationRoomHashMap.put(reservation, room);
     }
 
