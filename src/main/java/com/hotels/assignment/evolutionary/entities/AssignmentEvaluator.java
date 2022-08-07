@@ -14,10 +14,10 @@ import java.util.Map;
 
 @NoArgsConstructor
 public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
-    final int maxFitnessPerReservation = 20;
-    final int damageForMultipleReservations = 5; // 5
-    final int damageForCapacity = 3; // 3
-    final int damageForRequest = 2; // == 12
+    final int MAX_FITNESS_PER_RESERVATION = 20;
+    final int DAMAGE_FOR_MULTIPLE_RESERVATIONS = 5; // 5
+    final int DAMAGE_FOR_CAPACITY = 3; // 3
+    final int DAMAGE_FOR_REQUEST = 2; // == 12
 
     /**
      * Finds the fitness for every:
@@ -27,7 +27,7 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
      */
     public double getFitness(Assignment candidate
             , List<? extends Assignment> population) {
-        double fitness = candidate.getAmountOfReservations() * maxFitnessPerReservation;
+        double fitness = candidate.getAmountOfReservations() * MAX_FITNESS_PER_RESERVATION;
 
         Map<Room, Integer> amountOfReservationsPerRoom = candidate.getAmountOfReservationsPerRoom(); // Includes reserved and unreserved rooms
         // MAIN LOOP:
@@ -35,11 +35,11 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
             // Handle multiple reservations per room:
             Room reservedRoom = candidate.getRoomByReservation(reservation);
             if (amountOfReservationsPerRoom.get(reservedRoom) > 1) {
-                fitness -= damageForMultipleReservations;
+                fitness -= DAMAGE_FOR_MULTIPLE_RESERVATIONS;
             }
             // Handle more guests than room capacity:
             if (reservation.getGuestsAmount() > reservedRoom.getRoomCapacity()) {
-                fitness -= damageForCapacity;
+                fitness -= DAMAGE_FOR_CAPACITY;
             }
             // Handle unfulfilled requests:
             synchronized (this) {
@@ -57,10 +57,10 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
     private double fitnessEvalHelper(double fitness, Integer importance) {
         switch (RequestImportance.getRequestImportanceByInt(importance)) {
             case MUST:
-                fitness -= damageForRequest;
+                fitness -= DAMAGE_FOR_REQUEST;
                 break;
             case NICE_TO_HAVE:
-                fitness -= (damageForRequest - 1);
+                fitness -= (DAMAGE_FOR_REQUEST - 1);
                 break;
             default:
                 break;
@@ -69,7 +69,7 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
     }
 
     public Double getMaxFitness(int amountOfReservations) {
-        return (double) (this.maxFitnessPerReservation * amountOfReservations);
+        return (double) (this.MAX_FITNESS_PER_RESERVATION * amountOfReservations);
     }
 
     public boolean isNatural() {
