@@ -21,7 +21,7 @@ public class EngineProperties {
     public EngineProperties() {
         mutationProb = new Probability(0.2);
         this.selectionStrategy = getSelectionStrategy(2, 0.51);
-        int[] termConds = {1, 3, 5};
+        int[] termConds = {1};
         this.termCond = getTerminationConditions(
                 termConds,
                 5000L,

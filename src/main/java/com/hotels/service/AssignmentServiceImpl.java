@@ -25,6 +25,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     private final ReservationRepository resRep;
     private final UserRepository userRep;
 
+    @Autowired
     public AssignmentServiceImpl(
             EngineRepository engineRep,
             RoomRepository roomRep,
@@ -35,8 +36,6 @@ public class AssignmentServiceImpl implements AssignmentService {
         this.resRep = resRep;
         this.userRep = userRep;
     }
-
-    @Autowired
 
 
     @PostConstruct

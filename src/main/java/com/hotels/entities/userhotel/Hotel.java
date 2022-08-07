@@ -7,8 +7,8 @@ import com.hotels.entities.roomreservationfeature.Reservation;
 import com.hotels.entities.roomreservationfeature.Room;
 import lombok.Data;
 
-import javax.persistence.*;
-import java.util.Set;
+import javax.persistence.*; // TODO *
+import java.util.List;
 
 @Entity
 @Table(name = "hotel")
@@ -31,11 +31,11 @@ public class Hotel {
 
     @OneToMany(mappedBy = "hotel")
     @JsonIgnore
-    private Set<Room> rooms;
+    private List<Room> rooms;
 
     @OneToMany(mappedBy = "hotel")
     @JsonIgnore
-    private Set<Reservation> reservations;
+    private List<Reservation> reservations;
 
     public Hotel() {
     }

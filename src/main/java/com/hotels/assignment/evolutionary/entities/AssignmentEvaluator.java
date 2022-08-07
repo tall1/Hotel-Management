@@ -1,10 +1,9 @@
 package com.hotels.assignment.evolutionary.entities;
 
 import com.hotels.assignment.Assignment;
-import com.hotels.entities.enums.Request;
-import com.hotels.entities.enums.RequestImportance;
 import com.hotels.entities.roomreservationfeature.Feature;
 import com.hotels.entities.roomreservationfeature.Reservation;
+import com.hotels.entities.roomreservationfeature.ReservationFeature;
 import com.hotels.entities.roomreservationfeature.Room;
 import lombok.NoArgsConstructor;
 import org.uncommons.watchmaker.framework.FitnessEvaluator;
@@ -19,10 +18,9 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
     final int damageForCapacity = 3; // 3
     final int damageForRequest = 2; // == 12
 
-
     /**
      * Finds the fitness for every:
-     * 1. com.hotels.assignment.entities.Room with multiple reservations.
+     * 1. Room with multiple reservations.
      * 2. Insufficient room.
      * 3. Unfulfilled request, according to the importance.
      */
@@ -43,42 +41,25 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
                 fitness -= damageForCapacity;
             }
             // Handle unfulfilled requests:
-            for (Request request : Request.values()) {
-                if (!reservedRoom.doesComplyWithRequest(request)) {
-                    fitness = fitnessEvalHelper(fitness, reservation, request);
+            synchronized (this) {
+                for (ReservationFeature reservationFeature : reservation.getReservationFeatures()) {
+                    Feature feature = reservationFeature.getFeature();
+                    if (feature != null && !reservedRoom.doesHaveFeature(feature)) {
+                        fitness = fitnessEvalHelper(fitness, reservationFeature.getImportance());
+                    }
                 }
             }
-            /*for (Feature feature : reservation.getGuestsRequestsSet()) {
-                if(!reservedRoom.getFeatures().contains(feature)){
-                    fitness = fitnessEvalHelper(fitness, reservation, feature);
-                }
-            }*/
         }
         return fitness;
     }
 
-    private double fitnessEvalHelper(double fitness, Reservation reservation, Request request) {
-        RequestImportance importance = reservation.getImportance(request);
+    private double fitnessEvalHelper(double fitness, Integer importance) {
+        //TODO: change to ENUM
         switch (importance) {
-            case MUST:
+            case 3:
                 fitness -= damageForRequest;
                 break;
-            case NICE_TO_HAVE:
-                fitness -= (damageForRequest - 1);
-                break;
-            default:
-                break;
-        }
-        return fitness;
-    }
-
-    private double fitnessEvalHelper(double fitness, Reservation reservation, Feature feature) {
-        RequestImportance importance = reservation.getImportance(feature);
-        switch (importance) {
-            case MUST:
-                fitness -= damageForRequest;
-                break;
-            case NICE_TO_HAVE:
+            case 2:
                 fitness -= (damageForRequest - 1);
                 break;
             default:
@@ -88,7 +69,7 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
     }
 
     public Double getMaxFitness(int amountOfReservations) {
-        return Double.valueOf(this.maxFitnessPerReservation * amountOfReservations);
+        return (double) (this.maxFitnessPerReservation * amountOfReservations);
     }
 
     public boolean isNatural() {

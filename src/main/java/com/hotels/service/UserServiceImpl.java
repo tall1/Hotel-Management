@@ -17,7 +17,6 @@ public class UserServiceImpl implements UserService {
 
     @PostConstruct
     public void init453534() {
-        // here put any after construction operations
         System.out.println("UserServiceImpl: @PostConstruct");
     }
 

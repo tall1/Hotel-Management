@@ -6,20 +6,17 @@ import com.hotels.assignment.evolutionary.entities.AssignmentEvaluator;
 import com.hotels.assignment.evolutionary.entities.AssignmentFactory;
 import com.hotels.assignment.evolutionary.entities.AssignmentMutation;
 import com.hotels.entities.Lobby;
+import com.hotels.entities.roomreservationfeature.Feature;
 import com.hotels.entities.roomreservationfeature.Reservation;
+import com.hotels.entities.roomreservationfeature.ReservationFeature;
 import com.hotels.entities.roomreservationfeature.Room;
-import com.hotels.repository.ReservationRepository;
-import com.hotels.repository.RoomRepository;
+import com.hotels.entities.userhotel.Hotel;
 import com.hotels.service.utils.EngineProperties;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 import org.uncommons.watchmaker.framework.*;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
 
-import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,8 +24,9 @@ import java.util.Random;
 
 
 public class Main {
-    private final static int numOfRooms = 20;
-    private final static int numOfReservations = 12;
+    private final static int numOfRooms = 30;
+    private final static int numOfReservations = 20;
+
 
     public static void main(String[] args) {
         List<Room> roomList = new ArrayList<>();
@@ -54,7 +52,7 @@ public class Main {
                 rng);
 
         double maxFitness = fitnessEvaluator.getMaxFitness(
-                lobby.getAmountOfReservations() // TODO: I don't know about this. looks cumbersome.
+                lobby.getAmountOfReservations()
         );
 
         return runEngine(engine, fitnessEvaluator, maxFitness, ep);
@@ -85,11 +83,47 @@ public class Main {
     }
 
     private static void init(List<Room> rooms, List<Reservation> reservations) {
+        String[] featureNames = {"elevator proximity", "sea view", "bathtub", "balcony", "handicapped", "high floor"};
+        Hotel hotel = new Hotel();
+        hotel.setId(1);
+        hotel.setHotelName("Tal's hotel");
+        List<Feature> featureList = new ArrayList<>();
         for (int i = 0; i < Main.numOfRooms; ++i) {
-            rooms.add(new Room(10));
+            featureList.clear();
+            for (int j = 1; j < 6; j++) {
+                Feature feature = new Feature();
+                feature.setId(j);
+                feature.setFeatureName(featureNames[j]);
+                if (Math.random() > 0.5) {
+                    featureList.add(feature);
+                }
+            }
+            rooms.add(new Room(i, i, hotel, 4, featureList));
         }
+
+        List<ReservationFeature> reservationFeatures = new ArrayList<>();
         for (int i = 0; i < Main.numOfReservations; ++i) {
-            reservations.add(new Reservation((int) (Math.random() * 10)));
+            reservationFeatures.clear();
+            for (int j = 1; j < 6; j++) {
+                Feature feature = new Feature();
+                feature.setId(j);
+                feature.setFeatureName(featureNames[j]);
+
+                Reservation fakeReservation = new Reservation();
+                fakeReservation.setReservationNumber(i);
+
+                Integer importance = Math.random() < 0.33 ? 3 : Math.random() < 0.5 ? 2 : 1;
+
+                ReservationFeature reservationFeature = new ReservationFeature();
+                reservationFeature.setReservation(fakeReservation);
+                reservationFeature.setFeature(feature);
+                reservationFeature.setImportance(importance);
+
+                reservationFeatures.add(reservationFeature);
+            }
+            LocalDate checkin = LocalDate.now();
+            LocalDate checkout = checkin.plusDays(2);
+            reservations.add(new Reservation(i, hotel, "Adi", 3, checkin, checkout, reservationFeatures));
         }
     }
 }

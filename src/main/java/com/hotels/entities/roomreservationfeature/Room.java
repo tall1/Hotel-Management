@@ -1,12 +1,16 @@
 package com.hotels.entities.roomreservationfeature;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hotels.entities.enums.Request;
 import com.hotels.entities.userhotel.Hotel;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "room")
@@ -34,8 +38,7 @@ public class Room {
     private Integer roomCapacity;
 
     @Column(name = "available_date")
-    @Temporal(TemporalType.DATE)
-    private Date availableDate;
+    private LocalDate availableDate;
 
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
@@ -43,22 +46,7 @@ public class Room {
             joinColumns = {@JoinColumn(name = "room_id")},
             inverseJoinColumns = {@JoinColumn(name = "feature_id")}
     )
-    @ToString.Exclude
-    private Set<Feature> featureSet = new HashSet<>();
-
-
-    // Eventually erase:
-    @Transient
-    @JsonIgnore
-    private static int counter = 1;
-    @Transient
-    @ToString.Exclude
-    @JsonIgnore
-    private Map<Request, Boolean> requestsMap = new HashMap<>();
-    @Transient
-    @ToString.Exclude
-    @JsonIgnore
-    private Boolean isAvailable;
+    private List<Feature> featureList = new ArrayList<>();
 
     // Maybe add:
     //private RoomType roomType;
@@ -82,36 +70,26 @@ public class Room {
         PresidentSuite
     }*/
 
-    public Room(int roomCapacity) {
-        roomNumber = counter++;
+    public Room(Integer id,
+                Integer roomNumber,
+                Hotel hotel,
+                Integer roomCapacity,
+                List<Feature> featureSet) {
+        this.id = id;
+        this.roomNumber = roomNumber;
+        this.hotel = hotel;
+        this.floorNumber = Integer.parseInt(String.valueOf(String.valueOf(this.roomNumber).charAt(0)));
         this.roomCapacity = roomCapacity;
-        this.floorNumber = Integer.parseInt(String.valueOf(String.valueOf(roomNumber).charAt(0)));
-        for (Request request : Request.values()) {
-            requestsMap.put(request, Math.random() > 0.5);
-        }
-        this.availableDate = new Date();
-        this.isAvailable = true;
+        this.availableDate = LocalDate.now();
+        this.featureList = new ArrayList<>(featureSet);
     }
 
     public boolean getIsAvailable() {
-        return this.availableDate.compareTo(new Date()) >= 0;
+        return this.availableDate.isBefore(LocalDate.now()) || this.availableDate.isEqual(LocalDate.now());
     }
 
-    public Boolean doesComplyWithRequest(Request request) {
-        // Update requestMap to Repository if needed:
-        if (featureSet.size() > 0) {
-            // Set features in map to true:
-            for (Feature feature : featureSet) {
-                requestsMap.put(feature.getReqName(), true);
-            }
-            // Set other features to false:
-            for (Request req : Request.values()) {
-                if (!requestsMap.containsKey(req)) {
-                    requestsMap.put(req, false);
-                }
-            }
-        }
-        return this.requestsMap.get(request);
+    public Boolean doesHaveFeature(Feature feature) {
+        return this.featureList.contains(feature);
     }
 
     @Override
@@ -119,11 +97,10 @@ public class Room {
         return "Room{" +
                 "id=" + id +
                 ", roomNumber=" + roomNumber +
-                ", hotel=" + hotel +
+                ", hotel=" + hotel.getId() +
                 ", floorNumber=" + floorNumber +
                 ", roomCapacity=" + roomCapacity +
                 ", availableDate=" + availableDate +
-                ", features=" + featureSet +
                 '}';
     }
 }

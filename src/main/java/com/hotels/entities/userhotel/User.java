@@ -23,9 +23,7 @@ public class User {
     @Column(name="last_name")
     private String lastName;
 
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "hotel_id", referencedColumnName = "id")
-    //@JsonIgnore // This annotation breaks the loop.
     private Hotel hotel;
 }
