@@ -1,6 +1,7 @@
 package com.hotels.assignment.evolutionary.entities;
 
 import com.hotels.assignment.Assignment;
+import com.hotels.entities.enums.RequestImportance;
 import com.hotels.entities.roomreservationfeature.Feature;
 import com.hotels.entities.roomreservationfeature.Reservation;
 import com.hotels.entities.roomreservationfeature.ReservationFeature;
@@ -54,12 +55,11 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
     }
 
     private double fitnessEvalHelper(double fitness, Integer importance) {
-        //TODO: change to ENUM
-        switch (importance) {
-            case 3:
+        switch (RequestImportance.getRequestImportanceByInt(importance)) {
+            case MUST:
                 fitness -= damageForRequest;
                 break;
-            case 2:
+            case NICE_TO_HAVE:
                 fitness -= (damageForRequest - 1);
                 break;
             default:
