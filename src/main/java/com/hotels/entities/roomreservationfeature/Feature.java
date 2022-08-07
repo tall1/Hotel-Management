@@ -1,11 +1,14 @@
 package com.hotels.entities.roomreservationfeature;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "feature")
@@ -19,15 +22,24 @@ public class Feature {
     @Column(name = "feature_name")
     private String featureName;
 
-    @ManyToMany(mappedBy = "features")
+    @ManyToMany(mappedBy = "featureList")
     @JsonIgnore
-    private Set<Room> rooms = new HashSet<>();
-
-    /*@ManyToMany(mappedBy = "guestsRequestsSet")
-    @JsonIgnore
-    private Set<Reservation> reservations = new HashSet<>();*/
+    private List<Room> rooms = new ArrayList<>();
 
     @OneToMany(mappedBy = "feature")
     @JsonIgnore
-    private Set<ReservationFeature> reservationFeatures = new HashSet<>();
+    private List<ReservationFeature> reservationFeatures = new ArrayList<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Feature feature = (Feature) o;
+        return id.equals(feature.id) && featureName.equals(feature.featureName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, featureName);
+    }
 }

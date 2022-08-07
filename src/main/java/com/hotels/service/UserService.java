@@ -13,6 +13,4 @@ public interface UserService {
      void insertUser(User user) throws SQLException;
      void updateUser(User user) throws SQLException;
      void deleteUser(int id) throws SQLException;
-
-     Assignment getAssignment();
 }

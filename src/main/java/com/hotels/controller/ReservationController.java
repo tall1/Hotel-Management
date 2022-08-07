@@ -24,9 +24,9 @@ public class ReservationController {
     }
 
 //    localhost:8080/api/v1/person/get1/5
-    @GetMapping("/{id}")
-    public Reservation getReservationById(@PathVariable int id) throws SQLException {
-        return reservationService.getReservationById(id);
+    @GetMapping("/{reservationNumber}")
+    public Reservation getReservationById(@PathVariable Integer reservationNumber) throws SQLException {
+        return reservationService.getReservationById(reservationNumber);
     }
 
     /*//http://localhost:8080/api/v1/person/get2?id=5

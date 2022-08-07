@@ -15,12 +15,8 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
-    @Autowired
-    private Main myMain;
-
     @PostConstruct
     public void init453534() {
-        // here put any after construction operations
         System.out.println("UserServiceImpl: @PostConstruct");
     }
 
@@ -32,12 +28,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-    }
-
-    public Assignment getAssignment() {
-        Assignment assignment = myMain.prepareAssignment();
-        // Return small assignment...
-        return assignment;
     }
 
     @Override

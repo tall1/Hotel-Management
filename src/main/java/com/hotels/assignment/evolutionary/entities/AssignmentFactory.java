@@ -25,7 +25,7 @@ public class AssignmentFactory extends AbstractCandidateFactory<Assignment> {
             assignmentSuggestion.put(reservation, room);
             // Enable multiple reservations per room:
             if(room.getIsAvailable()){
-                room.setIsAvailable(false);
+                room.setAvailableDate(reservation.getCheckout());
                 lobby.addOrRemoveRoomFromAvailable(room);
             }
         }

@@ -3,27 +3,27 @@ package com.hotels.assignment;
 import com.hotels.entities.Lobby;
 import com.hotels.entities.roomreservationfeature.Reservation;
 import com.hotels.entities.roomreservationfeature.Room;
+import lombok.Getter;
+import lombok.Setter;
 
+
+import java.time.LocalDate;
 import java.util.*;
 
+@Getter
+@Setter
 public class Assignment {
     private final Map<Reservation, Room> reservationRoomHashMap;
-    // private final Map<com.hotels.assignment.entities.Room, com.hotels.assignment.entities.Reservation> roomReservationHashMap;
+
     private final Lobby lobby;
 
     public Assignment(Lobby lobby, Map<Reservation, Room> reservationRoomHashMap) {
-        // Shallow copy reservation-room map:
-        this.reservationRoomHashMap = reservationRoomHashMap;
-        //this.roomReservationHashMap = new HashMap<>();
+        this.reservationRoomHashMap = new HashMap<>(reservationRoomHashMap);
         this.lobby = lobby;
-
-        // Add the information to reservation-room map:
-        //this.reservationRoomHashMap.forEach((reservation, room) -> this.roomReservationHashMap.put(room, reservation));
     }
 
     public Assignment(Assignment otherAssignment) {
         this.lobby = otherAssignment.lobby;
-        //this.roomReservationHashMap = new HashMap<>(otherAssignment.roomReservationHashMap);
         this.reservationRoomHashMap = new HashMap<>(otherAssignment.reservationRoomHashMap);
     }
 
@@ -32,11 +32,10 @@ public class Assignment {
     }
 
     public void assign(Room room, Reservation reservation) {
-        //this.roomReservationHashMap.put(room, reservation);
         Room oldRoom = this.reservationRoomHashMap.get(reservation);
         // Set old room availability:
         if (getAmountOfReservationsForSpecificRoom(oldRoom) > 1) {
-            oldRoom.setIsAvailable(!oldRoom.getIsAvailable());
+            oldRoom.setAvailableDate(LocalDate.now()); // TODO: Change to other reservation's checkout
         }
         this.reservationRoomHashMap.put(reservation, room);
     }
@@ -57,7 +56,6 @@ public class Assignment {
     public Collection<Reservation> getReservations() {
         return this.reservationRoomHashMap.keySet();
     }
-
 
     public Map<Room, Integer> getAmountOfReservationsPerRoom() {
         Map<Room, Integer> roomToAmountOfReservationsMap = new HashMap<>(this.getAmountOfRooms());
