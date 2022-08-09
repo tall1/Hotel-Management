@@ -13,9 +13,11 @@ import java.util.Set;
 @NoArgsConstructor
 /* This class is used for returning a simple POJO from AssignmentController: */
 public class SimpleAssignment {
+    private int hotelId;
     private final Map<Integer, Integer> reservationRoomHashMap = new HashMap<>();
 
-    public SimpleAssignment(Assignment asmt) {
+    public SimpleAssignment(Assignment asmt, int hotelId) {
+        this.hotelId = hotelId;
         Set<Map.Entry<Reservation, Room>> mapEntrySet = asmt.getReservationRoomHashMap().entrySet();
         for (Map.Entry<Reservation, Room> entry : mapEntrySet) {
             int resNum = entry.getKey().getReservationNumber();

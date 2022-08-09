@@ -1,16 +1,13 @@
 package com.hotels.service;
 
 import com.hotels.assignment.SimpleAssignment;
-import com.hotels.service.utils.EngineDTO;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 public interface AssignmentService {
-    SimpleAssignment getAssignment(Integer userId) throws SQLException;
 
-    void insertEngineData(EngineDTO engineDTO) throws SQLException;
+    SimpleAssignment computeAssignmentByDate(Integer userId, LocalDate date) throws SQLException;
 
-    void updateEngineData(EngineDTO engineDTO) throws SQLException;
-
-    void deleteEngineData(Integer userId) throws SQLException;
+    void updateRoomsAvailableDate(SimpleAssignment chosenAssignment) throws SQLException;
 }
