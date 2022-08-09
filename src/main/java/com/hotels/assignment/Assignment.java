@@ -12,7 +12,6 @@ import java.util.*;
 @Setter
 public class Assignment {
     private final Map<Reservation, Room> reservationRoomHashMap;
-
     private final Lobby lobby;
 
     public Assignment(Lobby lobby, Map<Reservation, Room> reservationRoomHashMap) {
