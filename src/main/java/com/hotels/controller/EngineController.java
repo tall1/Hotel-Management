@@ -33,8 +33,8 @@ public class EngineController {
         engineService.updateEngineData(eDto);
     }
 
-    @DeleteMapping("/{userId}")
-    public void deleteEngineProperties(@PathVariable Integer userId) throws EntityNotFoundException {
+    @DeleteMapping
+    public void deleteEngineProperties(Integer userId) throws EntityNotFoundException {
         engineService.deleteEngineData(userId);
     }
 }
