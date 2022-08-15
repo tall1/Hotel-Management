@@ -55,6 +55,6 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public void deleteHotel(int id) {
-        hotelRepository.deleteById(id);
+            hotelRepository.deleteHotelById(id);
     }
 }
