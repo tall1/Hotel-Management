@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.sql.SQLException;
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +53,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public SimpleAssignment computeAssignmentByDate(Integer userId, LocalDate date) throws SQLException {
+    public SimpleAssignment computeAssignmentByDate(Integer userId, LocalDate date) throws EntityNotFoundException {
         Integer hotelId = findHotelByUserId(userId);
         EngineProperties engineProps = getEnginePropertiesByUserId(userId);
 
@@ -68,25 +68,25 @@ public class AssignmentServiceImpl implements AssignmentService {
         return new SimpleAssignment(resultAssignment, hotelId);
     }
 
-    private EngineProperties getEnginePropertiesByUserId(Integer userId) throws SQLException {
+    private EngineProperties getEnginePropertiesByUserId(Integer userId) throws EntityNotFoundException {
         Optional<EngineDTO> eDto = this.engineRep.findById(userId);
         if (!eDto.isPresent()) {
-            throw new SQLException("Engine properties not found!");
+            throw new EntityNotFoundException("Engine properties not found!");
         }
         // Retrieve EngineProps from EngineDTO:
         return new EngineProperties(eDto.get());
     }
 
-    private int findHotelByUserId(Integer userId) throws SQLException {
+    private int findHotelByUserId(Integer userId) throws EntityNotFoundException {
         Optional<Integer> hotelIdOpt = this.userRep.findHotelIdByUserId(userId);
         if (!hotelIdOpt.isPresent()) {
-            throw new SQLException("User not found!");
+            throw new EntityNotFoundException("User not found!");
         }
         return hotelIdOpt.get();
     }
 
     @Override
-    public void updateRoomsAvailableDate(SimpleAssignment chosenAssignment) throws SQLException {
+    public void updateRoomsAvailableDate(SimpleAssignment chosenAssignment) throws EntityNotFoundException {
         // Update rooms available date according to chosen assignment:
         Map<Integer, Integer> reservationRoomMap = chosenAssignment.getReservationRoomHashMap();
         int hotelId = chosenAssignment.getHotelId();
@@ -97,18 +97,18 @@ public class AssignmentServiceImpl implements AssignmentService {
         }
     }
 
-    private LocalDate getReservationCheckoutDateByResNum(int reservationNum) throws SQLException {
+    private LocalDate getReservationCheckoutDateByResNum(int reservationNum) throws EntityNotFoundException {
         Optional<LocalDate> checkoutOpt = reservationRep.findCheckoutDateByReservationNumber(reservationNum);
         if (!checkoutOpt.isPresent()) {
-            throw new SQLException("Reservation" + reservationNum + " not found!");
+            throw new EntityNotFoundException("Reservation" + reservationNum);
         }
         return checkoutOpt.get();
     }
 
-    private Integer getRoomIdByHotelIdAndRoomNumber(int hotelId, int roomNum) throws SQLException {
+    private Integer getRoomIdByHotelIdAndRoomNumber(int hotelId, int roomNum) throws EntityNotFoundException {
         Optional<Integer> roomIdOpt = roomRepository.findRoomByRoomNumberAndHotelId(hotelId, roomNum);
         if (!roomIdOpt.isPresent()) {
-            throw new SQLException("Room " + roomNum + " in hotel " + hotelId + "not found!");
+            throw new EntityNotFoundException("Room " + roomNum + " in hotel " + hotelId);
         }
         return roomIdOpt.get();
     }

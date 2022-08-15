@@ -1,13 +1,13 @@
 package com.hotels.service;
 
 import com.hotels.entities.userhotel.User;
-import com.hotels.exceptions.ResourceNotFoundException;
 import com.hotels.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         if (userOpt.isPresent()) {
             return userOpt.get();
         }
-        throw new ResourceNotFoundException("User");
+        throw new EntityNotFoundException("User" + id);
     }
 
     @Override

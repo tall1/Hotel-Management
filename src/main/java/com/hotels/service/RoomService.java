@@ -1,13 +1,14 @@
 package com.hotels.service;
+
 import com.hotels.entities.roomreservationfeature.Room;
 
-import java.sql.SQLException;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 public interface RoomService {
-     List<Room> getAll() throws SQLException;
-     Room getRoomById(int id) throws SQLException;
-     void insertRoom(Room room) throws SQLException;
-     void updateRoom(Room room) throws SQLException;
-     void deleteRoom(int id) throws SQLException;
+     List<Room> getAll() throws EntityNotFoundException;
+     Room getRoomById(int id) throws EntityNotFoundException;
+     void insertRoom(Room room) throws EntityNotFoundException;
+     void updateRoom(Room room) throws EntityNotFoundException;
+     void deleteRoom(int id) throws EntityNotFoundException;
 }

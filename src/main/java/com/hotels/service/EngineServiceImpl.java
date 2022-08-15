@@ -5,7 +5,7 @@ import com.hotels.service.utils.EngineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
+import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 @Service
@@ -18,10 +18,10 @@ public class EngineServiceImpl implements EngineService {
     }
 
     @Override
-    public EngineDTO getEngineDataByUserId(Integer userId) throws SQLException {
+    public EngineDTO getEngineDataByUserId(Integer userId) throws EntityNotFoundException{
         Optional<EngineDTO> engineDTO = engineRep.findById(userId);
         if(!engineDTO.isPresent()){
-            throw new SQLException("Engine Data Not Found!");
+            throw new EntityNotFoundException("Engine Data Not Found!");
         }
         return engineDTO.get();
     }

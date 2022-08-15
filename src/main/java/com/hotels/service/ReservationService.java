@@ -2,13 +2,13 @@ package com.hotels.service;
 
 import com.hotels.entities.roomreservationfeature.Reservation;
 
-import java.sql.SQLException;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 public interface ReservationService {
-     List<Reservation> getAll() throws SQLException;
-     Reservation getReservationById(int id) throws SQLException;
-     void insertReservation(Reservation reservation) throws SQLException;
-     void updateReservation(Reservation reservation) throws SQLException;
-     void deleteReservation(int id) throws SQLException;
+     List<Reservation> getAll() throws EntityNotFoundException;
+     Reservation getReservationById(int id) throws EntityNotFoundException;
+     void insertReservation(Reservation reservation) throws EntityNotFoundException;
+     void updateReservation(Reservation reservation) throws EntityNotFoundException;
+     void deleteReservation(int id) throws EntityNotFoundException;
 }
