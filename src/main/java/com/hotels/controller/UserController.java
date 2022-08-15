@@ -1,7 +1,7 @@
 package com.hotels.controller;
 
-import com.hotels.assignment.Assignment;
 import com.hotels.entities.userhotel.User;
+import com.hotels.exceptions.ResourceNotFoundException;
 import com.hotels.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +26,7 @@ public class UserController {
 
 //    localhost:8080/api/v1/person/get1/5
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable Integer userId) throws SQLException {
+    public User getUserById(@PathVariable Integer userId) throws SQLException, ResourceNotFoundException {
         return userService.getUserById(userId);
     }
 
