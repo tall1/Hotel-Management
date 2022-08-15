@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -37,7 +38,7 @@ public class ReservationServiceImpl implements ReservationService {
         if(reservationRepository.findById(id).isPresent()){
             return reservationRepository.findById(id).get();
         }
-        return null;
+        throw new EntityNotFoundException("Reservation " + id);
     }
 
     @Override

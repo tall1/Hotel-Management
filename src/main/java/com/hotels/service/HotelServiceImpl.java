@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -39,7 +40,7 @@ public class HotelServiceImpl implements HotelService {
         if (hotelRepository.findById(id).isPresent()) {
             return hotelRepository.findById(id).get();
         }
-        return null;
+        throw new EntityNotFoundException("Hotel " + id);
     }
 
     @Override

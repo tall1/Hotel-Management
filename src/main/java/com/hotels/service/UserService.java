@@ -1,16 +1,15 @@
 package com.hotels.service;
 
 
-import com.hotels.assignment.Assignment;
 import com.hotels.entities.userhotel.User;
 
-import java.sql.SQLException;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 public interface UserService {
-     List<User> getAll() throws SQLException;
-     User getUserById(int id) throws SQLException;
-     void insertUser(User user) throws SQLException;
-     void updateUser(User user) throws SQLException;
-     void deleteUser(int id) throws SQLException;
+     List<User> getAll() throws EntityNotFoundException;
+     User getUserById(int id) throws  EntityNotFoundException;
+     void insertUser(User user) throws EntityNotFoundException;
+     void updateUser(User user) throws EntityNotFoundException;
+     void deleteUser(int id) throws EntityNotFoundException;
 }

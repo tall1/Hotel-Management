@@ -1,13 +1,13 @@
 package com.hotels.service;
 
 import com.hotels.entities.roomreservationfeature.Room;
-import com.hotels.entities.roomreservationfeature.Room;
 import com.hotels.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -40,7 +40,7 @@ public class RoomServiceImpl implements RoomService {
         if (roomRepository.findById(id).isPresent()) {
             return roomRepository.findById(id).get();
         }
-        return null;
+        throw new EntityNotFoundException("Room " + id);
     }
 
     @Override

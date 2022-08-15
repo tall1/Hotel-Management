@@ -2,12 +2,12 @@ package com.hotels.service;
 
 import com.hotels.assignment.SimpleAssignment;
 
-import java.sql.SQLException;
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 
 public interface AssignmentService {
 
-    SimpleAssignment computeAssignmentByDate(Integer userId, LocalDate date) throws SQLException;
+    SimpleAssignment computeAssignmentByDate(Integer userId, LocalDate date) throws EntityNotFoundException;
 
-    void updateRoomsAvailableDate(SimpleAssignment chosenAssignment) throws SQLException;
+    void updateRoomsAvailableDate(SimpleAssignment chosenAssignment) throws EntityNotFoundException;
 }

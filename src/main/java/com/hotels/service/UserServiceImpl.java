@@ -1,7 +1,5 @@
 package com.hotels.service;
 
-import com.hotels.Main;
-import com.hotels.assignment.Assignment;
 import com.hotels.entities.userhotel.User;
 import com.hotels.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +7,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -37,10 +37,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(int id) {
-        if (userRepository.findById(id).isPresent()) {
-            return userRepository.findById(id).get();
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isPresent()) {
+            return userOpt.get();
         }
-        return null;
+        throw new EntityNotFoundException("User" + id);
     }
 
     @Override
