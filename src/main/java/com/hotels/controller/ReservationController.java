@@ -46,7 +46,7 @@ public class ReservationController {
     }
 
     @DeleteMapping
-    public void deleteReservation(int id) throws EntityNotFoundException {
-        reservationService.deleteReservation(id);
+    public void deleteReservation(Integer resNum) throws EntityNotFoundException {
+        reservationService.deleteReservation(resNum);
     }
 }

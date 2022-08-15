@@ -38,6 +38,6 @@ public class EngineServiceImpl implements EngineService {
 
     @Override
     public void deleteEngineData(Integer userId) {
-        this.engineRep.deleteById(userId);
+        this.engineRep.deleteEngineByUserId(userId);
     }
 }

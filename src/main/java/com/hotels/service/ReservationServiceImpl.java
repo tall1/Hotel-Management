@@ -52,7 +52,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void deleteReservation(int id) {
-        reservationRepository.deleteById(id);
+    public void deleteReservation(Integer resNum) {
+        reservationRepository.deleteReservationByReservationNumber(resNum);
     }
 }

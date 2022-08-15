@@ -10,5 +10,5 @@ public interface ReservationService {
      Reservation getReservationById(int id) throws EntityNotFoundException;
      void insertReservation(Reservation reservation) throws EntityNotFoundException;
      void updateReservation(Reservation reservation) throws EntityNotFoundException;
-     void deleteReservation(int id) throws EntityNotFoundException;
+     void deleteReservation(Integer resNum) throws EntityNotFoundException;
 }
