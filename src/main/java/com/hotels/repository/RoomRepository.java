@@ -28,9 +28,4 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     @Modifying
     @Query(value = "UPDATE `hoteldb`.`room` SET `available_date` = :new_date WHERE (`id` = :room_id);", nativeQuery = true)
     void updateRoomAvailableDate(@Param("room_id") Integer roomId, @Param("new_date") LocalDate newDate);
-
-    @Transactional
-    @Modifying
-    @Query(value = "delete from room r where r.id = :room_id", nativeQuery = true)
-    void deleteRoomById(@Param("room_id") Integer roomId);
 }
