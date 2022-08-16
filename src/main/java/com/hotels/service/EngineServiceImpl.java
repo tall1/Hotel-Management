@@ -1,7 +1,7 @@
 package com.hotels.service;
 
 import com.hotels.repository.EngineRepository;
-import com.hotels.service.utils.EngineDTO;
+import com.hotels.entities.engine.EngineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

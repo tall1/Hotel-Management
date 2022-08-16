@@ -1,4 +1,4 @@
-package com.hotels.service.utils;
+package com.hotels.entities.engine;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;

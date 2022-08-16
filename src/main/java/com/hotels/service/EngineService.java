@@ -1,6 +1,6 @@
 package com.hotels.service;
 
-import com.hotels.service.utils.EngineDTO;
+import com.hotels.entities.engine.EngineDTO;
 
 import javax.persistence.EntityNotFoundException;
 

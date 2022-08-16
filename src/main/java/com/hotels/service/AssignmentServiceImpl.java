@@ -9,8 +9,8 @@ import com.hotels.repository.EngineRepository;
 import com.hotels.repository.ReservationRepository;
 import com.hotels.repository.RoomRepository;
 import com.hotels.repository.UserRepository;
-import com.hotels.service.utils.EngineDTO;
-import com.hotels.service.utils.EngineProperties;
+import com.hotels.entities.engine.EngineDTO;
+import com.hotels.entities.engine.EngineProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package com.hotels.repository;
 
-import com.hotels.service.utils.EngineDTO;
+import com.hotels.entities.engine.EngineDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

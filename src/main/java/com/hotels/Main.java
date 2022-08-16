@@ -11,7 +11,7 @@ import com.hotels.entities.reservation.Reservation;
 import com.hotels.entities.roomreservationfeature.ReservationFeature;
 import com.hotels.entities.room.Room;
 import com.hotels.entities.hotel.Hotel;
-import com.hotels.service.utils.EngineProperties;
+import com.hotels.entities.engine.EngineProperties;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 import org.uncommons.watchmaker.framework.*;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
