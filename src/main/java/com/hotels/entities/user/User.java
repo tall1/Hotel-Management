@@ -1,14 +1,14 @@
-package com.hotels.entities.userhotel;
+package com.hotels.entities.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.hotels.entities.hotel.Hotel;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "user")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {

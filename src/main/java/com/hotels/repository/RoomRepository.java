@@ -1,6 +1,6 @@
 package com.hotels.repository;
 
-import com.hotels.entities.roomreservationfeature.Room;
+import com.hotels.entities.room.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +17,9 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     @Query(value = "select * from room r where r.hotel_id = :hotel_id and r.available_date <= :date", nativeQuery = true)
     List<Room> findRoomsByHotelIdAndAvailableDate(@Param("hotel_id") Integer hotelId, @Param("date") LocalDate date);
+
+    @Query(value = "select * from room r where r.hotel_id = :hotel_id", nativeQuery = true)
+    List<Room> findRoomsByHotelId(@Param("hotel_id") int hotelId);
 
     @Query(value = "select r.id from room r where r.hotel_id = :hotel_id and r.room_number = :room_num", nativeQuery = true)
     Optional<Integer> findRoomByRoomNumberAndHotelId(@Param("hotel_id") Integer hotelId, @Param("room_num") Integer roomNumber);

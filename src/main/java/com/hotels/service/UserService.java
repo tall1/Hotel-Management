@@ -1,7 +1,7 @@
 package com.hotels.service;
 
 
-import com.hotels.entities.userhotel.User;
+import com.hotels.entities.user.User;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;

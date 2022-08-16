@@ -1,6 +1,6 @@
 package com.hotels.controller;
 
-import com.hotels.entities.roomreservationfeature.Reservation;
+import com.hotels.entities.reservation.Reservation;
 import com.hotels.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

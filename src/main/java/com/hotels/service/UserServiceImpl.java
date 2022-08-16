@@ -1,6 +1,6 @@
 package com.hotels.service;
 
-import com.hotels.entities.userhotel.User;
+import com.hotels.entities.user.User;
 import com.hotels.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

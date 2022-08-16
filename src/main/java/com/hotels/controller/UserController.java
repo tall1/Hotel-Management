@@ -1,6 +1,6 @@
 package com.hotels.controller;
 
-import com.hotels.entities.userhotel.User;
+import com.hotels.entities.user.User;
 import com.hotels.exceptions.ResourceNotFoundException;
 import com.hotels.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

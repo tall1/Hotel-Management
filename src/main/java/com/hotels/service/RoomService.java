@@ -1,6 +1,6 @@
 package com.hotels.service;
 
-import com.hotels.entities.roomreservationfeature.Room;
+import com.hotels.entities.room.Room;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;

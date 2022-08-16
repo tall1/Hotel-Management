@@ -1,8 +1,8 @@
-package com.hotels.assignment;
+package com.hotels.entities.assignment;
 
-import com.hotels.entities.Lobby;
-import com.hotels.entities.roomreservationfeature.Reservation;
-import com.hotels.entities.roomreservationfeature.Room;
+import com.hotels.entities.lobby.Lobby;
+import com.hotels.entities.reservation.Reservation;
+import com.hotels.entities.room.Room;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,25 +11,25 @@ import java.util.*;
 @Getter
 @Setter
 public class Assignment {
-    private final Map<Reservation, Room> reservationRoomHashMap;
+    private final Map<Reservation, Room> reservationRoomMap;
     private final Lobby lobby;
 
-    public Assignment(Lobby lobby, Map<Reservation, Room> reservationRoomHashMap) {
-        this.reservationRoomHashMap = new HashMap<>(reservationRoomHashMap);
+    public Assignment(Lobby lobby, Map<Reservation, Room> reservationRoomMap) {
+        this.reservationRoomMap = new HashMap<>(reservationRoomMap);
         this.lobby = lobby;
     }
 
     public Assignment(Assignment otherAssignment) {
         this.lobby = otherAssignment.lobby;
-        this.reservationRoomHashMap = new HashMap<>(otherAssignment.reservationRoomHashMap);
+        this.reservationRoomMap = new HashMap<>(otherAssignment.reservationRoomMap);
     }
 
     public Room getRoomByReservation(Reservation reservation) {
-        return this.reservationRoomHashMap.get(reservation);
+        return this.reservationRoomMap.get(reservation);
     }
 
     public void assign(Room room, Reservation reservation) {
-        this.reservationRoomHashMap.put(reservation, room);
+        this.reservationRoomMap.put(reservation, room);
     }
 
     public int getAmountOfReservations() {
@@ -41,7 +41,7 @@ public class Assignment {
     }
 
     public Collection<Reservation> getReservations() {
-        return this.reservationRoomHashMap.keySet();
+        return this.reservationRoomMap.keySet();
     }
 
     public Map<Room, Integer> getAmountOfReservationsPerRoom() {
@@ -50,7 +50,7 @@ public class Assignment {
             roomToAmountOfReservationsMap.put(room, 0);
         }
         for (Reservation reservation : this.lobby.getReservationArrayList()) {
-            Room room = this.reservationRoomHashMap.get(reservation);
+            Room room = this.reservationRoomMap.get(reservation);
             Integer currentReservationAmount = roomToAmountOfReservationsMap.get(room);
             roomToAmountOfReservationsMap.put(room, currentReservationAmount + 1);
         }
@@ -64,11 +64,11 @@ public class Assignment {
     @Override
     public String toString() {
         StringBuilder assignments = new StringBuilder();
-        List<Reservation> reservationList = new ArrayList<>(this.reservationRoomHashMap.keySet());
+        List<Reservation> reservationList = new ArrayList<>(this.reservationRoomMap.keySet());
         reservationList.sort(Comparator.comparingInt(Reservation::getReservationNumber));
 
         for (Reservation reservation : reservationList) {
-            Room room = reservationRoomHashMap.get(reservation);
+            Room room = reservationRoomMap.get(reservation);
             assignments.
                     append("Reservation: ").
                     append(reservation.getReservationNumber()).

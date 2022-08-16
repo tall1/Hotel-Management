@@ -1,11 +1,11 @@
-package com.hotels.entities.roomreservationfeature;
+package com.hotels.entities.room;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hotels.entities.userhotel.Hotel;
+import com.hotels.entities.feature.Feature;
+import com.hotels.entities.hotel.Hotel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDate;

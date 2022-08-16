@@ -1,5 +1,7 @@
 package com.hotels.entities.roomreservationfeature;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hotels.entities.feature.Feature;
+import com.hotels.entities.reservation.Reservation;
 import lombok.*;
 
 import javax.persistence.*;

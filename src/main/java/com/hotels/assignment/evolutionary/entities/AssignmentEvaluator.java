@@ -1,11 +1,11 @@
 package com.hotels.assignment.evolutionary.entities;
 
-import com.hotels.assignment.Assignment;
+import com.hotels.entities.assignment.Assignment;
 import com.hotels.entities.enums.RequestImportance;
-import com.hotels.entities.roomreservationfeature.Feature;
-import com.hotels.entities.roomreservationfeature.Reservation;
+import com.hotels.entities.feature.Feature;
+import com.hotels.entities.reservation.Reservation;
 import com.hotels.entities.roomreservationfeature.ReservationFeature;
-import com.hotels.entities.roomreservationfeature.Room;
+import com.hotels.entities.room.Room;
 import lombok.NoArgsConstructor;
 import org.uncommons.watchmaker.framework.FitnessEvaluator;
 

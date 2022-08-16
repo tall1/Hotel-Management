@@ -1,7 +1,7 @@
-package com.hotels.entities;
+package com.hotels.entities.lobby;
 
-import com.hotels.entities.roomreservationfeature.Reservation;
-import com.hotels.entities.roomreservationfeature.Room;
+import com.hotels.entities.reservation.Reservation;
+import com.hotels.entities.room.Room;
 
 import java.util.ArrayList;
 import java.util.List;

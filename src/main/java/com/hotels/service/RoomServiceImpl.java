@@ -1,6 +1,6 @@
 package com.hotels.service;
 
-import com.hotels.entities.roomreservationfeature.Room;
+import com.hotels.entities.room.Room;
 import com.hotels.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

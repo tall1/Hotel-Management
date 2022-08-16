@@ -5,10 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import com.hotels.assignment.Assignment;
-import com.hotels.entities.Lobby;
-import com.hotels.entities.roomreservationfeature.Reservation;
-import com.hotels.entities.roomreservationfeature.Room;
+import com.hotels.entities.assignment.Assignment;
+import com.hotels.entities.lobby.Lobby;
+import com.hotels.entities.reservation.Reservation;
+import com.hotels.entities.room.Room;
 import org.uncommons.maths.number.ConstantGenerator;
 import org.uncommons.maths.number.NumberGenerator;
 import org.uncommons.maths.random.Probability;
