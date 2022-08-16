@@ -86,6 +86,9 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public void deleteHotel(int id) {
+        if (!this.hotelRepository.findById(id).isPresent()) {
+            throw new EntityNotFoundException("Hotel with id " + id + " not found.");
+        }
         hotelRepository.deleteHotelById(id);
     }
 
