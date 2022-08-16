@@ -1,15 +1,15 @@
 package com.hotels.service;
 
 
-import com.hotels.entities.user.User;
+import com.hotels.entities.user.UserDTO;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 public interface UserService {
-     List<User> getAll() throws EntityNotFoundException;
-     User getUserById(int id) throws  EntityNotFoundException;
-     void insertUser(User user) throws EntityNotFoundException;
-     void updateUser(User user) throws EntityNotFoundException;
-     void deleteUser(int id) throws EntityNotFoundException;
+     List<UserDTO> getAll() throws EntityNotFoundException;
+     UserDTO getUserById(int id) throws  EntityNotFoundException;
+     void insertUser(UserDTO userDTO) throws EntityNotFoundException;
+     void updateUser(UserDTO userDTO) throws EntityNotFoundException;
+     void deleteUser(int userId) throws EntityNotFoundException;
 }

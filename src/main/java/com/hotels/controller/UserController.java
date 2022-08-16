@@ -1,6 +1,6 @@
 package com.hotels.controller;
 
-import com.hotels.entities.user.User;
+import com.hotels.entities.user.UserDTO;
 import com.hotels.exceptions.ResourceNotFoundException;
 import com.hotels.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +20,13 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public List<User> getAll() throws EntityNotFoundException {
+    public List<UserDTO> getAll() throws EntityNotFoundException {
         return this.userService.getAll();
     }
 
 //    localhost:8080/api/v1/person/get1/5
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable Integer userId) throws  ResourceNotFoundException {
+    public UserDTO getUserById(@PathVariable int userId) throws  ResourceNotFoundException {
         return userService.getUserById(userId);
     }
 
@@ -37,13 +37,13 @@ public class UserController {
     }*/
 
     @PostMapping
-    public void insertUser(User user) throws EntityNotFoundException{
-        userService.insertUser(user);
+    public void insertUser(@RequestBody UserDTO userDTO) throws EntityNotFoundException{
+        userService.insertUser(userDTO);
     }
 
     @PutMapping
-    public void updateUser(User user) throws EntityNotFoundException{
-        userService.updateUser(user);
+    public void updateUser(@RequestBody UserDTO userDTO) throws EntityNotFoundException{
+        userService.updateUser(userDTO);
     }
 
     @DeleteMapping

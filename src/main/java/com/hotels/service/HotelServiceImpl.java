@@ -80,7 +80,7 @@ public class HotelServiceImpl implements HotelService {
         }
         Hotel hotel = createHotelFromHotelDto(hotelDTO, false); // Id is generated automatically
         hotelRepository.save(hotel);
-        userOpt.get().setHotel(hotel); // TODO: CHANGE TO HOTELID
+        userOpt.get().setHotel(hotel);
         userRepository.save(userOpt.get());
     }
 

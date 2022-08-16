@@ -23,7 +23,7 @@ public class EngineServiceImpl implements EngineService {
     @Override
     public EngineDTO getEngineDataByUserId(Integer userId) throws EntityNotFoundException {
         Optional<EngineDTO> engineDTO = engineRep.findById(userId);
-        if (!engineDTO.isPresent()) {
+        if (!engineDTO.isPresent()) { // TODO: make this in method.
             throw new EntityNotFoundException("Engine Data for user id: " + userId + " not found!");
         }
         return engineDTO.get();
