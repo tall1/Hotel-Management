@@ -1,6 +1,6 @@
 package com.hotels.controller;
 
-import com.hotels.entities.roomreservationfeature.Room;
+import com.hotels.entities.room.RoomDTO;
 import com.hotels.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +19,13 @@ public class RoomController {
     }
 
     @GetMapping("/")
-    public List<Room> getAll() throws EntityNotFoundException {
+    public List<RoomDTO> getAll() throws EntityNotFoundException {
         return this.roomService.getAll();
     }
 
-//    localhost:8080/api/v1/person/get1/5
+    //    localhost:8080/api/v1/person/get1/5
     @GetMapping("/{roomId}")
-    public Room getRoomById(@PathVariable Integer roomId) throws EntityNotFoundException{
+    public RoomDTO getRoomById(@PathVariable Integer roomId) throws EntityNotFoundException {
         return roomService.getRoomById(roomId);
     }
 
@@ -36,17 +36,17 @@ public class RoomController {
     }*/
 
     @PostMapping
-    public void insertRoom(Room room) throws EntityNotFoundException{
-        roomService.insertRoom(room);
+    public void insertRoom(@RequestBody RoomDTO roomDTO) throws EntityNotFoundException {
+        roomService.insertRoom(roomDTO);
     }
 
     @PutMapping
-    public void updateRoom(Room room) throws EntityNotFoundException{
-        roomService.updateRoom(room);
+    public void updateRoom(@RequestBody RoomDTO roomDTO) throws EntityNotFoundException {
+        roomService.updateRoom(roomDTO);
     }
 
     @DeleteMapping
-    public void deleteRoom(int id) throws EntityNotFoundException{
+    public void deleteRoom(int id) throws EntityNotFoundException {
         roomService.deleteRoom(id);
     }
 }

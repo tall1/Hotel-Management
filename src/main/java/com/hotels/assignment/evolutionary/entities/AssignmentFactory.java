@@ -1,16 +1,16 @@
 package com.hotels.assignment.evolutionary.entities;
 
-import com.hotels.assignment.Assignment;
-import com.hotels.entities.Lobby;
-import com.hotels.entities.roomreservationfeature.Reservation;
-import com.hotels.entities.roomreservationfeature.Room;
+import com.hotels.entities.assignment.Assignment;
+import com.hotels.entities.lobby.Lobby;
+import com.hotels.entities.reservation.Reservation;
+import com.hotels.entities.room.Room;
 import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory;
 
 import java.util.*;
 
 public class AssignmentFactory extends AbstractCandidateFactory<Assignment> {
 
-    private Lobby lobby;
+    private final Lobby lobby;
 
     public AssignmentFactory(Lobby lobby) {
         this.lobby = lobby;

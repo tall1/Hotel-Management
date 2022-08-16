@@ -1,17 +1,17 @@
 package com.hotels;
 
-import com.hotels.assignment.Assignment;
+import com.hotels.entities.assignment.Assignment;
 import com.hotels.assignment.evolutionary.entities.AssignmentCrossover;
 import com.hotels.assignment.evolutionary.entities.AssignmentEvaluator;
 import com.hotels.assignment.evolutionary.entities.AssignmentFactory;
 import com.hotels.assignment.evolutionary.entities.AssignmentMutation;
-import com.hotels.entities.Lobby;
-import com.hotels.entities.roomreservationfeature.Feature;
-import com.hotels.entities.roomreservationfeature.Reservation;
+import com.hotels.entities.lobby.Lobby;
+import com.hotels.entities.feature.Feature;
+import com.hotels.entities.reservation.Reservation;
 import com.hotels.entities.roomreservationfeature.ReservationFeature;
-import com.hotels.entities.roomreservationfeature.Room;
-import com.hotels.entities.userhotel.Hotel;
-import com.hotels.service.utils.EngineProperties;
+import com.hotels.entities.room.Room;
+import com.hotels.entities.hotel.Hotel;
+import com.hotels.entities.engine.EngineProperties;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 import org.uncommons.watchmaker.framework.*;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;

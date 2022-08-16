@@ -1,6 +1,8 @@
-package com.hotels.entities.roomreservationfeature;
+package com.hotels.entities.feature;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hotels.entities.roomreservationfeature.ReservationFeature;
+import com.hotels.entities.room.Room;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

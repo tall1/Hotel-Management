@@ -1,6 +1,7 @@
-package com.hotels.entities.roomreservationfeature;
+package com.hotels.entities.reservation;
 
-import com.hotels.entities.userhotel.Hotel;
+import com.hotels.entities.hotel.Hotel;
+import com.hotels.entities.roomreservationfeature.ReservationFeature;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -1,16 +1,16 @@
 package com.hotels.service;
 
 import com.hotels.Main;
-import com.hotels.assignment.Assignment;
-import com.hotels.assignment.SimpleAssignment;
-import com.hotels.entities.roomreservationfeature.Reservation;
-import com.hotels.entities.roomreservationfeature.Room;
+import com.hotels.entities.assignment.Assignment;
+import com.hotels.entities.assignment.AssignmentDTO;
+import com.hotels.entities.reservation.Reservation;
+import com.hotels.entities.room.Room;
 import com.hotels.repository.EngineRepository;
 import com.hotels.repository.ReservationRepository;
 import com.hotels.repository.RoomRepository;
 import com.hotels.repository.UserRepository;
-import com.hotels.service.utils.EngineDTO;
-import com.hotels.service.utils.EngineProperties;
+import com.hotels.entities.engine.EngineDTO;
+import com.hotels.entities.engine.EngineProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +53,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public SimpleAssignment computeAssignmentByDate(Integer userId, LocalDate date) throws EntityNotFoundException {
+    public AssignmentDTO computeAssignmentByDate(Integer userId, LocalDate date) throws EntityNotFoundException {
         Integer hotelId = findHotelByUserId(userId);
         EngineProperties engineProps = getEnginePropertiesByUserId(userId);
 
@@ -65,7 +65,10 @@ public class AssignmentServiceImpl implements AssignmentService {
                         engineProps,
                         roomList,
                         reservationList);
-        return new SimpleAssignment(resultAssignment, hotelId);
+        AssignmentDTO assignmentDTO = new AssignmentDTO();
+        assignmentDTO.setHotelId(hotelId);
+        assignmentDTO.setReservationRoomMap(resultAssignment.getReservationRoomMap());
+        return assignmentDTO;
     }
 
     private EngineProperties getEnginePropertiesByUserId(Integer userId) throws EntityNotFoundException {
@@ -86,9 +89,9 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public void updateRoomsAvailableDate(SimpleAssignment chosenAssignment) throws EntityNotFoundException {
+    public void updateRoomsAvailableDate(AssignmentDTO chosenAssignment) throws EntityNotFoundException {
         // Update rooms available date according to chosen assignment:
-        Map<Integer, Integer> reservationRoomMap = chosenAssignment.getReservationRoomHashMap();
+        Map<Integer, Integer> reservationRoomMap = chosenAssignment.getReservationRoomMap();
         int hotelId = chosenAssignment.getHotelId();
         for (Map.Entry<Integer, Integer> entry : reservationRoomMap.entrySet()) {
             LocalDate reservationCheckoutDate = getReservationCheckoutDateByResNum(entry.getKey());

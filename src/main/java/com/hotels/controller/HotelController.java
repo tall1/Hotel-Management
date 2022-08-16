@@ -1,6 +1,6 @@
 package com.hotels.controller;
 
-import com.hotels.entities.userhotel.Hotel;
+import com.hotels.entities.hotel.HotelDTO;
 import com.hotels.service.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +19,13 @@ public class HotelController {
     }
 
     @GetMapping("/")
-    public List<Hotel> getAll() throws EntityNotFoundException {
+    public List<HotelDTO> getAll() throws EntityNotFoundException {
         return this.hotelService.getAll();
     }
 
     //    localhost:8080/api/v1/person/get1/5
     @GetMapping("/{hotelId}")
-    public Hotel getHotelById(@PathVariable Integer hotelId) throws EntityNotFoundException{
+    public HotelDTO getHotelById(@PathVariable Integer hotelId) throws EntityNotFoundException{
         return hotelService.getHotelById(hotelId);
     }
 
@@ -36,13 +36,13 @@ public class HotelController {
     }*/
 
     @PostMapping
-    public void insertHotel(Hotel hotel) throws EntityNotFoundException{
-        hotelService.insertHotel(hotel);
+    public void insertHotel(@RequestBody HotelDTO hotelDTO) throws EntityNotFoundException{
+        hotelService.insertHotel(hotelDTO);
     }
 
     @PutMapping
-    public void updateHotel(Hotel hotel) throws EntityNotFoundException{
-        hotelService.updateHotel(hotel);
+    public void updateHotel(@RequestBody HotelDTO hotelDTO) throws EntityNotFoundException{
+        hotelService.updateHotel(hotelDTO);
     }
 
     @DeleteMapping

@@ -1,6 +1,6 @@
 package com.hotels.repository;
 
-import com.hotels.entities.userhotel.User;
+import com.hotels.entities.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

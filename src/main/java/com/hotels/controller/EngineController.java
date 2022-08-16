@@ -1,7 +1,7 @@
 package com.hotels.controller;
 
 import com.hotels.service.EngineService;
-import com.hotels.service.utils.EngineDTO;
+import com.hotels.entities.engine.EngineDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

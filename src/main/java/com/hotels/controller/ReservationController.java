@@ -1,6 +1,6 @@
 package com.hotels.controller;
 
-import com.hotels.entities.roomreservationfeature.Reservation;
+import com.hotels.entities.reservation.ReservationDTO;
 import com.hotels.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +19,14 @@ public class ReservationController {
     }
 
     @GetMapping("/")
-    public List<Reservation> getAll() throws EntityNotFoundException {
+    public List<ReservationDTO> getAll() throws EntityNotFoundException {
         return this.reservationService.getAll();
     }
 
     //    localhost:8080/api/v1/person/get1/5
     @GetMapping("/{reservationNumber}")
-    public Reservation getReservationById(@PathVariable Integer reservationNumber) throws EntityNotFoundException {
-        return reservationService.getReservationById(reservationNumber);
+    public ReservationDTO getReservationById(@PathVariable Integer reservationNumber) throws EntityNotFoundException {
+        return reservationService.getReservationByReservationNum(reservationNumber);
     }
 
     /*//http://localhost:8080/api/v1/person/get2?id=5
@@ -36,17 +36,17 @@ public class ReservationController {
     }*/
 
     @PostMapping
-    public void insertReservation(Reservation reservation) throws EntityNotFoundException {
-        reservationService.insertReservation(reservation);
+    public void insertReservation(@RequestBody ReservationDTO reservationDTO) throws EntityNotFoundException {
+        reservationService.insertReservation(reservationDTO);
     }
 
     @PutMapping
-    public void updateReservation(Reservation reservation) throws EntityNotFoundException {
-        reservationService.updateReservation(reservation);
+    public void updateReservation(@RequestBody ReservationDTO reservationDTO) throws EntityNotFoundException {
+        reservationService.updateReservation(reservationDTO);
     }
 
     @DeleteMapping
-    public void deleteReservation(Integer resNum) throws EntityNotFoundException {
+    public void deleteReservation(int resNum) throws EntityNotFoundException {
         reservationService.deleteReservation(resNum);
     }
 }
