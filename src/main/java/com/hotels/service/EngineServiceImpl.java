@@ -1,12 +1,13 @@
 package com.hotels.service;
 
+import com.hotels.entities.engine.Engine;
 import com.hotels.repository.EngineRepository;
-import com.hotels.entities.engine.EngineDTO;
 import com.hotels.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -21,37 +22,37 @@ public class EngineServiceImpl implements EngineService {
     }
 
     @Override
-    public EngineDTO getEngineDataByUserId(Integer userId) throws EntityNotFoundException {
-        Optional<EngineDTO> engineDTO = engineRep.findById(userId);
-        if (!engineDTO.isPresent()) { // TODO: make this in method.
-            throw new EntityNotFoundException("Engine Data for user id: " + userId + " not found!");
-        }
-        return engineDTO.get();
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    public Engine getEngineDataByUserId(Integer userId) throws EntityNotFoundException {
+        checkValidUserId(userId);
+        return this.engineRep.findById(userId).get();
     }
 
     @Override
-    public void insertEngineData(EngineDTO engineDTO) {
-        if (!this.userRepository.findById(engineDTO.getUserId()).isPresent()) {
-            throw new EntityNotFoundException("User with id: " + engineDTO.getUserId() + " not found!");
+    public void insertEngineData(Engine engine) {
+        if (!this.userRepository.findById(engine.getUserId()).isPresent()) {
+            throw new EntityNotFoundException("User with id: " + engine.getUserId() + " not found!");
         }
-        this.engineRep.save(engineDTO);
+        this.engineRep.save(engine);
     }
 
     @Override
-    public void updateEngineData(EngineDTO engineDTO) {
-        Optional<EngineDTO> engineDTOOptional = this.engineRep.findById(engineDTO.getUserId());
-        if (!engineDTOOptional.isPresent()) {
-            throw new EntityNotFoundException("Engine Data for user id: " + engineDTO.getUserId() + " not found!");
-        }
-        this.engineRep.save(engineDTO);
+    public void updateEngineData(Engine engine) {
+        checkValidUserId(engine.getUserId());
+        this.engineRep.save(engine);
     }
 
     @Override
+    @Transactional
     public void deleteEngineData(Integer userId) {
-        Optional<EngineDTO> engineDTOOptional = this.engineRep.findById(userId);
-        if (!engineDTOOptional.isPresent()) {
+        //checkValidUserId(userId);
+        this.engineRep.deleteEngineByUserId(userId);
+    }
+
+    private void checkValidUserId(int userId) {
+        Optional<Engine> enginengineOptional = this.engineRep.findById(userId);
+        if (!enginengineOptional.isPresent()) {
             throw new EntityNotFoundException("Engine Data for user id: " + userId + " not found!");
         }
-        this.engineRep.deleteEngineByUserId(userId);
     }
 }

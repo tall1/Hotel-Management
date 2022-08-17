@@ -13,6 +13,11 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityNotFoundException;
+import javax.sql.DataSource;
+import javax.transaction.Transactional;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,9 +30,10 @@ public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final HotelRepository hotelRepository;
     private final FeatureRepository featureRepository;
+    private DataSource dataSource;
 
     @PostConstruct
-    public void init453534() {
+    public void init453534() throws SQLException {
         // here put any after construction operations
         System.out.println("RoomServiceImpl: @PostConstruct");
     }
@@ -38,10 +44,11 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Autowired
-    public RoomServiceImpl(RoomRepository roomRepository, HotelRepository hotelRepository, FeatureRepository featureRepository) {
+    public RoomServiceImpl(RoomRepository roomRepository, HotelRepository hotelRepository, FeatureRepository featureRepository, DataSource dataSource) {
         this.roomRepository = roomRepository;
         this.hotelRepository = hotelRepository;
         this.featureRepository = featureRepository;
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -55,14 +62,14 @@ public class RoomServiceImpl implements RoomService {
     @Override
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public RoomDTO getRoomById(int roomId) {
-        checkRoomExists(roomId); // throws exception if not.
+        checkValidRoomId(roomId); // throws exception if not.
         return convertRoomToRoomDto(this.roomRepository.findById(roomId).get());
     }
 
     @Override
     public void updateRoom(RoomDTO roomDTO) {
-        checkRoomExists(roomDTO.getId()); // throws exception if not.
-        roomRepository.save(convertRoomDtoToRoom(roomDTO,true));
+        checkValidRoomId(roomDTO.getId()); // throws exception if not.
+        roomRepository.save(convertRoomDtoToRoom(roomDTO, true));
     }
 
     @Override
@@ -72,9 +79,17 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void deleteRoom(int id) {
-        checkRoomExists(id); // throws exception if not.
-        this.roomRepository.deleteById(id);
+    @Transactional
+    public void deleteRoom(int roomId) throws SQLException {
+        //checkValidRoomId(roomId); // throws exception if not.
+        this.roomRepository.deleteRoomByRoomId(roomId);
+        deleteFromRelationTable(roomId);
+    }
+
+    private void deleteFromRelationTable(int roomId) throws SQLException {
+        Connection connection = dataSource.getConnection();
+        Statement statement = connection.createStatement();
+        statement.executeUpdate("delete from room_feature where room_id = " + roomId);
     }
 
     private RoomDTO convertRoomToRoomDto(Room room) {
@@ -125,10 +140,8 @@ public class RoomServiceImpl implements RoomService {
         return hotelOpt.get();
     }
 
-    private void checkRoomExists(int roomId) {
+    private void checkValidRoomId(int roomId) {
         Optional<Room> roomOpt = this.roomRepository.findById(roomId);
-        if(!roomOpt.isPresent()){
-            throw new EntityNotFoundException("Room with id " + roomId + " not found");
-        }
+        roomOpt.orElseThrow(() -> new EntityNotFoundException("Room with id " + roomId + " not found"));
     }
 }

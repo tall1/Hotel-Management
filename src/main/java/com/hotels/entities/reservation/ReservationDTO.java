@@ -20,12 +20,12 @@ public class ReservationDTO {
     private int guestsAmount;
     private String checkin;
     private String checkout;
-    private List<Integer> importanceList = new ArrayList<>((int) (FeatureCounter.getAmountOfFeatures())); // index = feature id, value = importance
+    private List<Integer> importanceList = new ArrayList<>((int) (FeatureCounter.getAmountOfFeatures() + 1) ); // index = feature id, value = importance
 
     @JsonIgnore
     public void setImportanceListByReservationFeatureList(List<ReservationFeature> reservationFeatures) {
         // Initialize:
-        for (int i = 0; i < reservationFeatures.size(); i++) {
+        for (int i = 0; i <= reservationFeatures.size(); i++) {
             this.importanceList.add(-1);
         }
         // Set reservationFeatureIds: index = featureId, value = importance

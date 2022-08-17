@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(int userId) {
-        checkValidUserId(userId);
+        //checkValidUserId(userId);
         userRepository.deleteUserById(userId);
     }
 
