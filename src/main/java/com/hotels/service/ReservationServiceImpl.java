@@ -9,6 +9,7 @@ import com.hotels.repository.FeatureRepository;
 import com.hotels.repository.HotelRepository;
 import com.hotels.repository.ReservationFeatureRepository;
 import com.hotels.repository.ReservationRepository;
+import com.hotels.utils.FeatureCounter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,41 +61,36 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public ReservationDTO getReservationByReservationNum(int resNum) {
-        checkValidREservationNumber(resNum); // if not - throws exception
+        validReservationNumberOrElseThrow(resNum); // if not - throws exception
         return convertReservationToReservationDto(reservationRepository.findById(resNum).get());
     }
 
     @Override
     public void insertReservation(ReservationDTO reservationDTO) {
         Optional<Hotel> hotelOpt = this.hotelRepository.findById(reservationDTO.getHotelId());
-        if (!hotelOpt.isPresent()) {
-            throw new EntityNotFoundException("Hotel with id " + reservationDTO.getHotelId() + "not found.");
-        }
-        Reservation reservation = createReservationFromReservationDto(reservationDTO, false);
+        hotelOpt.orElseThrow(() -> new EntityNotFoundException("Hotel with id " + reservationDTO.getHotelId() + "not found."));
+        Reservation reservation = toReservation(reservationDTO, false);
         this.reservationRepository.save(reservation);
         this.reservationFeatureRepository.saveAll(reservation.getReservationFeatures());
     }
 
     @Override
     public void updateReservation(ReservationDTO reservationDTO) {
-        checkValidREservationNumber(reservationDTO.getReservationNumber()); // if not - throws exception
-        Reservation reservation = createReservationFromReservationDto(reservationDTO, true);
+        validReservationNumberOrElseThrow(reservationDTO.getReservationNumber()); // if not - throws exception
+        Reservation reservation = toReservation(reservationDTO, true);
         this.reservationRepository.save(reservation);
         this.reservationFeatureRepository.saveAll(reservation.getReservationFeatures());
     }
 
     @Override
     public void deleteReservation(Integer resNum) {
-        //checkValidREservationNumber(resNum); // if not - throws exception
-        this.reservationRepository.deleteById(resNum);
+        this.reservationRepository.deleteReservationByReservationNumber(resNum);
         this.reservationFeatureRepository.deleteReservationFeatureByReservationNumber(resNum);
     }
 
-    private void checkValidREservationNumber(int reservationNum) {
+    private void validReservationNumberOrElseThrow(int reservationNum) {
         Optional<Reservation> reservationOpt = this.reservationRepository.findById(reservationNum);
-        if (!reservationOpt.isPresent()) {
-            throw new EntityNotFoundException("Reservation number: " + reservationNum + " not found.");
-        }
+        reservationOpt.orElseThrow(() -> new EntityNotFoundException("Reservation number: " + reservationNum + " not found."));
     }
 
     private ReservationDTO convertReservationToReservationDto(Reservation reservation) {
@@ -110,7 +106,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    private Reservation createReservationFromReservationDto(ReservationDTO reservationDTO, boolean setReservationNumber) {
+    private Reservation toReservation(ReservationDTO reservationDTO, boolean setReservationNumber) {
         Reservation reservation = new Reservation();
         if (setReservationNumber) {
             reservation.setReservationNumber(reservationDTO.getReservationNumber());
@@ -127,10 +123,10 @@ public class ReservationServiceImpl implements ReservationService {
     private List<ReservationFeature> createReservationFeatureListFromReservationDto(ReservationDTO reservationDTO, Reservation reservation, boolean setId) {
         List<ReservationFeature> reservationFeatures = new ArrayList<>();
 
-        for (int i = 1; i <= reservationDTO.getImportanceList().size(); i++) {
+        for (int i = 1; i <= FeatureCounter.getAmountOfFeatures(); i++) {
             Optional<Feature> featureOptional = this.featureRepository.findById(i);
             int finalI = i;
-            featureOptional.orElseThrow(()-> new EntityNotFoundException("Feature with id: " + finalI + " not found."));
+            featureOptional.orElseThrow(() -> new EntityNotFoundException("Feature with id: " + finalI + " not found."));
             ReservationFeature reservationFeature = new ReservationFeature();
             if (setId) {
                 reservationFeature.setId(this.reservationFeatureRepository.findReservationFeatureIdByResNumAndFeatureId(reservationDTO.getReservationNumber(), i));

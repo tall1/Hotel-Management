@@ -22,7 +22,6 @@ public class SpringBootHelloWorldTests {
     @Autowired
     private TestRestTemplate restTemplate;
 
-
     @Test
     public void greetingShouldReturnDefaultMessage() {
         UserDTO userDto = this.restTemplate.getForObject("http://localhost:" + port + "/users/1", UserDTO.class);

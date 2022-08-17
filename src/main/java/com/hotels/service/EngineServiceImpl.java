@@ -1,6 +1,7 @@
 package com.hotels.service;
 
 import com.hotels.entities.engine.Engine;
+import com.hotels.entities.user.User;
 import com.hotels.repository.EngineRepository;
 import com.hotels.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,8 @@ public class EngineServiceImpl implements EngineService {
 
     @Override
     public void insertEngineData(Engine engine) {
-        if (!this.userRepository.findById(engine.getUserId()).isPresent()) {
-            throw new EntityNotFoundException("User with id: " + engine.getUserId() + " not found!");
-        }
+        Optional<User> userOpt = this.userRepository.findById(engine.getUserId());
+        userOpt.orElseThrow(() -> new EntityNotFoundException("User with id: " + engine.getUserId() + " not found!"));
         this.engineRep.save(engine);
     }
 
@@ -45,14 +45,11 @@ public class EngineServiceImpl implements EngineService {
     @Override
     @Transactional
     public void deleteEngineData(Integer userId) {
-        //checkValidUserId(userId);
         this.engineRep.deleteEngineByUserId(userId);
     }
 
     private void checkValidUserId(int userId) {
-        Optional<Engine> enginengineOptional = this.engineRep.findById(userId);
-        if (!enginengineOptional.isPresent()) {
-            throw new EntityNotFoundException("Engine Data for user id: " + userId + " not found!");
-        }
+        Optional<Engine> engineOptional = this.engineRep.findById(userId);
+        engineOptional.orElseThrow(() -> new EntityNotFoundException("Engine Data for user id: " + userId + " not found!"));
     }
 }

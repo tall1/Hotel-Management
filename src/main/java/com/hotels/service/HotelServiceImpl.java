@@ -70,9 +70,7 @@ public class HotelServiceImpl implements HotelService {
     @Transactional
     public void insertHotel(HotelDTO hotelDTO) {
         Optional<User> userOpt = this.userRepository.findById(hotelDTO.getAdminId());
-        if (!userOpt.isPresent()) {
-            throw new EntityNotFoundException("User with id " + hotelDTO.getAdminId() + " not found.");
-        }
+        userOpt.orElseThrow(() -> new EntityNotFoundException("User with id " + hotelDTO.getAdminId() + " not found."));
         Hotel hotel = createHotelFromHotelDto(hotelDTO, false); // Id is generated automatically
         hotelRepository.save(hotel);
         userOpt.get().setHotel(hotel);
@@ -82,14 +80,12 @@ public class HotelServiceImpl implements HotelService {
     @Override
     @Transactional
     public void deleteHotel(int hotelId) {
-        //checkValidHotelId(hotelId);
         hotelRepository.deleteHotelById(hotelId);
     }
 
     private void checkValidHotelId(int hotelId) {
-        if (!this.hotelRepository.findById(hotelId).isPresent()) {
-            throw new EntityNotFoundException("Hotel with id " + hotelId + " not found.");
-        }
+        Optional<Hotel> hotelOpt = this.hotelRepository.findById(hotelId);
+        hotelOpt.orElseThrow(() -> new EntityNotFoundException("Hotel with id " + hotelId + " not found."));
     }
 
     private HotelDTO convertHotelToDto(Hotel hotel) {
@@ -120,9 +116,7 @@ public class HotelServiceImpl implements HotelService {
 
     private User getAdmin(HotelDTO hotelDTO) {
         Optional<User> adminOpt = this.userRepository.findById(hotelDTO.getAdminId());
-        if (!adminOpt.isPresent()) {
-            throw new EntityNotFoundException("Admin " + hotelDTO.getAdminId());
-        }
+        adminOpt.orElseThrow(() -> new EntityNotFoundException("Admin with id: " + hotelDTO.getAdminId() + " not found."));
         return adminOpt.get();
     }
 }

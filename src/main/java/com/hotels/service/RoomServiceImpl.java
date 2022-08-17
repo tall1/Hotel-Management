@@ -30,10 +30,10 @@ public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final HotelRepository hotelRepository;
     private final FeatureRepository featureRepository;
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     @PostConstruct
-    public void init453534() throws SQLException {
+    public void init453534()  {
         // here put any after construction operations
         System.out.println("RoomServiceImpl: @PostConstruct");
     }
@@ -81,7 +81,6 @@ public class RoomServiceImpl implements RoomService {
     @Override
     @Transactional
     public void deleteRoom(int roomId) throws SQLException {
-        //checkValidRoomId(roomId); // throws exception if not.
         this.roomRepository.deleteRoomByRoomId(roomId);
         deleteFromRelationTable(roomId);
     }
@@ -124,9 +123,7 @@ public class RoomServiceImpl implements RoomService {
         allFeatures.sort(Comparator.comparingInt(Feature::getId));
         for (Integer featureId : featureIdList) {
             Optional<Feature> featureOpt = this.featureRepository.findById(featureId);
-            if (!featureOpt.isPresent()) {
-                throw new EntityNotFoundException("Feature id " + featureId + " not found.");
-            }
+            featureOpt.orElseThrow(() -> new EntityNotFoundException("Feature id " + featureId + " not found."));
             featureList.add(featureOpt.get());
         }
         return featureList;
@@ -134,9 +131,7 @@ public class RoomServiceImpl implements RoomService {
 
     private Hotel getHotelByHotelId(int hotelId) {
         Optional<Hotel> hotelOpt = this.hotelRepository.findById(hotelId);
-        if (!hotelOpt.isPresent()) {
-            throw new EntityNotFoundException("Hotel with id " + hotelId + " not found.");
-        }
+        hotelOpt.orElseThrow(() -> new EntityNotFoundException("Hotel with id " + hotelId + " not found."));
         return hotelOpt.get();
     }
 

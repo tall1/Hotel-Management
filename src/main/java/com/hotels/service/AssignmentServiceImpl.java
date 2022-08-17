@@ -74,18 +74,13 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     private EngineProperties getEnginePropertiesByUserId(Integer userId) throws EntityNotFoundException {
         Optional<Engine> engine = this.engineRep.findById(userId);
-        if (!engine.isPresent()) {
-            throw new EntityNotFoundException("Engine properties not found!");
-        }
-        // Retrieve EngineProps from Engine:
+        engine.orElseThrow(() -> new EntityNotFoundException("Engine properties for user "+ userId + " not found!"));
         return new EngineProperties(engine.get());
     }
 
     private int findHotelByUserId(Integer userId) throws EntityNotFoundException {
         Optional<Integer> hotelIdOpt = this.userRep.findHotelIdByUserId(userId);
-        if (!hotelIdOpt.isPresent()) {
-            throw new EntityNotFoundException("User not found!");
-        }
+        hotelIdOpt.orElseThrow(() -> new EntityNotFoundException("AssignmentServiceImpl: User with id " + userId + " not found!"));
         return hotelIdOpt.get();
     }
 
@@ -104,17 +99,13 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     private LocalDate getReservationCheckoutDateByResNum(int reservationNum) throws EntityNotFoundException {
         Optional<LocalDate> checkoutOpt = reservationRep.findCheckoutDateByReservationNumber(reservationNum);
-        if (!checkoutOpt.isPresent()) {
-            throw new EntityNotFoundException("Reservation" + reservationNum);
-        }
+        checkoutOpt.orElseThrow(() -> new EntityNotFoundException("Reservation" + reservationNum));
         return checkoutOpt.get();
     }
 
     private Integer getRoomIdByHotelIdAndRoomNumber(int hotelId, int roomNum) throws EntityNotFoundException {
         Optional<Integer> roomIdOpt = roomRepository.findRoomByRoomNumberAndHotelId(hotelId, roomNum);
-        if (!roomIdOpt.isPresent()) {
-            throw new EntityNotFoundException("Room " + roomNum + " in hotel " + hotelId);
-        }
+        roomIdOpt.orElseThrow(() -> new EntityNotFoundException("Room " + roomNum + " in hotel " + hotelId));
         return roomIdOpt.get();
     }
 }
