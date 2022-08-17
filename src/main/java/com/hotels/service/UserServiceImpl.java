@@ -3,6 +3,7 @@ package com.hotels.service;
 import com.hotels.entities.hotel.Hotel;
 import com.hotels.entities.user.User;
 import com.hotels.entities.user.UserDTO;
+import com.hotels.repository.EngineRepository;
 import com.hotels.repository.HotelRepository;
 import com.hotels.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final HotelRepository hotelRepository;
+    private final EngineRepository engineRepository;
 
     @PostConstruct
     public void init453534() {
@@ -31,9 +34,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, HotelRepository hotelRepository) {
+    public UserServiceImpl(UserRepository userRepository, HotelRepository hotelRepository, EngineRepository engineRepository) {
         this.userRepository = userRepository;
         this.hotelRepository = hotelRepository;
+        this.engineRepository = engineRepository;
     }
 
     @Override
@@ -67,16 +71,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(int userId) {
-        checkValidUserId(userId);
-        userRepository.deleteUserById(userId);
+        userRepository.deleteById(userId); // Also deletes hotel.
+        engineRepository.deleteEngineByUserId(userId);
     }
 
     private void checkValidUserId(int userId) {
         Optional<User> userOpt = userRepository.findById(userId);
-        if (!userOpt.isPresent()) {
-            throw new EntityNotFoundException("User with id " + userId + " not found.");
-        }
+        userOpt.orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found."));
     }
 
     private User convertDtoToUser(UserDTO userDTO, boolean setId) {

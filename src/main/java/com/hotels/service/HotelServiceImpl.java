@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,32 +53,24 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public HotelDTO getHotelById(int id) {
-        Optional<Hotel> hotelOpt = hotelRepository.findById(id);
-        if (hotelOpt.isPresent()) {
-            return convertHotelToDto(hotelOpt.get());
-        }
-        throw new EntityNotFoundException("Hotel " + id + " not found.");
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    public HotelDTO getHotelById(int hotelId) {
+        checkValidHotelId(hotelId);
+        return convertHotelToDto(this.hotelRepository.findById(hotelId).get());
     }
 
     @Override
     public void updateHotel(HotelDTO hotelDTO) {
-        if (!this.hotelRepository.findById(hotelDTO.getId()).isPresent()) {
-            throw new EntityNotFoundException("Hotel with id " + hotelDTO.getId() + " not found.");
-        }
-        if (!this.userRepository.findById(hotelDTO.getAdminId()).isPresent()) {
-            throw new EntityNotFoundException("User with id " + hotelDTO.getAdminId() + " not found.");
-        }
+        checkValidHotelId(hotelDTO.getId());
         Hotel hotel = createHotelFromHotelDto(hotelDTO, true);
         hotelRepository.save(hotel);
     }
 
     @Override
+    @Transactional
     public void insertHotel(HotelDTO hotelDTO) {
         Optional<User> userOpt = this.userRepository.findById(hotelDTO.getAdminId());
-        if (!userOpt.isPresent()) {
-            throw new EntityNotFoundException("User with id " + hotelDTO.getAdminId() + " not found.");
-        }
+        userOpt.orElseThrow(() -> new EntityNotFoundException("User with id " + hotelDTO.getAdminId() + " not found."));
         Hotel hotel = createHotelFromHotelDto(hotelDTO, false); // Id is generated automatically
         hotelRepository.save(hotel);
         userOpt.get().setHotel(hotel);
@@ -85,8 +78,14 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public void deleteHotel(int id) {
-        hotelRepository.deleteHotelById(id);
+    @Transactional
+    public void deleteHotel(int hotelId) {
+        hotelRepository.deleteHotelById(hotelId);
+    }
+
+    private void checkValidHotelId(int hotelId) {
+        Optional<Hotel> hotelOpt = this.hotelRepository.findById(hotelId);
+        hotelOpt.orElseThrow(() -> new EntityNotFoundException("Hotel with id " + hotelId + " not found."));
     }
 
     private HotelDTO convertHotelToDto(Hotel hotel) {
@@ -117,9 +116,7 @@ public class HotelServiceImpl implements HotelService {
 
     private User getAdmin(HotelDTO hotelDTO) {
         Optional<User> adminOpt = this.userRepository.findById(hotelDTO.getAdminId());
-        if (!adminOpt.isPresent()) {
-            throw new EntityNotFoundException("Admin " + hotelDTO.getAdminId());
-        }
+        adminOpt.orElseThrow(() -> new EntityNotFoundException("Admin with id: " + hotelDTO.getAdminId() + " not found."));
         return adminOpt.get();
     }
 }

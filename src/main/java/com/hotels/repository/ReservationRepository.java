@@ -2,6 +2,7 @@ package com.hotels.repository;
 
 import com.hotels.entities.reservation.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -20,4 +21,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
 
     @Query(value = "select checkout from reservation r where r.reservation_number = :reservation_number", nativeQuery = true)
     Optional<LocalDate> findCheckoutDateByReservationNumber(@Param("reservation_number") Integer resNum);
+
+    @Modifying
+    @Query(value = "DELETE FROM hoteldb.reservation WHERE reservation_number = :res_num", nativeQuery = true)
+    void deleteReservationByReservationNumber(@Param("res_num") int resNum);
 }

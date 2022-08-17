@@ -32,19 +32,19 @@ public class EngineProperties {
         );
     }
 
-    public EngineProperties(EngineDTO eDto) {
-        mutationProb = new Probability(eDto.getMutationProb());
+    public EngineProperties(Engine engine) {
+        mutationProb = new Probability(engine.getMutationProb());
         this.selectionStrategy =
                 getSelectionStrategy(
-                        eDto.getSelectionStrategy(), eDto.getSelecDouble());
+                        engine.getSelectionStrategy(), engine.getSelecDouble());
         this.termCond =
                 getTerminationConditions(
-                        eDto.getTerminationInts(),
-                        eDto.getMaxDuration(),
-                        eDto.getGenerationCount(),
-                        eDto.getGenerationLimit(),
-                        eDto.getNaturalFitness(),
-                        eDto.getTargetFitness()
+                        engine.getTerminationInts(),
+                        engine.getMaxDuration(),
+                        engine.getGenerationCount(),
+                        engine.getGenerationLimit(),
+                        engine.getNaturalFitness(),
+                        engine.getTargetFitness()
                 );
     }
 

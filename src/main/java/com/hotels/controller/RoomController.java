@@ -46,7 +46,7 @@ public class RoomController {
     }
 
     @DeleteMapping
-    public void deleteRoom(int id) throws EntityNotFoundException {
+    public void deleteRoom(int id) throws Exception {
         roomService.deleteRoom(id);
     }
 }
