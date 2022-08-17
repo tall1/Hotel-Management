@@ -9,7 +9,7 @@ import java.util.List;
 public interface UserService {
      List<UserDTO> getAll() throws EntityNotFoundException;
      UserDTO getUserById(int id) throws  EntityNotFoundException;
-     void insertUser(UserDTO userDTO) throws EntityNotFoundException;
+     void insertUser(UserDTO userDTO) throws Exception;
      void updateUser(UserDTO userDTO) throws EntityNotFoundException;
      void deleteUser(int userId) throws EntityNotFoundException;
 }
