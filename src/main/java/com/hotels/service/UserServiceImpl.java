@@ -57,6 +57,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int getUserIdByEmail(String email) throws EntityNotFoundException {
+        Optional<Integer> userIdOpt = this.userRepository.findUserIdByEmail(email);
+        return userIdOpt.orElseThrow(() -> new EntityNotFoundException("User with email: " + email + " not found."));
+    }
+
+    @Override
     public void insertUser(UserDTO userDTO) {
         if (this.userRepository.findAmountOfEmails(userDTO.getEmail()) > 0) {
             throw new EmailAlreadyExistsException("Email address: " + userDTO.getEmail() + " already exists.");

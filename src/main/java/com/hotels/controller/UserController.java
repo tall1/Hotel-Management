@@ -1,7 +1,6 @@
 package com.hotels.controller;
 
 import com.hotels.entities.user.UserDTO;
-import com.hotels.exceptions.ResourceNotFoundException;
 import com.hotels.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +25,18 @@ public class UserController {
 
     //    localhost:8080/api/v1/person/get1/5
     @GetMapping("/{userId}")
-    public UserDTO getUserById(@PathVariable int userId) throws ResourceNotFoundException {
+    public UserDTO getUserById(@PathVariable int userId) throws EntityNotFoundException {
         return userService.getUserById(userId);
+    }
+
+    @GetMapping("/get_id_by_email")
+    public int getUserIdByEmail(@RequestParam String email) throws EntityNotFoundException {
+        return userService.getUserIdByEmail(email);
     }
 
     /*//http://localhost:8080/api/v1/person/get2?id=5
     @GetMapping
-    public User getPersonById2(int id) throws EntityNotFoundException{
+    public User getPersonById2(@RequestParam int id) throws EntityNotFoundException{
         return userService.getPersonById(id);
     }*/
 
