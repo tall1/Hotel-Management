@@ -3,6 +3,7 @@ package com.hotels.service;
 import com.hotels.entities.hotel.Hotel;
 import com.hotels.entities.user.User;
 import com.hotels.entities.user.UserDTO;
+import com.hotels.exceptions.EmailAlreadyExistsException;
 import com.hotels.repository.EngineRepository;
 import com.hotels.repository.HotelRepository;
 import com.hotels.repository.UserRepository;
@@ -56,8 +57,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int getUserIdByEmail(String email) throws EntityNotFoundException {
+        Optional<Integer> userIdOpt = this.userRepository.findUserIdByEmail(email);
+        return userIdOpt.orElseThrow(() -> new EntityNotFoundException("User with email: " + email + " not found."));
+    }
+
+    @Override
+    public boolean verifyEmailPass(String email, String password) {
+        return this.userRepository.findAmountOfEmailAndPasswordCombinations(email, password) > 0;
+    }
+
+    @Override
     public void insertUser(UserDTO userDTO) {
-        userRepository.save(convertDtoToUser(userDTO, false));
+        if (this.userRepository.findAmountOfEmails(userDTO.getEmail()) > 0) {
+            throw new EmailAlreadyExistsException("Email address: " + userDTO.getEmail() + " already exists.");
+        }
+        userRepository.save(toUser(userDTO, false));
     }
 
 
@@ -65,7 +80,7 @@ public class UserServiceImpl implements UserService {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void updateUser(UserDTO userDTO) {
         checkValidUserId(userDTO.getId());
-        User user = convertDtoToUser(userDTO, true);
+        User user = toUser(userDTO, true);
         user.setPassword(this.userRepository.findById(user.getId()).get().getPassword());
         userRepository.save(user);
     }
@@ -82,15 +97,15 @@ public class UserServiceImpl implements UserService {
         userOpt.orElseThrow(() -> new EntityNotFoundException("User with id " + userId + " not found."));
     }
 
-    private User convertDtoToUser(UserDTO userDTO, boolean setId) {
+    private User toUser(UserDTO userDTO, boolean setId) {
         User user = new User();
         if (setId) {
             user.setId(userDTO.getId());
         }
         user.setEmail(userDTO.getEmail());
         user.setPassword(userDTO.getPassword());
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
+        /*user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());*/
         user.setHotel(getHotelByHotelId(userDTO.getHotelId()));
         return user;
     }
@@ -106,8 +121,8 @@ public class UserServiceImpl implements UserService {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setEmail(user.getEmail());
-        userDTO.setFirstName(user.getFirstName());
-        userDTO.setLastName(user.getLastName());
+        /*userDTO.setFirstName(user.getFirstName());
+        userDTO.setLastName(user.getLastName());*/
         userDTO.setHotelId(user.getHotel().getId());
         return userDTO;
     }

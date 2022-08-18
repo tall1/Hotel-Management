@@ -1,7 +1,6 @@
 package com.hotels.controller;
 
 import com.hotels.entities.user.UserDTO;
-import com.hotels.exceptions.ResourceNotFoundException;
 import com.hotels.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,30 +23,40 @@ public class UserController {
         return this.userService.getAll();
     }
 
-//    localhost:8080/api/v1/person/get1/5
+    //    localhost:8080/api/v1/person/get1/5
     @GetMapping("/{userId}")
-    public UserDTO getUserById(@PathVariable int userId) throws  ResourceNotFoundException {
+    public UserDTO getUserById(@PathVariable int userId) throws EntityNotFoundException {
         return userService.getUserById(userId);
+    }
+
+    @GetMapping("/get_id_by_email")
+    public int getUserIdByEmail(@RequestParam String email) throws EntityNotFoundException {
+        return userService.getUserIdByEmail(email);
+    }
+
+    @GetMapping("/verify_email_password")
+    public boolean verifyUserPass(@RequestParam String email, @RequestParam String password) {
+        return userService.verifyEmailPass(email, password);
     }
 
     /*//http://localhost:8080/api/v1/person/get2?id=5
     @GetMapping
-    public User getPersonById2(int id) throws EntityNotFoundException{
+    public User getPersonById2(@RequestParam int id) throws EntityNotFoundException{
         return userService.getPersonById(id);
     }*/
 
     @PostMapping
-    public void insertUser(@RequestBody UserDTO userDTO) throws EntityNotFoundException{
+    public void insertUser(@RequestBody UserDTO userDTO) throws Exception {
         userService.insertUser(userDTO);
     }
 
     @PutMapping
-    public void updateUser(@RequestBody UserDTO userDTO) throws EntityNotFoundException{
+    public void updateUser(@RequestBody UserDTO userDTO) throws EntityNotFoundException {
         userService.updateUser(userDTO);
     }
 
     @DeleteMapping
-    public void deleteUser(int id) throws EntityNotFoundException{
+    public void deleteUser(int id) throws EntityNotFoundException {
         userService.deleteUser(id);
     }
 }
