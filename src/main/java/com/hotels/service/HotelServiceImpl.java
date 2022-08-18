@@ -71,7 +71,7 @@ public class HotelServiceImpl implements HotelService {
     public void insertHotel(HotelDTO hotelDTO) {
         Optional<User> userOpt = this.userRepository.findById(hotelDTO.getAdminId());
         userOpt.orElseThrow(() -> new EntityNotFoundException("User with id " + hotelDTO.getAdminId() + " not found."));
-        Hotel hotel = createHotelFromHotelDto(hotelDTO, false); // Id is generated automatically
+        Hotel hotel = createHotelFromHotelDto(hotelDTO, false); // id is generated automatically
         hotelRepository.save(hotel);
         userOpt.get().setHotel(hotel);
         userRepository.save(userOpt.get());
