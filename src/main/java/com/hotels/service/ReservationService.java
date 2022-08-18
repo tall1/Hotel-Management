@@ -9,6 +9,7 @@ public interface ReservationService {
      List<ReservationDTO> getAll() throws EntityNotFoundException;
      ReservationDTO getReservationByReservationNum(int resNum) throws EntityNotFoundException;
      void insertReservation(ReservationDTO reservationDTO) throws EntityNotFoundException;
+     void insertReservations(List<ReservationDTO> reservationDTO) throws EntityNotFoundException;
      void updateReservation(ReservationDTO reservationDTO) throws EntityNotFoundException;
      void deleteReservation(Integer resNum) throws EntityNotFoundException;
 }

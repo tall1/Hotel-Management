@@ -33,7 +33,7 @@ public class RoomServiceImpl implements RoomService {
     private final DataSource dataSource;
 
     @PostConstruct
-    public void init453534()  {
+    public void init453534() {
         // here put any after construction operations
         System.out.println("RoomServiceImpl: @PostConstruct");
     }
@@ -67,15 +67,24 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void updateRoom(RoomDTO roomDTO) {
-        checkValidRoomId(roomDTO.getId()); // throws exception if not.
-        roomRepository.save(convertRoomDtoToRoom(roomDTO, true));
-    }
-
-    @Override
     public void insertRoom(RoomDTO roomDTO) {
         Room room = convertRoomDtoToRoom(roomDTO, false);
         roomRepository.save(room);
+    }
+
+    @Override
+    public void insertRooms(List<RoomDTO> roomsDTOs) throws EntityNotFoundException {
+        List<Room> roomsList = new ArrayList<>();
+        for (RoomDTO roomDTO : roomsDTOs) {
+            roomsList.add(convertRoomDtoToRoom(roomDTO, false));
+        }
+        this.roomRepository.saveAll(roomsList);
+    }
+
+    @Override
+    public void updateRoom(RoomDTO roomDTO) {
+        checkValidRoomId(roomDTO.getId()); // throws exception if not.
+        roomRepository.save(convertRoomDtoToRoom(roomDTO, true));
     }
 
     @Override

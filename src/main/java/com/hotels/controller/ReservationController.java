@@ -29,15 +29,14 @@ public class ReservationController {
         return reservationService.getReservationByReservationNum(reservationNumber);
     }
 
-    /*//http://localhost:8080/api/v1/person/get2?id=5
-    @GetMapping
-    public Reservation getPersonById2(int id) throws EntityNotFoundException{
-        return reservationService.getPersonById(id);
-    }*/
-
-    @PostMapping
+    @PostMapping("/insert/reservation")
     public void insertReservation(@RequestBody ReservationDTO reservationDTO) throws EntityNotFoundException {
         reservationService.insertReservation(reservationDTO);
+    }
+
+    @PostMapping("/insert/reservation_list")
+    public void insertReservations(@RequestBody List<ReservationDTO> reservationsDTOs) throws EntityNotFoundException {
+        reservationService.insertReservations(reservationsDTOs);
     }
 
     @PutMapping
