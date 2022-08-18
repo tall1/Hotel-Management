@@ -34,6 +34,11 @@ public class UserController {
         return userService.getUserIdByEmail(email);
     }
 
+    @GetMapping("/verify_email_password")
+    public boolean verifyUserPass(@RequestParam String email, @RequestParam String password) {
+        return userService.verifyEmailPass(email, password);
+    }
+
     /*//http://localhost:8080/api/v1/person/get2?id=5
     @GetMapping
     public User getPersonById2(@RequestParam int id) throws EntityNotFoundException{

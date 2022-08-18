@@ -17,7 +17,7 @@ public class ControllerExceptionHandler {
 
   @ExceptionHandler(EntityNotFoundException.class)
   @ResponseStatus(value = HttpStatus.NOT_FOUND)
-  public ErrorMessage resourceNotFoundException(EntityNotFoundException ex) {
+  public ErrorMessage entityNotFoundException(EntityNotFoundException ex) {
     return new ErrorMessage(ex.getMessage());
   }
 

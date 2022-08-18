@@ -63,6 +63,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean verifyEmailPass(String email, String password) {
+        return this.userRepository.findAmountOfEmailAndPasswordCombinations(email, password) > 0;
+    }
+
+    @Override
     public void insertUser(UserDTO userDTO) {
         if (this.userRepository.findAmountOfEmails(userDTO.getEmail()) > 0) {
             throw new EmailAlreadyExistsException("Email address: " + userDTO.getEmail() + " already exists.");

@@ -19,4 +19,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query(value = "select count(*) from hoteldb.user u where u.email = :email", nativeQuery = true)
     int findAmountOfEmails(@Param("email") String email);
+
+    @Query(value = "select count(*) from hoteldb.user u where u.email = :email and u.password = :password", nativeQuery = true)
+    int findAmountOfEmailAndPasswordCombinations(@Param("email") String email, @Param("password") String password);
 }
