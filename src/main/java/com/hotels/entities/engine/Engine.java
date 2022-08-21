@@ -1,6 +1,7 @@
 package com.hotels.entities.engine;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hotels.entities.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,8 +15,14 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Engine {
     @Id
-    @Column(name = "user_id")
-    private Integer userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "task_id")
+    private long taskId;
+    @ManyToOne
+    @JoinColumn(name="user_id", nullable=false)
+    private User user;
+    @Column(name = "status")
+    private String status;
     @Column(name = "mutation_prob")
     private Double mutationProb;
     @Column(name = "selection_strategy")
@@ -74,5 +81,8 @@ public class Engine {
         return termConds;
     }
 
-
+    @JsonIgnore
+    public int getUserId() {
+        return this.user.getId();
+    }
 }
