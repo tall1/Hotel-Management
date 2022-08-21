@@ -1,11 +1,12 @@
 package com.hotels.controller;
 
-import com.hotels.entities.engine.Engine;
+import com.hotels.entities.engine.EngineDTO;
 import com.hotels.service.EngineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/engine")
@@ -17,25 +18,35 @@ public class EngineController {
         this.engineService = engineService;
     }
 
+    @GetMapping("/{taskId}")
+    public EngineDTO getEngine(@PathVariable Long taskId) throws EntityNotFoundException {
+        return engineService.getEngineByTaskId(taskId);
+    }
+
     //    localhost:8080/api/v1/person/get1/5
-    @GetMapping("/{userId}")
-    public Engine getEngine(@PathVariable Integer userId) throws EntityNotFoundException {
-        return engineService.getEngineDataByUserId(userId);
+    @GetMapping("/get_engines_by_user/{userId}")
+    public List<EngineDTO> getEngines(@PathVariable Integer userId) throws EntityNotFoundException {
+        return engineService.getEnginesByUserId(userId);
     }
 
     @PostMapping
-    public void insertEngineProperties(@RequestBody Engine engine) throws EntityNotFoundException {
-        engineService.insertEngineData(engine);
+    public long insertEngineProperties(@RequestBody EngineDTO engineDTO) throws EntityNotFoundException {
+        return engineService.insertEngineData(engineDTO);
     }
 
     @PutMapping
-    public void updateEngineProperties(@RequestBody Engine engine) throws EntityNotFoundException {
-        engineService.updateEngineData(engine);
+    public void updateEngineProperties(@RequestBody EngineDTO engineDTO) throws EntityNotFoundException {
+        engineService.updateEngineData(engineDTO);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/delete_by_task")
+    public void deleteEngineProperties(Long taskId) throws EntityNotFoundException {
+        engineService.deleteEngineDataByTaskId(taskId);
+    }
+
+    @DeleteMapping("/delete_by_user")
     public void deleteEngineProperties(Integer userId) throws EntityNotFoundException {
-        engineService.deleteEngineData(userId);
+        engineService.deleteEngineDataByUserId(userId);
     }
 }
 

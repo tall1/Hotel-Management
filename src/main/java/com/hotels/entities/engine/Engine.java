@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "engine")
@@ -17,12 +18,14 @@ public class Engine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "task_id")
-    private long taskId;
+    private Long taskId;
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
     private User user;
     @Column(name = "status")
     private String status;
+    @Column(name = "date")
+    private LocalDate date;
     @Column(name = "mutation_prob")
     private Double mutationProb;
     @Column(name = "selection_strategy")

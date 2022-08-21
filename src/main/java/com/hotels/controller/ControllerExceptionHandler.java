@@ -1,5 +1,6 @@
 package com.hotels.controller;
 
+import com.hotels.exceptions.CannotUpdateTaskNotNewException;
 import com.hotels.exceptions.EmailAlreadyExistsException;
 import org.springdoc.api.ErrorMessage;
 import org.springframework.http.HttpStatus;
@@ -31,5 +32,11 @@ public class ControllerExceptionHandler {
   @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
   public ErrorMessage emailAlreadyExistsException(EmailAlreadyExistsException ex) {
     return new ErrorMessage("Email already exists: " + ex.getMessage());
+  }
+
+  @ExceptionHandler(CannotUpdateTaskNotNewException.class)
+  @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)
+  public ErrorMessage cannotUpdateTaskNotNewException(CannotUpdateTaskNotNewException ex) {
+    return new ErrorMessage(ex.getMessage());
   }
 }

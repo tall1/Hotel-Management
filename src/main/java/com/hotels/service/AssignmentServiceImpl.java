@@ -73,9 +73,11 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     private EngineProperties getEnginePropertiesByUserId(Integer userId) throws EntityNotFoundException {
-        Optional<Engine> engine = this.engineRep.findById(userId);
-        engine.orElseThrow(() -> new EntityNotFoundException("Engine properties for user "+ userId + " not found!"));
-        return new EngineProperties(engine.get());
+        List<Engine> engines = this.engineRep.findEnginesByUserId(userId);
+        if (engines.size() == 0) {
+            throw new EntityNotFoundException("Engine properties for user " + userId + " not found!");
+        }
+        return new EngineProperties(engines.get(0)); // TODO: Handle this..
     }
 
     private int findHotelByUserId(Integer userId) throws EntityNotFoundException {
