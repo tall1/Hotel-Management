@@ -1,6 +1,7 @@
 package com.hotels.entities.engine;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hotels.entities.hotel.Hotel;
 import com.hotels.entities.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,9 @@ public class Engine {
     @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
     private User user;
+    @ManyToOne
+    @JoinColumn(name="hotel_id")
+    private Hotel hotel;
     @Column(name = "status")
     private String status;
     @Column(name = "date")

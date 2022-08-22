@@ -12,6 +12,8 @@ import com.hotels.entities.roomreservationfeature.ReservationFeature;
 import com.hotels.entities.room.Room;
 import com.hotels.entities.hotel.Hotel;
 import com.hotels.entities.engine.EngineProperties;
+import com.hotels.exceptions.EmptyReservationListException;
+import com.hotels.exceptions.EmptyRoomListException;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 import org.uncommons.watchmaker.framework.*;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
@@ -28,7 +30,7 @@ public class Main {
     private final static int numOfReservations = 20;
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         List<Room> roomList = new ArrayList<>();
         List<Reservation> resList = new ArrayList<>();
         init(roomList, resList);
@@ -37,6 +39,12 @@ public class Main {
     }
 
     public static Assignment getAssignment(EngineProperties ep, List<Room> roomList, List<Reservation> resList) {
+        if (roomList.size() == 0) {
+            throw new EmptyRoomListException();
+        }
+        if (resList.size() == 0) {
+            throw new EmptyReservationListException();
+        }
         Lobby lobby = new Lobby(roomList, resList);
         CandidateFactory<Assignment> factory = new AssignmentFactory(lobby);
         EvolutionaryOperator<Assignment> pipeline = getPipeline(ep, lobby);

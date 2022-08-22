@@ -2,11 +2,13 @@ package com.hotels.service;
 
 import com.hotels.entities.engine.Engine;
 import com.hotels.entities.engine.EngineDTO;
-import com.hotels.entities.enums.TaskStatus;
+import com.hotels.entities.hotel.Hotel;
 import com.hotels.entities.user.User;
 import com.hotels.exceptions.CannotUpdateTaskNotNewException;
 import com.hotels.repository.EngineRepository;
+import com.hotels.repository.HotelRepository;
 import com.hotels.repository.UserRepository;
+import com.hotels.utils.MyConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,11 +26,13 @@ public class EngineServiceImpl implements EngineService {
     Boolean naturalFitness;
     private final EngineRepository engineRep;
     private final UserRepository userRepository;
+    private final HotelRepository hotelRepository;
 
     @Autowired
-    public EngineServiceImpl(EngineRepository engineRep, UserRepository userRepository) {
+    public EngineServiceImpl(EngineRepository engineRep, UserRepository userRepository, HotelRepository hotelRepository) {
         this.engineRep = engineRep;
         this.userRepository = userRepository;
+        this.hotelRepository = hotelRepository;
     }
 
     @Override
@@ -51,6 +55,8 @@ public class EngineServiceImpl implements EngineService {
     public long insertEngineData(EngineDTO engineDTO) {
         Optional<User> userOpt = this.userRepository.findById(engineDTO.getUserId());
         userOpt.orElseThrow(() -> new EntityNotFoundException("User with id: " + engineDTO.getUserId() + " not found!"));
+        Optional<Hotel> hotelOpt = this.hotelRepository.findById(userOpt.get().getHotel().getId());
+        hotelOpt.orElseThrow(() -> new EntityNotFoundException("Hotel with id " + userOpt.get().getHotel().getId() + " not found."));
         Engine savedEngine = this.engineRep.save(toEngine(engineDTO, false));
         return savedEngine.getTaskId();
     }
@@ -59,8 +65,7 @@ public class EngineServiceImpl implements EngineService {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     public void updateEngineData(EngineDTO engineDTO) {
         Optional<Engine> engineOpt = this.engineRep.findById(engineDTO.getTaskId());
-
-        if (engineOpt.get().getStatus().compareToIgnoreCase(TaskStatus.NEW.getStatusName()) != 0) {
+        if (engineOpt.get().getStatus().compareToIgnoreCase(MyConstants.TASK_NEW) != 0) {
             throw new CannotUpdateTaskNotNewException("Task number " + engineDTO.getTaskId() + " is not new. Can't update in progress\\running tasks.");
         }
         this.engineRep.save(toEngine(engineDTO, true));
@@ -83,15 +88,17 @@ public class EngineServiceImpl implements EngineService {
         if (setTaskId) {
             engine.setTaskId(engineDTO.getTaskId());
         }
-        engine.setUser(this.userRepository.findById(engineDTO.getUserId()).get());
-        engine.setStatus(TaskStatus.NEW.getStatusName());
+        User user = this.userRepository.findById(engineDTO.getUserId()).get();
+        engine.setUser(user);
+        engine.setHotel(user.getHotel());
+        engine.setStatus(MyConstants.TASK_NEW);
         engine.setDate(LocalDate.parse(engineDTO.getDate()));
         engine.setNaturalFitness(this.naturalFitness);
         engine.setMutationProb(engineDTO.getMutationProb());
         engine.setSelectionStrategy(engineDTO.getSelectionStrategy());
         engine.setSelecDouble(engineDTO.getSelecdouble());
         engine.setMaxDuration(engineDTO.getMaxDuration());
-        engine.setGenerationCount(engine.getGenerationCount());
+        engine.setGenerationCount(engineDTO.getGenerationCount());
         engine.setGenerationLimit(engineDTO.getGenerationLimit());
         engine.setTargetFitness(engineDTO.getTargetFitness());
         engine.setTerminationElapsedTime(engineDTO.getTerminationElapsedTime());

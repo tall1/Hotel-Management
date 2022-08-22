@@ -25,17 +25,15 @@ public class AssignmentMutation implements EvolutionaryOperator<Assignment> {
     }
 
     public AssignmentMutation(Lobby lobby, NumberGenerator<Probability> mutationProbability) {
-        this.rooms = lobby.getRoomArrayList();
-        this.reservations = lobby.getReservationArrayList();
+        this.rooms = lobby.getRoomList();
+        this.reservations = lobby.getReservationList();
         this.mutationProbability = mutationProbability;
     }
 
     public List<Assignment> apply(List<Assignment> selectedCandidates, Random rng) {
         List<Assignment> mutatedPopulation = new ArrayList<>(selectedCandidates.size());
-        Iterator i$ = selectedCandidates.iterator();
 
-        while (i$.hasNext()) {
-            Assignment assignment = (Assignment) i$.next();
+        for (Assignment assignment : selectedCandidates) {
             mutatedPopulation.add(this.mutateAssignment(assignment, rng));
         }
 
