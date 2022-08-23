@@ -17,6 +17,8 @@
     <description>Hotel Management Project</description>
     <properties>
         <java.version>16</java.version>
+        <!-- The main class to start by executing "java -jar" -->
+        <start-class>com.hotels.HotelApplication</start-class>
     </properties>
     <dependencies>
         <dependency>
@@ -82,6 +84,13 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <verbose>true</verbose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.hotels.HotelApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

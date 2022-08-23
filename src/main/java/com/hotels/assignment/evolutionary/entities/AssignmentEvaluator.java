@@ -19,7 +19,8 @@ public class AssignmentEvaluator implements FitnessEvaluator<Assignment> {
     final int DAMAGE_FOR_CAPACITY = 3; // 3
     final int DAMAGE_FOR_REQUEST = 2; // == 12
 
-    /**
+    @Override
+    /*
      * Finds the fitness for every:
      * 1. Room with multiple reservations.
      * 2. Insufficient room.

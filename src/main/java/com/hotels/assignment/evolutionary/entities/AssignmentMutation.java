@@ -1,10 +1,5 @@
 package com.hotels.assignment.evolutionary.entities;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-
 import com.hotels.entities.assignment.Assignment;
 import com.hotels.entities.lobby.Lobby;
 import com.hotels.entities.reservation.Reservation;
@@ -14,6 +9,10 @@ import org.uncommons.maths.number.NumberGenerator;
 import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.EvolutionaryOperator;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class AssignmentMutation implements EvolutionaryOperator<Assignment> {
 
     private final List<Room> rooms;
@@ -21,21 +20,19 @@ public class AssignmentMutation implements EvolutionaryOperator<Assignment> {
     private final NumberGenerator<Probability> mutationProbability;
 
     public AssignmentMutation(Lobby lobby, Probability mutationProbability) {
-        this(lobby, new ConstantGenerator(mutationProbability));
+        this(lobby, new ConstantGenerator<>(mutationProbability));
     }
 
     public AssignmentMutation(Lobby lobby, NumberGenerator<Probability> mutationProbability) {
-        this.rooms = lobby.getRoomArrayList();
-        this.reservations = lobby.getReservationArrayList();
+        this.rooms = lobby.getRoomList();
+        this.reservations = lobby.getReservationList();
         this.mutationProbability = mutationProbability;
     }
 
     public List<Assignment> apply(List<Assignment> selectedCandidates, Random rng) {
         List<Assignment> mutatedPopulation = new ArrayList<>(selectedCandidates.size());
-        Iterator i$ = selectedCandidates.iterator();
 
-        while (i$.hasNext()) {
-            Assignment assignment = (Assignment) i$.next();
+        for (Assignment assignment : selectedCandidates) {
             mutatedPopulation.add(this.mutateAssignment(assignment, rng));
         }
 
@@ -45,7 +42,7 @@ public class AssignmentMutation implements EvolutionaryOperator<Assignment> {
     public Assignment mutateAssignment(Assignment oldAssignment, Random rng) {
         Assignment newAssignment = new Assignment(oldAssignment);
         for (int i = 0; i < newAssignment.getAmountOfReservations(); ++i) {
-            if (((Probability) this.mutationProbability.nextValue()).nextEvent(rng)) {
+            if ((this.mutationProbability.nextValue()).nextEvent(rng)) {
                 Reservation currentReservation = reservations.get(i);
                 Room randomRoom = this.rooms.get(rng.nextInt(this.rooms.size() - 1));
 

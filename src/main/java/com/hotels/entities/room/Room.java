@@ -40,7 +40,7 @@ public class Room {
     @Column(name = "available_date")
     private LocalDate availableDate;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "room_feature",
             joinColumns = {@JoinColumn(name = "room_id")},

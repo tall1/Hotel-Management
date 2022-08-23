@@ -68,20 +68,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void insertUser(UserDTO userDTO) {
+    public int insertUser(UserDTO userDTO) {
         if (this.userRepository.findAmountOfEmails(userDTO.getEmail()) > 0) {
             throw new EmailAlreadyExistsException("Email address: " + userDTO.getEmail() + " already exists.");
         }
-        userRepository.save(toUser(userDTO, false));
+        return userRepository.save(toUser(userDTO, false)).getId(); // Save and return the Id.
     }
 
 
     @Override
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    //@SuppressWarnings("OptionalGetWithoutIsPresent")
     public void updateUser(UserDTO userDTO) {
         checkValidUserId(userDTO.getId());
         User user = toUser(userDTO, true);
-        user.setPassword(this.userRepository.findById(user.getId()).get().getPassword());
+        //user.setPassword(this.userRepository.findById(user.getId()).get().getPassword()); // Why?
         userRepository.save(user);
     }
 
@@ -112,9 +112,7 @@ public class UserServiceImpl implements UserService {
 
     private Hotel getHotelByHotelId(int hotelId) {
         Optional<Hotel> hotelOpt = this.hotelRepository.findById(hotelId);
-        Hotel hotel = new Hotel();
-        hotel.setId(hotelId);
-        return hotelOpt.orElse(null);
+        return hotelOpt.orElse(null); // If not exists, hotel = null.
     }
 
     private UserDTO convertUserToDto(User user) {
@@ -123,7 +121,9 @@ public class UserServiceImpl implements UserService {
         userDTO.setEmail(user.getEmail());
         /*userDTO.setFirstName(user.getFirstName());
         userDTO.setLastName(user.getLastName());*/
-        userDTO.setHotelId(user.getHotel().getId());
+        if (user.getHotel() != null) {
+            userDTO.setHotelId(user.getHotel().getId());
+        }
         return userDTO;
     }
 }

@@ -1,9 +1,15 @@
 package com.hotels.entities.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hotels.entities.engine.Engine;
 import com.hotels.entities.hotel.Hotel;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -26,4 +32,8 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "hotel_id", referencedColumnName = "id")
     private Hotel hotel;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Engine> engine;
 }

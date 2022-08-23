@@ -46,10 +46,10 @@ public class Assignment {
 
     public Map<Room, Integer> getAmountOfReservationsPerRoom() {
         Map<Room, Integer> roomToAmountOfReservationsMap = new HashMap<>(this.getAmountOfRooms());
-        for (Room room : this.lobby.getRoomArrayList()) {
+        for (Room room : this.lobby.getRoomList()) {
             roomToAmountOfReservationsMap.put(room, 0);
         }
-        for (Reservation reservation : this.lobby.getReservationArrayList()) {
+        for (Reservation reservation : this.lobby.getReservationList()) {
             Room room = this.reservationRoomMap.get(reservation);
             Integer currentReservationAmount = roomToAmountOfReservationsMap.get(room);
             roomToAmountOfReservationsMap.put(room, currentReservationAmount + 1);

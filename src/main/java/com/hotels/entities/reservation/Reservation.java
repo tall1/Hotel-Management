@@ -32,7 +32,7 @@ public class Reservation {
     private LocalDate checkin;
     @Column(name = "checkout")
     private LocalDate checkout;
-    @OneToMany(mappedBy = "reservation")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "reservation")
     private List<ReservationFeature> reservationFeatures = new ArrayList<>();
 
 

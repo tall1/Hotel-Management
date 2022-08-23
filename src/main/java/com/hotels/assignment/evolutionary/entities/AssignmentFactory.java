@@ -20,14 +20,9 @@ public class AssignmentFactory extends AbstractCandidateFactory<Assignment> {
         Map<Reservation, Room> assignmentSuggestion = new HashMap<>();
         Room room;
         // Assign random room for each reservation:
-        for (Reservation reservation : lobby.getReservationArrayList()) {
+        for (Reservation reservation : lobby.getReservationList()) {
             room = lobby.getRandomRoom();
             assignmentSuggestion.put(reservation, room);
-            // Enable multiple reservations per room:
-            if(room.getIsAvailable()){
-                room.setAvailableDate(reservation.getCheckout());
-                lobby.addOrRemoveRoomFromAvailable(room);
-            }
         }
         return new Assignment(lobby, assignmentSuggestion);
     }
