@@ -62,7 +62,7 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public void updateHotel(HotelDTO hotelDTO) {
         checkValidHotelId(hotelDTO.getId());
-        Hotel hotel = createHotelFromHotelDto(hotelDTO, true);
+        Hotel hotel = convertDtoToHotel(hotelDTO, true);
         hotelRepository.save(hotel);
     }
 
@@ -71,7 +71,7 @@ public class HotelServiceImpl implements HotelService {
     public void insertHotel(HotelDTO hotelDTO) {
         Optional<User> userOpt = this.userRepository.findById(hotelDTO.getAdminId());
         userOpt.orElseThrow(() -> new EntityNotFoundException("User with id " + hotelDTO.getAdminId() + " not found."));
-        Hotel hotel = createHotelFromHotelDto(hotelDTO, false); // id is generated automatically
+        Hotel hotel = convertDtoToHotel(hotelDTO, false); // id is generated automatically
         hotelRepository.save(hotel);
         userOpt.get().setHotel(hotel);
         userRepository.save(userOpt.get());
@@ -98,7 +98,7 @@ public class HotelServiceImpl implements HotelService {
         return hotelDTO;
     }
 
-    private Hotel createHotelFromHotelDto(HotelDTO hotelDTO, boolean setId) {
+    private Hotel convertDtoToHotel(HotelDTO hotelDTO, boolean setId) {
         Hotel hotel = new Hotel();
         if (setId) {
             hotel.setId(hotelDTO.getId());

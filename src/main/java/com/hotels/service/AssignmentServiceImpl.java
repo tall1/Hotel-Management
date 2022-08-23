@@ -15,7 +15,6 @@ import com.hotels.exceptions.NoAssignmentsForTaskException;
 import com.hotels.repository.*;
 import com.hotels.utils.MyConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.SelectionStrategy;
@@ -65,7 +64,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public AssignmentDTO computeAssignmentByDate(Integer userId, LocalDate date) throws Exception {
+    public AssignmentDTO computeAssignmentByDate(Integer userId, LocalDate date) throws EntityNotFoundException {
         int hotelId = findHotelByUserId(userId);
         Assignment resultAssignment = runEngine(getEnginePropertiesByUserId(userId), date, hotelId);
         AssignmentDTO assignmentDTO = new AssignmentDTO();
@@ -88,22 +87,6 @@ public class AssignmentServiceImpl implements AssignmentService {
         return toDto(assignmentDB.get());
     }
 
-    private AssignmentDTO toDto(AssignmentsDB assignmentsDB) throws EntityNotFoundException {
-        AssignmentDTO assignmentDTO = new AssignmentDTO();
-        Optional<Engine> engineOpt = this.engineRep.findById(assignmentsDB.getTaskId());
-        engineOpt.orElseThrow(() -> new EntityNotFoundException("Task " + assignmentsDB.getTaskId() + " not found."));
-        int hotelId = engineOpt.get().getHotel().getId();
-        Optional<Hotel> hotelOpt = this.hotelRepository.findById(hotelId);
-        hotelOpt.orElseThrow(() -> new EntityNotFoundException("Hotel with id " + hotelId + " not found."));
-        assignmentDTO.setHotelId(hotelId);
-        for (ReservationRoomAssignment reservationRoomAssignment : assignmentsDB.getReservationRoomAssignments()) {
-            assignmentDTO.getReservationRoomMap().put(
-                    Math.toIntExact(reservationRoomAssignment.getReservationNumber()),
-                    Math.toIntExact(reservationRoomAssignment.getRoomId()));
-        }
-        return assignmentDTO;
-    }
-
     @Override
     @Transactional
     public void updateRoomsAvailableDate(AssignmentDTO chosenAssignment) throws EntityNotFoundException {
@@ -117,10 +100,10 @@ public class AssignmentServiceImpl implements AssignmentService {
         }
     }
 
-    @Scheduled(fixedDelay = 3000)
-    public void schedule() {
+    @Override
+    public void runTasks() {
         Optional<Engine> engine;
-        synchronized (this){
+        synchronized (this) {
             // Once in every X seconds, check all the NEW tasks and run them.
             engine = this.engineRep.findMinimumTaskWithStatusNew();
             if (!engine.isPresent()) {
@@ -159,7 +142,23 @@ public class AssignmentServiceImpl implements AssignmentService {
         }
     }
 
-    private Assignment runEngine(EngineProperties engineProperties, LocalDate date, Integer hotelId) throws Exception {
+    private AssignmentDTO toDto(AssignmentsDB assignmentsDB) throws EntityNotFoundException {
+        AssignmentDTO assignmentDTO = new AssignmentDTO();
+        Optional<Engine> engineOpt = this.engineRep.findById(assignmentsDB.getTaskId());
+        engineOpt.orElseThrow(() -> new EntityNotFoundException("Task " + assignmentsDB.getTaskId() + " not found."));
+        int hotelId = engineOpt.get().getHotel().getId();
+        Optional<Hotel> hotelOpt = this.hotelRepository.findById(hotelId);
+        hotelOpt.orElseThrow(() -> new EntityNotFoundException("Hotel with id " + hotelId + " not found."));
+        assignmentDTO.setHotelId(hotelId);
+        for (ReservationRoomAssignment reservationRoomAssignment : assignmentsDB.getReservationRoomAssignments()) {
+            assignmentDTO.getReservationRoomMap().put(
+                    Math.toIntExact(reservationRoomAssignment.getReservationNumber()),
+                    Math.toIntExact(reservationRoomAssignment.getRoomId()));
+        }
+        return assignmentDTO;
+    }
+
+    private Assignment runEngine(EngineProperties engineProperties, LocalDate date, Integer hotelId) {
         List<Room> roomList = roomRepository.findRoomsByHotelIdAndAvailableDate(hotelId, date);
         List<Reservation> reservationList = reservationRep.findReservationsByHotelIdAndCheckinDate(hotelId, date);
 
@@ -195,7 +194,6 @@ public class AssignmentServiceImpl implements AssignmentService {
      * 5. TournamentSelection
      * 6. TruncationSelection
      * */
-
     private SelectionStrategy<Object> getSelectionStrategy(
             Integer selectionStrategyInteger, Double selecDouble) {
         switch (selectionStrategyInteger) {
@@ -213,6 +211,7 @@ public class AssignmentServiceImpl implements AssignmentService {
                 return new RouletteWheelSelection();
         }
     }
+
     /* TerminationCondition Integers:
      * 1. ElapsedTime
      * 2. GenerationCount
@@ -220,7 +219,6 @@ public class AssignmentServiceImpl implements AssignmentService {
      * 4. TargetFitness
      * 5. UserAbort
      * */
-
     private List<TerminationCondition> getTerminationConditions(
             int[] termConds, // Array of the termination conditions ints as described above.
             Long maxDuration, // maxDuration for ElapsedTime.
