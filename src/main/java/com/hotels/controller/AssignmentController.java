@@ -20,18 +20,6 @@ public class AssignmentController {
         this.assignmentService = assignmentService;
     }
 
-    /*//localhost:8080/api/v1/person/get1/5
-    @GetMapping("/{userId}")
-    public AssignmentDTO getAssignment(@PathVariable Integer userId) throws Exception {
-        return assignmentService.computeAssignmentByDate(userId, null);
-    }
-
-    //http://localhost:8080/api/v1/person/get2?id=5
-    @GetMapping("/byDate")
-    public AssignmentDTO getAssignment(int userId, int day, int month, int year) throws Exception {
-        return assignmentService.computeAssignmentByDate(userId, LocalDate.of(year, month, day));
-    }*/
-
     @GetMapping("/get_status/{taskId}")
     public String getStatus(@PathVariable long taskId) throws Exception {
         return assignmentService.getTaskStatus(taskId);

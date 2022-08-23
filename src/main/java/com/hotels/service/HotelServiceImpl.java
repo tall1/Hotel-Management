@@ -80,6 +80,12 @@ public class HotelServiceImpl implements HotelService {
     @Override
     @Transactional
     public void deleteHotel(int hotelId) {
+        Optional<Hotel> hotel = this.hotelRepository.findById(hotelId);
+        if(!hotel.isPresent()){
+            return;
+        }
+        Optional<User> user = this.userRepository.findById(hotel.get().getAdmin().getId());
+        user.ifPresent(u -> u.setHotel(null));
         hotelRepository.deleteHotelById(hotelId);
     }
 

@@ -46,8 +46,8 @@ public class UserController {
     }*/
 
     @PostMapping
-    public void insertUser(@RequestBody UserDTO userDTO) throws Exception {
-        userService.insertUser(userDTO);
+    public int insertUser(@RequestBody UserDTO userDTO) throws Exception {
+        return userService.insertUser(userDTO);
     }
 
     @PutMapping

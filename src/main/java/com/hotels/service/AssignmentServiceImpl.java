@@ -64,16 +64,6 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public AssignmentDTO computeAssignmentByDate(Integer userId, LocalDate date) throws EntityNotFoundException {
-        int hotelId = findHotelByUserId(userId);
-        Assignment resultAssignment = runEngine(getEnginePropertiesByUserId(userId), date, hotelId);
-        AssignmentDTO assignmentDTO = new AssignmentDTO();
-        assignmentDTO.setHotelId(hotelId);
-        assignmentDTO.copyReservationAndRoomIds(resultAssignment.getReservationRoomMap());
-        return assignmentDTO;
-    }
-
-    @Override
     public String getTaskStatus(Long taskId) throws EntityNotFoundException {
         Optional<Engine> engineOpt = this.engineRep.findById(taskId);
         engineOpt.orElseThrow(() -> new EntityNotFoundException("Task " + taskId + " not found."));
@@ -252,14 +242,6 @@ public class AssignmentServiceImpl implements AssignmentService {
         return termList;
     }
 
-    private EngineProperties getEnginePropertiesByUserId(Integer userId) throws EntityNotFoundException {
-        List<Engine> engines = this.engineRep.findEnginesByUserId(userId);
-        if (engines.size() == 0) {
-            throw new EntityNotFoundException("Engine properties for user " + userId + " not found!");
-        }
-        return new EngineProperties(engines.get(0)); // TODO: Handle this..
-    }
-
     private int findHotelByUserId(Integer userId) throws EntityNotFoundException {
         Optional<Integer> hotelIdOpt = this.userRep.findHotelIdByUserId(userId);
         hotelIdOpt.orElseThrow(() -> new EntityNotFoundException("AssignmentServiceImpl: User with id " + userId + " not found!"));
@@ -268,13 +250,13 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     private LocalDate getReservationCheckoutDateByResNum(int reservationNum) throws EntityNotFoundException {
         Optional<LocalDate> checkoutOpt = reservationRep.findCheckoutDateByReservationNumber(reservationNum);
-        checkoutOpt.orElseThrow(() -> new EntityNotFoundException("Reservation" + reservationNum));
+        checkoutOpt.orElseThrow(() -> new EntityNotFoundException("Reservation" + reservationNum + " not found."));
         return checkoutOpt.get();
     }
 
     private Integer getRoomIdByHotelIdAndRoomNumber(int hotelId, int roomNum) throws EntityNotFoundException {
         Optional<Integer> roomIdOpt = roomRepository.findRoomByRoomNumberAndHotelId(hotelId, roomNum);
-        roomIdOpt.orElseThrow(() -> new EntityNotFoundException("Room " + roomNum + " in hotel " + hotelId));
+        roomIdOpt.orElseThrow(() -> new EntityNotFoundException("Room " + roomNum + " in hotel " + hotelId + "not found."));
         return roomIdOpt.get();
     }
 }

@@ -4,11 +4,8 @@ import com.hotels.entities.assignment.AssignmentDTO;
 import com.hotels.exceptions.NoAssignmentsForTaskException;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDate;
 
 public interface AssignmentService {
-
-    AssignmentDTO computeAssignmentByDate(Integer userId, LocalDate date) throws EntityNotFoundException;
 
     AssignmentDTO getAssignment(Long taskId) throws NoAssignmentsForTaskException;
 
