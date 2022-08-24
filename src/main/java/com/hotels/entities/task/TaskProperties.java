@@ -1,4 +1,4 @@
-package com.hotels.entities.engine;
+package com.hotels.entities.task;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,11 +14,11 @@ import java.util.List;
 
 @Getter
 @Setter
-public class EngineProperties {
+public class TaskProperties {
     private Probability mutationProb;
     private SelectionStrategy<Object> selectionStrategy;
     private List<TerminationCondition> termCond;
-    public EngineProperties() {
+    public TaskProperties() {
         mutationProb = new Probability(0.2);
         this.selectionStrategy = getSelectionStrategy(2, 0.51);
         int[] termConds = {1};
@@ -30,22 +30,6 @@ public class EngineProperties {
                 true,
                 1000.0
         );
-    }
-
-    public EngineProperties(Engine engine) {
-        mutationProb = new Probability(engine.getMutationProb());
-        this.selectionStrategy =
-                getSelectionStrategy(
-                        engine.getSelectionStrategy(), engine.getSelecDouble());
-        this.termCond =
-                getTerminationConditions(
-                        engine.getTerminationInts(),
-                        engine.getMaxDuration(),
-                        engine.getGenerationCount(),
-                        engine.getGenerationLimit(),
-                        engine.getNaturalFitness(),
-                        engine.getTargetFitness()
-                );
     }
 
     /* SelectionStrategy Integers:

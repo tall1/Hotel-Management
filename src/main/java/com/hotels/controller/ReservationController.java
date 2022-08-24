@@ -30,13 +30,13 @@ public class ReservationController {
     }
 
     @PostMapping("/insert/reservation")
-    public void insertReservation(@RequestBody ReservationDTO reservationDTO) throws EntityNotFoundException {
-        reservationService.insertReservation(reservationDTO);
+    public int insertReservation(@RequestBody ReservationDTO reservationDTO) throws EntityNotFoundException {
+        return reservationService.insertReservation(reservationDTO);
     }
 
     @PostMapping("/insert/reservation_list")
-    public void insertReservations(@RequestBody List<ReservationDTO> reservationsDTOs) throws EntityNotFoundException {
-        reservationService.insertReservations(reservationsDTOs);
+    public List<Integer> insertReservations(@RequestBody List<ReservationDTO> reservationsDTOs) throws EntityNotFoundException {
+        return reservationService.insertReservations(reservationsDTOs);
     }
 
     @PutMapping

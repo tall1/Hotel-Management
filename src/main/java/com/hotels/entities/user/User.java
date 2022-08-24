@@ -1,7 +1,7 @@
 package com.hotels.entities.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hotels.entities.engine.Engine;
+import com.hotels.entities.task.Task;
 import com.hotels.entities.hotel.Hotel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,5 +35,5 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private List<Engine> engine;
+    private List<Task> task;
 }

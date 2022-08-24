@@ -36,8 +36,8 @@ public class HotelController {
     }*/
 
     @PostMapping
-    public void insertHotel(@RequestBody HotelDTO hotelDTO) throws EntityNotFoundException{
-        hotelService.insertHotel(hotelDTO);
+    public int insertHotel(@RequestBody HotelDTO hotelDTO) throws EntityNotFoundException{
+        return hotelService.insertHotel(hotelDTO);
     }
 
     @PutMapping

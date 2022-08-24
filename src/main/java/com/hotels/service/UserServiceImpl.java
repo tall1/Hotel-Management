@@ -4,7 +4,7 @@ import com.hotels.entities.hotel.Hotel;
 import com.hotels.entities.user.User;
 import com.hotels.entities.user.UserDTO;
 import com.hotels.exceptions.EmailAlreadyExistsException;
-import com.hotels.repository.EngineRepository;
+import com.hotels.repository.TaskRepository;
 import com.hotels.repository.HotelRepository;
 import com.hotels.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final HotelRepository hotelRepository;
-    private final EngineRepository engineRepository;
+    private final TaskRepository taskRepository;
 
     @PostConstruct
     public void init453534() {
@@ -35,10 +35,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, HotelRepository hotelRepository, EngineRepository engineRepository) {
+    public UserServiceImpl(UserRepository userRepository, HotelRepository hotelRepository, TaskRepository taskRepository) {
         this.userRepository = userRepository;
         this.hotelRepository = hotelRepository;
-        this.engineRepository = engineRepository;
+        this.taskRepository = taskRepository;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUser(int userId) {
         userRepository.deleteById(userId); // Also deletes hotel.
-        engineRepository.deleteEngineByUserId(userId);
+        taskRepository.deleteTaskByUserId(userId);
     }
 
     private void checkValidUserId(int userId) {

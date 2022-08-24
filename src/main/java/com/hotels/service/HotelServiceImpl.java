@@ -68,13 +68,14 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     @Transactional
-    public void insertHotel(HotelDTO hotelDTO) {
+    public int insertHotel(HotelDTO hotelDTO) {
         Optional<User> userOpt = this.userRepository.findById(hotelDTO.getAdminId());
         userOpt.orElseThrow(() -> new EntityNotFoundException("User with id " + hotelDTO.getAdminId() + " not found."));
         Hotel hotel = convertDtoToHotel(hotelDTO, false); // id is generated automatically
-        hotelRepository.save(hotel);
+        int newHotelId = hotelRepository.save(hotel).getId();
         userOpt.get().setHotel(hotel);
         userRepository.save(userOpt.get());
+        return newHotelId;
     }
 
     @Override

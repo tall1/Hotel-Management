@@ -6,8 +6,8 @@ import com.hotels.entities.assignment.Assignment;
 import com.hotels.entities.assignment.AssignmentDTO;
 import com.hotels.entities.assignment.db.AssignmentsDB;
 import com.hotels.entities.assignment.db.ReservationRoomAssignment;
-import com.hotels.entities.engine.Engine;
-import com.hotels.entities.engine.EngineProperties;
+import com.hotels.entities.task.Task;
+import com.hotels.entities.task.TaskProperties;
 import com.hotels.entities.hotel.Hotel;
 import com.hotels.entities.reservation.Reservation;
 import com.hotels.entities.room.Room;
@@ -31,7 +31,7 @@ import java.util.*;
 
 @Service
 public class AssignmentServiceImpl implements AssignmentService {
-    private final EngineRepository engineRep;
+    private final TaskRepository taskRep;
     private final RoomRepository roomRepository;
     private final ReservationRepository reservationRep;
     private final UserRepository userRep;
@@ -40,11 +40,11 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Autowired
     public AssignmentServiceImpl(
-            EngineRepository engineRep,
+            TaskRepository taskRep,
             RoomRepository roomRepository,
             ReservationRepository reservationRep,
             UserRepository userRep, AssignmentsRepository assignmentsRepository, HotelRepository hotelRepository) {
-        this.engineRep = engineRep;
+        this.taskRep = taskRep;
         this.roomRepository = roomRepository;
         this.reservationRep = reservationRep;
         this.userRep = userRep;
@@ -65,9 +65,9 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public String getTaskStatus(Long taskId) throws EntityNotFoundException {
-        Optional<Engine> engineOpt = this.engineRep.findById(taskId);
-        engineOpt.orElseThrow(() -> new EntityNotFoundException("Task " + taskId + " not found."));
-        return engineOpt.get().getStatus();
+        Optional<Task> taskOpt = this.taskRep.findById(taskId);
+        taskOpt.orElseThrow(() -> new EntityNotFoundException("Task " + taskId + " not found."));
+        return taskOpt.get().getStatus();
     }
 
     @Override
@@ -92,40 +92,41 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public void runTasks() {
-        Optional<Engine> engine;
+        Optional<Task> task;
         synchronized (this) {
             // Once in every X seconds, check all the NEW tasks and run them.
-            engine = this.engineRep.findMinimumTaskWithStatusNew();
-            if (!engine.isPresent()) {
+            task = this.taskRep.findMinimumTaskWithStatusNew();
+            if (!task.isPresent()) {
                 return; // no new status tasks
             }
-            engine.get().setStatus(MyConstants.TASK_IN_PROGRESS);
-            this.engineRep.save(engine.get());
+            task.get().setStatus(MyConstants.TASK_IN_PROGRESS);
+            this.taskRep.save(task.get());
         }
-        executeNewTask(engine);
-        this.engineRep.save(engine.get());
+        executeNewTask(task);
+        this.taskRep.save(task.get());
     }
 
     @Transactional
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    public void executeNewTask(Optional<Engine> engine) {
+    public void executeNewTask(Optional<Task> task) {
         try {
-            int hotelId = findHotelByUserId(engine.get().getUserId());
-            Assignment assignment = runEngine(getEnginePropertiesByTaskId(engine.get().getTaskId()), engine.get().getDate(), hotelId);
+            int hotelId = findHotelByUserId(task.get().getUserId());
+            Assignment assignment = runEngine(getTaskPropertiesByTaskId(task.get().getTaskId()), task.get().getDate(), hotelId);
             AssignmentsDB assignmentDB = new AssignmentsDB();
             // convert assignment to AssignmentDB
             for (Map.Entry<Reservation, Room> entity : assignment.getReservationRoomMap().entrySet()) {
                 ReservationRoomAssignment reservationRoomAssignment = new ReservationRoomAssignment();
                 reservationRoomAssignment.setAssignment(assignmentDB);
                 reservationRoomAssignment.setReservationNumber((long) entity.getKey().getReservationNumber());
-                reservationRoomAssignment.setRoomId((long) entity.getValue().getId());
+                //reservationRoomAssignment.setRoomId((long) entity.getValue().getId()); // Number or Id?
+                reservationRoomAssignment.setRoomNumber((long) entity.getValue().getRoomNumber());
                 assignmentDB.getReservationRoomAssignments().add(reservationRoomAssignment);
             }
-            assignmentDB.setTaskId(engine.get().getTaskId());
+            assignmentDB.setTaskId(task.get().getTaskId());
             AssignmentEvaluator assignmentEvaluator = new AssignmentEvaluator();
             assignmentDB.setFitness(assignmentEvaluator.getFitness(assignment, null));
             this.assignmentsRepository.save(assignmentDB);
-            engine.get().setStatus(MyConstants.TASK_DONE);
+            task.get().setStatus(MyConstants.TASK_DONE);
             System.out.println(assignment);
         } catch (Exception e) {
             e.printStackTrace();
@@ -134,46 +135,47 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     private AssignmentDTO toDto(AssignmentsDB assignmentsDB) throws EntityNotFoundException {
         AssignmentDTO assignmentDTO = new AssignmentDTO();
-        Optional<Engine> engineOpt = this.engineRep.findById(assignmentsDB.getTaskId());
-        engineOpt.orElseThrow(() -> new EntityNotFoundException("Task " + assignmentsDB.getTaskId() + " not found."));
-        int hotelId = engineOpt.get().getHotel().getId();
+        Optional<Task> taskOpt = this.taskRep.findById(assignmentsDB.getTaskId());
+        taskOpt.orElseThrow(() -> new EntityNotFoundException("Task " + assignmentsDB.getTaskId() + " not found."));
+        int hotelId = taskOpt.get().getHotel().getId();
         Optional<Hotel> hotelOpt = this.hotelRepository.findById(hotelId);
         hotelOpt.orElseThrow(() -> new EntityNotFoundException("Hotel with id " + hotelId + " not found."));
+
         assignmentDTO.setHotelId(hotelId);
         for (ReservationRoomAssignment reservationRoomAssignment : assignmentsDB.getReservationRoomAssignments()) {
             assignmentDTO.getReservationRoomMap().put(
                     Math.toIntExact(reservationRoomAssignment.getReservationNumber()),
-                    Math.toIntExact(reservationRoomAssignment.getRoomId()));
+                    Math.toIntExact(reservationRoomAssignment.getRoomNumber()));
         }
         return assignmentDTO;
     }
 
-    private Assignment runEngine(EngineProperties engineProperties, LocalDate date, Integer hotelId) {
+    private Assignment runEngine(TaskProperties taskProperties, LocalDate date, Integer hotelId) {
         List<Room> roomList = roomRepository.findRoomsByHotelIdAndAvailableDate(hotelId, date);
         List<Reservation> reservationList = reservationRep.findReservationsByHotelIdAndCheckinDate(hotelId, date);
 
         return Main.getAssignment(
-                engineProperties,
+                taskProperties,
                 roomList,
                 reservationList);
     }
 
-    private EngineProperties getEnginePropertiesByTaskId(Long taskId) throws EntityNotFoundException {
-        Optional<Engine> engine = this.engineRep.findById(taskId);
-        engine.orElseThrow(() -> new EntityNotFoundException("Engine properties for task " + taskId + " not found!"));
-        EngineProperties engineProperties = new EngineProperties();
-        engineProperties.setMutationProb(new Probability(engine.get().getMutationProb()));
-        engineProperties.setSelectionStrategy(getSelectionStrategy(engine.get().getSelectionStrategy(), engine.get().getSelecDouble()));
-        engineProperties.setTermCond(
+    private TaskProperties getTaskPropertiesByTaskId(Long taskId) throws EntityNotFoundException {
+        Optional<Task> task = this.taskRep.findById(taskId);
+        task.orElseThrow(() -> new EntityNotFoundException("Task properties for task " + taskId + " not found!"));
+        TaskProperties taskProperties = new TaskProperties();
+        taskProperties.setMutationProb(new Probability(task.get().getMutationProb()));
+        taskProperties.setSelectionStrategy(getSelectionStrategy(task.get().getSelectionStrategy(), task.get().getSelecDouble()));
+        taskProperties.setTermCond(
                 getTerminationConditions(
-                        engine.get().getTerminationInts(),
-                        engine.get().getMaxDuration(),
-                        engine.get().getGenerationCount(),
-                        engine.get().getGenerationLimit(),
-                        engine.get().getNaturalFitness(),
-                        engine.get().getTargetFitness()
+                        task.get().getTerminationInts(),
+                        task.get().getMaxDuration(),
+                        task.get().getGenerationCount(),
+                        task.get().getGenerationLimit(),
+                        task.get().getNaturalFitness(),
+                        task.get().getTargetFitness()
                 ));
-        return engineProperties;
+        return taskProperties;
     }
 
     /* SelectionStrategy Integers:

@@ -19,7 +19,7 @@ public class ReservationRoomAssignment {
     @Column(name = "reservation_number")
     private Long reservationNumber;
     @Column(name = "room_id")
-    private Long roomId;
+    private Long roomNumber;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "assignment_id")
