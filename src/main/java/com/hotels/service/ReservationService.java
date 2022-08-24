@@ -6,7 +6,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 public interface ReservationService {
-     List<ReservationDTO> getAll() throws EntityNotFoundException;
+     List<ReservationDTO> getAll();
      ReservationDTO getReservationByReservationNum(int resNum) throws EntityNotFoundException;
      int insertReservation(ReservationDTO reservationDTO) throws EntityNotFoundException;
      List<Integer> insertReservations(List<ReservationDTO> reservationDTO) throws EntityNotFoundException;

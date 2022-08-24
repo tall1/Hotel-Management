@@ -37,10 +37,6 @@ public class Hotel {
 
     @OneToMany(mappedBy = "hotel")
     @JsonIgnore
-    private List<Task> task;
-
-    @OneToMany(mappedBy = "hotel")
-    @JsonIgnore
     private List<Room> rooms;
 
     @OneToMany(mappedBy = "hotel")
