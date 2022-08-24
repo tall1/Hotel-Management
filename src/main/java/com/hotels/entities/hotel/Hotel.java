@@ -3,7 +3,7 @@ package com.hotels.entities.hotel;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.hotels.entities.engine.Engine;
+import com.hotels.entities.task.Task;
 import com.hotels.entities.reservation.Reservation;
 import com.hotels.entities.room.Room;
 import com.hotels.entities.user.User;
@@ -37,7 +37,7 @@ public class Hotel {
 
     @OneToMany(mappedBy = "hotel")
     @JsonIgnore
-    private List<Engine> engine;
+    private List<Task> task;
 
     @OneToMany(mappedBy = "hotel")
     @JsonIgnore

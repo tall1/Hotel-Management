@@ -11,7 +11,7 @@ import com.hotels.entities.reservation.Reservation;
 import com.hotels.entities.roomreservationfeature.ReservationFeature;
 import com.hotels.entities.room.Room;
 import com.hotels.entities.hotel.Hotel;
-import com.hotels.entities.engine.EngineProperties;
+import com.hotels.entities.task.TaskProperties;
 import com.hotels.exceptions.EmptyReservationListException;
 import com.hotels.exceptions.EmptyRoomListException;
 import org.uncommons.maths.random.MersenneTwisterRNG;
@@ -30,15 +30,15 @@ public class Main {
     private final static int numOfReservations = 20;
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         List<Room> roomList = new ArrayList<>();
         List<Reservation> resList = new ArrayList<>();
         init(roomList, resList);
-        Assignment assignment = Main.getAssignment(new EngineProperties(), roomList, resList);
+        Assignment assignment = Main.getAssignment(new TaskProperties(), roomList, resList);
         System.out.println(assignment);
     }
 
-    public static Assignment getAssignment(EngineProperties ep, List<Room> roomList, List<Reservation> resList) {
+    public static Assignment getAssignment(TaskProperties taskProperties, List<Room> roomList, List<Reservation> resList) {
         if (roomList.size() == 0) {
             throw new EmptyRoomListException();
         }
@@ -47,9 +47,9 @@ public class Main {
         }
         Lobby lobby = new Lobby(roomList, resList);
         CandidateFactory<Assignment> factory = new AssignmentFactory(lobby);
-        EvolutionaryOperator<Assignment> pipeline = getPipeline(ep, lobby);
+        EvolutionaryOperator<Assignment> pipeline = getPipeline(taskProperties, lobby);
         AssignmentEvaluator fitnessEvaluator = new AssignmentEvaluator();
-        SelectionStrategy<Object> selection = ep.getSelectionStrategy();
+        SelectionStrategy<Object> selection = taskProperties.getSelectionStrategy();
         Random rng = new MersenneTwisterRNG();
 
         EvolutionEngine<Assignment> engine = new GenerationalEvolutionEngine<>(
@@ -63,13 +63,13 @@ public class Main {
                 lobby.getAmountOfReservations()
         );
 
-        return runEngine(engine, fitnessEvaluator, maxFitness, ep);
+        return runEngine(engine, fitnessEvaluator, maxFitness, taskProperties);
     }
 
-    private static EvolutionaryOperator<Assignment> getPipeline(EngineProperties ep, Lobby lobby) {
+    private static EvolutionaryOperator<Assignment> getPipeline(TaskProperties taskProperties, Lobby lobby) {
         // Create a pipeline that applies cross-over then mutation.
         List<EvolutionaryOperator<Assignment>> operators = new LinkedList<>();
-        operators.add(new AssignmentMutation(lobby, ep.getMutationProb()));
+        operators.add(new AssignmentMutation(lobby, taskProperties.getMutationProb()));
         operators.add(new AssignmentCrossover());
         return new EvolutionPipeline<>(operators);
     }
@@ -78,14 +78,14 @@ public class Main {
             EvolutionEngine<Assignment> engine,
             AssignmentEvaluator fitnessEvaluator,
             Double maxFitness,
-            EngineProperties ep) {
+            TaskProperties taskProperties) {
         engine.addEvolutionObserver(data ->
                 System.out.printf("Generation %d: Best candidate fitness: %s / %f\n",
                         data.getGenerationNumber(),
                         fitnessEvaluator.getFitness(data.getBestCandidate(), null),
                         maxFitness));
 
-        TerminationCondition[] termCondArr = ep.getTermCond().toArray(new TerminationCondition[0]);
+        TerminationCondition[] termCondArr = taskProperties.getTermCond().toArray(new TerminationCondition[0]);
         // i = population size, i1 = elitism:
         return engine.evolve(50, 5, termCondArr);
     }

@@ -67,18 +67,22 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void insertRoom(RoomDTO roomDTO) {
+    public int insertRoom(RoomDTO roomDTO) {
         Room room = convertRoomDtoToRoom(roomDTO, false);
-        roomRepository.save(room);
+        return roomRepository.save(room).getId();
     }
 
     @Override
-    public void insertRooms(List<RoomDTO> roomsDTOs) throws EntityNotFoundException {
+    public List<Integer> insertRooms(List<RoomDTO> roomsDTOs) throws EntityNotFoundException {
         List<Room> roomsList = new ArrayList<>();
         for (RoomDTO roomDTO : roomsDTOs) {
             roomsList.add(convertRoomDtoToRoom(roomDTO, false));
         }
-        this.roomRepository.saveAll(roomsList);
+        return this.roomRepository.
+                saveAll(roomsList).
+                stream().
+                map(Room::getId).
+                collect(Collectors.toList());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.hotels.entities.engine;
+package com.hotels.entities.task;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hotels.entities.hotel.Hotel;
@@ -11,11 +11,11 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "engine")
+@Table(name = "task")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Engine { // TODO: rename
+public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "task_id")

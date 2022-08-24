@@ -66,26 +66,31 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void insertReservation(ReservationDTO reservationDTO) throws EntityNotFoundException {
+    public int insertReservation(ReservationDTO reservationDTO) throws EntityNotFoundException {
         checkValidHotelOrElseThrow(reservationDTO);
         Reservation reservation = toReservation(reservationDTO, false);
-        this.reservationRepository.save(reservation);
+        int newReservationNum = this.reservationRepository.save(reservation).getReservationNumber();
         this.reservationFeatureRepository.saveAll(reservation.getReservationFeatures());
+        return newReservationNum;
     }
 
     @Override
     @Transactional
-    public void insertReservations(List<ReservationDTO> reservationsDTO) throws EntityNotFoundException {
+    public List<Integer> insertReservations(List<ReservationDTO> reservationsDTO) throws EntityNotFoundException {
         List<Reservation> reservations = new ArrayList<>();
         for (ReservationDTO resDTO : reservationsDTO) {
             checkValidHotelOrElseThrow(resDTO);
             Reservation reservation = toReservation(resDTO, false);
             reservations.add(reservation);
         }
-        this.reservationRepository.saveAll(reservations);
+        List<Integer> resNumList = this.reservationRepository.saveAll(reservations).
+                stream().
+                map(Reservation::getReservationNumber).
+                collect(Collectors.toList());
         for (Reservation reservation : reservations) {
             this.reservationFeatureRepository.saveAll(reservation.getReservationFeatures());
         }
+        return resNumList;
     }
 
     @Override

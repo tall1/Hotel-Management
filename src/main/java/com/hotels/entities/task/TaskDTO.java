@@ -1,4 +1,4 @@
-package com.hotels.entities.engine;
+package com.hotels.entities.task;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class EngineDTO {
+public class TaskDTO {
     private long taskId;
     private int userId;
     private String date;

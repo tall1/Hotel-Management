@@ -36,14 +36,14 @@ public class RoomController {
     }*/
 
     @PostMapping("/insert/room")
-    public void insertRoom(@RequestBody RoomDTO roomDTO) throws EntityNotFoundException {
-        roomService.insertRoom(roomDTO);
+    public int insertRoom(@RequestBody RoomDTO roomDTO) throws EntityNotFoundException {
+        return roomService.insertRoom(roomDTO);
     }
 
 
     @PostMapping("/insert/room_list")
-    public void insertReservations(@RequestBody List<RoomDTO> roomsDTOs) throws EntityNotFoundException {
-        this.roomService.insertRooms(roomsDTOs);
+    public List<Integer> insertReservations(@RequestBody List<RoomDTO> roomsDTOs) throws EntityNotFoundException {
+        return this.roomService.insertRooms(roomsDTOs);
     }
 
     @PutMapping
