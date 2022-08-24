@@ -73,7 +73,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     public AssignmentDTO getAssignment(Long taskId) throws NoAssignmentsForTaskException {
         Optional<AssignmentsDB> assignmentDB = this.assignmentsRepository.findAssignmentByTaskId(taskId);
-        assignmentDB.orElseThrow(() -> new NoAssignmentsForTaskException(taskId.toString()));
+        assignmentDB.orElseThrow(() -> new NoAssignmentsForTaskException("There are no finished assignments for task: " + taskId));
         return toDto(assignmentDB.get());
     }
 
@@ -102,16 +102,15 @@ public class AssignmentServiceImpl implements AssignmentService {
             task.get().setStatus(MyConstants.TASK_IN_PROGRESS);
             this.taskRep.save(task.get());
         }
-        executeNewTask(task);
+        executeNewTask(task.get());
         this.taskRep.save(task.get());
     }
 
     @Transactional
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
-    public void executeNewTask(Optional<Task> task) {
+    public void executeNewTask(Task task) {
         try {
-            int hotelId = findHotelByUserId(task.get().getUserId());
-            Assignment assignment = runEngine(getTaskPropertiesByTaskId(task.get().getTaskId()), task.get().getDate(), hotelId);
+            int hotelId = findHotelByUserId(task.getUserId());
+            Assignment assignment = runEngine(getTaskPropertiesByTaskId(task), task.getDate(), hotelId);
             AssignmentsDB assignmentDB = new AssignmentsDB();
             // convert assignment to AssignmentDB
             for (Map.Entry<Reservation, Room> entity : assignment.getReservationRoomMap().entrySet()) {
@@ -122,11 +121,11 @@ public class AssignmentServiceImpl implements AssignmentService {
                 reservationRoomAssignment.setRoomNumber((long) entity.getValue().getRoomNumber());
                 assignmentDB.getReservationRoomAssignments().add(reservationRoomAssignment);
             }
-            assignmentDB.setTaskId(task.get().getTaskId());
+            assignmentDB.setTaskId(task.getTaskId());
             AssignmentEvaluator assignmentEvaluator = new AssignmentEvaluator();
             assignmentDB.setFitness(assignmentEvaluator.getFitness(assignment, null));
             this.assignmentsRepository.save(assignmentDB);
-            task.get().setStatus(MyConstants.TASK_DONE);
+            task.setStatus(MyConstants.TASK_DONE);
             System.out.println(assignment);
         } catch (Exception e) {
             e.printStackTrace();
@@ -137,11 +136,11 @@ public class AssignmentServiceImpl implements AssignmentService {
         AssignmentDTO assignmentDTO = new AssignmentDTO();
         Optional<Task> taskOpt = this.taskRep.findById(assignmentsDB.getTaskId());
         taskOpt.orElseThrow(() -> new EntityNotFoundException("Task " + assignmentsDB.getTaskId() + " not found."));
-        int hotelId = taskOpt.get().getHotel().getId();
-        Optional<Hotel> hotelOpt = this.hotelRepository.findById(hotelId);
+        long hotelId = taskOpt.get().getHotelId();
+        Optional<Hotel> hotelOpt = this.hotelRepository.findById((int)hotelId);
         hotelOpt.orElseThrow(() -> new EntityNotFoundException("Hotel with id " + hotelId + " not found."));
 
-        assignmentDTO.setHotelId(hotelId);
+        assignmentDTO.setHotelId((int)hotelId);
         for (ReservationRoomAssignment reservationRoomAssignment : assignmentsDB.getReservationRoomAssignments()) {
             assignmentDTO.getReservationRoomMap().put(
                     Math.toIntExact(reservationRoomAssignment.getReservationNumber()),
@@ -160,20 +159,18 @@ public class AssignmentServiceImpl implements AssignmentService {
                 reservationList);
     }
 
-    private TaskProperties getTaskPropertiesByTaskId(Long taskId) throws EntityNotFoundException {
-        Optional<Task> task = this.taskRep.findById(taskId);
-        task.orElseThrow(() -> new EntityNotFoundException("Task properties for task " + taskId + " not found!"));
+    private TaskProperties getTaskPropertiesByTaskId(Task task) throws EntityNotFoundException {
         TaskProperties taskProperties = new TaskProperties();
-        taskProperties.setMutationProb(new Probability(task.get().getMutationProb()));
-        taskProperties.setSelectionStrategy(getSelectionStrategy(task.get().getSelectionStrategy(), task.get().getSelecDouble()));
+        taskProperties.setMutationProb(new Probability(task.getMutationProb()));
+        taskProperties.setSelectionStrategy(getSelectionStrategy(task.getSelectionStrategy(), task.getSelecDouble()));
         taskProperties.setTermCond(
                 getTerminationConditions(
-                        task.get().getTerminationInts(),
-                        task.get().getMaxDuration(),
-                        task.get().getGenerationCount(),
-                        task.get().getGenerationLimit(),
-                        task.get().getNaturalFitness(),
-                        task.get().getTargetFitness()
+                        task.getTerminationInts(),
+                        task.getMaxDuration(),
+                        task.getGenerationCount(),
+                        task.getGenerationLimit(),
+                        task.getNaturalFitness(),
+                        task.getTargetFitness()
                 ));
         return taskProperties;
     }
@@ -187,7 +184,7 @@ public class AssignmentServiceImpl implements AssignmentService {
      * 6. TruncationSelection
      * */
     private SelectionStrategy<Object> getSelectionStrategy(
-            Integer selectionStrategyInteger, Double selecDouble) {
+            Integer selectionStrategyInteger, Double selectionDouble) {
         switch (selectionStrategyInteger) {
             case 1:
                 return new RankSelection();
@@ -196,9 +193,9 @@ public class AssignmentServiceImpl implements AssignmentService {
             case 4:
                 return new StochasticUniversalSampling();
             case 5:
-                return new TournamentSelection(new Probability(selecDouble)); // Has 2 b: 0.5 < d < 1.0
+                return new TournamentSelection(new Probability(selectionDouble)); // Has 2 b: 0.5 < d < 1.0
             case 6:
-                return new TruncationSelection(selecDouble); // Has 2 b: 0.0 < d < 1.0
+                return new TruncationSelection(selectionDouble); // Has 2 b: 0.0 < d < 1.0
             default:
                 return new RouletteWheelSelection();
         }
@@ -212,7 +209,7 @@ public class AssignmentServiceImpl implements AssignmentService {
      * 5. UserAbort
      * */
     private List<TerminationCondition> getTerminationConditions(
-            int[] termConds, // Array of the termination conditions ints as described above.
+            int[] termConditions, // Array of the termination conditions ints as described above.
             Long maxDuration, // maxDuration for ElapsedTime.
             Integer generationCount, // generationCount for GenerationCount.
             Integer generationLimit, // generationLimit for GenerationCount.
@@ -220,7 +217,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             Double targetFitness // targetFitness for TargetFitness.
     ) {
         List<TerminationCondition> termList = new ArrayList<>();
-        for (int i : termConds) {
+        for (int i : termConditions) {
             switch (i) {
                 case 1:
                     termList.add(new ElapsedTime(maxDuration));

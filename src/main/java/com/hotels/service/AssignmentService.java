@@ -9,7 +9,7 @@ public interface AssignmentService {
 
     AssignmentDTO getAssignment(Long taskId) throws NoAssignmentsForTaskException;
 
-    String getTaskStatus(Long taskId) throws Exception;
+    String getTaskStatus(Long taskId) throws EntityNotFoundException;
 
     void updateRoomsAvailableDate(AssignmentDTO chosenAssignment) throws EntityNotFoundException;
 

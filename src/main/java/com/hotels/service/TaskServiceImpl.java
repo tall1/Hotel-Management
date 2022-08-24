@@ -90,7 +90,7 @@ public class TaskServiceImpl implements TaskService {
         }
         User user = this.userRepository.findById(taskDTO.getUserId()).get();
         task.setUser(user);
-        task.setHotel(user.getHotel());
+        task.setHotelId(user.getHotel().getId());
         task.setStatus(MyConstants.TASK_NEW);
         task.setDate(LocalDate.parse(taskDTO.getDate()));
         task.setNaturalFitness(this.naturalFitness);

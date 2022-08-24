@@ -25,9 +25,8 @@ public class Task {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "hotel_id")
-    private Hotel hotel;
+    @Column(name = "hotel_id")
+    private long hotelId;
 
     @Column(name = "status")
     private String status;

@@ -19,7 +19,7 @@ public class ReservationController {
     }
 
     @GetMapping("/")
-    public List<ReservationDTO> getAll() throws EntityNotFoundException {
+    public List<ReservationDTO> getAll() {
         return this.reservationService.getAll();
     }
 
