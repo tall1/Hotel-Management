@@ -79,11 +79,11 @@ public class Main {
             AssignmentEvaluator fitnessEvaluator,
             Double maxFitness,
             TaskProperties taskProperties) {
-        engine.addEvolutionObserver(data ->
+        /*engine.addEvolutionObserver(data ->
                 System.out.printf("Generation %d: Best candidate fitness: %s / %f\n",
                         data.getGenerationNumber(),
                         fitnessEvaluator.getFitness(data.getBestCandidate(), null),
-                        maxFitness));
+                        maxFitness));*/
 
         TerminationCondition[] termCondArr = taskProperties.getTermCond().toArray(new TerminationCondition[0]);
         // i = population size, i1 = elitism:

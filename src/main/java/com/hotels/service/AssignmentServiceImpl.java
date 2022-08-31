@@ -102,8 +102,10 @@ public class AssignmentServiceImpl implements AssignmentService {
             task.get().setStatus(MyConstants.TASK_IN_PROGRESS);
             this.taskRep.save(task.get());
         }
+        //System.out.println("Thread: " + Thread.currentThread().getId() + " started calculation.");
         executeNewTask(task.get());
         this.taskRep.save(task.get());
+        //System.out.println("Thread: " + Thread.currentThread().getId() + " finished calculation.");
     }
 
     @Transactional
