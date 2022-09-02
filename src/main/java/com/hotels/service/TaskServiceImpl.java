@@ -96,7 +96,7 @@ public class TaskServiceImpl implements TaskService {
         task.setNaturalFitness(this.naturalFitness);
         task.setMutationProb(taskDTO.getMutationProb());
         task.setSelectionStrategy(taskDTO.getSelectionStrategy());
-        task.setSelecDouble(taskDTO.getSelecdouble());
+        task.setSelecDouble(taskDTO.getSelecDouble());
         task.setMaxDuration(taskDTO.getMaxDuration());
         task.setGenerationCount(taskDTO.getGenerationCount());
         task.setGenerationLimit(taskDTO.getGenerationLimit());
@@ -116,7 +116,7 @@ public class TaskServiceImpl implements TaskService {
         taskDTO.setDate(task.getDate() != null ? task.getDate().toString() : null);
         taskDTO.setMutationProb(task.getMutationProb());
         taskDTO.setSelectionStrategy(task.getSelectionStrategy());
-        taskDTO.setSelecdouble(task.getSelecDouble());
+        taskDTO.setSelecDouble(task.getSelecDouble());
         taskDTO.setMaxDuration(task.getMaxDuration());
         taskDTO.setGenerationCount(task.getGenerationCount());
         taskDTO.setGenerationLimit(task.getGenerationLimit());

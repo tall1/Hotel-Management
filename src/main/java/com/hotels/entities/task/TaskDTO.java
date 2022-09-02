@@ -13,7 +13,7 @@ public class TaskDTO {
     private String date;
     private double mutationProb;
     private int selectionStrategy;
-    private double selecdouble;
+    private double selecDouble;
     private long maxDuration;
     private int generationCount;
     private int generationLimit;
