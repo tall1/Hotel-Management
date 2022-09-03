@@ -14,6 +14,7 @@ To Install `hoteldb`DB Schema, make sure to have MySql relational DB installed o
 Run command line: <br>
 `mysql -h localhost -uroot -proot  < src\main\resources\DB\Dump20220806.sql`
 
+
 You might have to remove any <br>
 collation: 'utf8mb4_0900_ai_ci' <br>
 collate = 'utf8mb4_0900_ai_ci'
