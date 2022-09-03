@@ -9,6 +9,7 @@ import javax.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping(path = "/assignments")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AssignmentController {
     /*@Value("${times.num}")
     private Integer timesNum;*/
@@ -21,7 +22,7 @@ public class AssignmentController {
     }
 
     @GetMapping("/get_status/{taskId}")
-    public String getStatus(@PathVariable long taskId) throws Exception {
+    public String getStatus(@PathVariable long taskId) throws EntityNotFoundException {
         return assignmentService.getTaskStatus(taskId);
     }
 
