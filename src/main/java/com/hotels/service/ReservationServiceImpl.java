@@ -5,10 +5,7 @@ import com.hotels.entities.hotel.Hotel;
 import com.hotels.entities.reservation.Reservation;
 import com.hotels.entities.reservation.ReservationDTO;
 import com.hotels.entities.roomreservationfeature.ReservationFeature;
-import com.hotels.repository.FeatureRepository;
-import com.hotels.repository.HotelRepository;
-import com.hotels.repository.ReservationFeatureRepository;
-import com.hotels.repository.ReservationRepository;
+import com.hotels.repository.*;
 import com.hotels.utils.FeatureCounter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +27,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final HotelRepository hotelRepository;
     private final FeatureRepository featureRepository;
     private final ReservationFeatureRepository reservationFeatureRepository;
+    private final UserRepository userRepository;
 
     @PostConstruct
     public void init453534() {
@@ -43,11 +41,12 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Autowired
-    public ReservationServiceImpl(ReservationRepository reservationRepository, HotelRepository hotelRepository, FeatureRepository featureRepository, ReservationFeatureRepository reservationFeatureRepository) {
+    public ReservationServiceImpl(ReservationRepository reservationRepository, HotelRepository hotelRepository, FeatureRepository featureRepository, ReservationFeatureRepository reservationFeatureRepository, UserRepository userRepository) {
         this.reservationRepository = reservationRepository;
         this.hotelRepository = hotelRepository;
         this.featureRepository = featureRepository;
         this.reservationFeatureRepository = reservationFeatureRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -56,6 +55,17 @@ public class ReservationServiceImpl implements ReservationService {
                 stream().
                 map(this::convertReservationToReservationDto).
                 collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReservationDTO> getAllByUserId(int userId) throws EntityNotFoundException {
+        Optional<Integer> hotelId = this.userRepository.findHotelIdByUserId(userId);
+        hotelId.orElseThrow(() -> new EntityNotFoundException("User with id: " + userId + " not found."));
+        return this.reservationRepository
+                .findReservationsByHotelId(hotelId.get())
+                .stream()
+                .map(this::convertReservationToReservationDto)
+                .collect(Collectors.toList());
     }
 
     @Override
