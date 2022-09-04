@@ -1,6 +1,7 @@
 package com.hotels.controller;
 
 import com.hotels.entities.assignment.AssignmentDTO;
+import com.hotels.entities.task.status.TaskStatus;
 import com.hotels.service.AssignmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +12,6 @@ import javax.persistence.EntityNotFoundException;
 @RequestMapping(path = "/assignments")
 @CrossOrigin(origins = "http://localhost:3000")
 public class AssignmentController {
-    /*@Value("${times.num}")
-    private Integer timesNum;*/
-
     AssignmentService assignmentService;
 
     @Autowired
@@ -22,7 +20,7 @@ public class AssignmentController {
     }
 
     @GetMapping("/get_status/{taskId}")
-    public String getStatus(@PathVariable long taskId) throws EntityNotFoundException {
+    public TaskStatus getStatus(@PathVariable long taskId) throws EntityNotFoundException {
         return assignmentService.getTaskStatus(taskId);
     }
 

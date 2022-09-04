@@ -11,6 +11,7 @@ import com.hotels.entities.task.TaskProperties;
 import com.hotels.entities.hotel.Hotel;
 import com.hotels.entities.reservation.Reservation;
 import com.hotels.entities.room.Room;
+import com.hotels.entities.task.status.TaskStatus;
 import com.hotels.exceptions.NoAssignmentsForTaskException;
 import com.hotels.repository.*;
 import com.hotels.utils.MyConstants;
@@ -64,10 +65,10 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public String getTaskStatus(Long taskId) throws EntityNotFoundException {
-        Optional<Task> taskOpt = this.taskRep.findById(taskId);
-        taskOpt.orElseThrow(() -> new EntityNotFoundException("Task " + taskId + " not found."));
-        return taskOpt.get().getStatus();
+    public TaskStatus getTaskStatus(Long taskId) throws EntityNotFoundException {
+        Optional<Task> statusOpt = this.taskRep.findById(taskId);
+        statusOpt.orElseThrow(() -> new EntityNotFoundException("Task " + taskId + " status not found."));
+        return statusOpt.get().getStatus();
     }
 
     @Override
@@ -99,7 +100,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             if (!task.isPresent()) {
                 return; // no new status tasks
             }
-            task.get().setStatus(MyConstants.TASK_IN_PROGRESS);
+            task.get().getStatus().setStatusStr(MyConstants.TASK_IN_PROGRESS);
             this.taskRep.save(task.get());
         }
         //System.out.println("Thread: " + Thread.currentThread().getId() + " started calculation.");
@@ -127,7 +128,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             AssignmentEvaluator assignmentEvaluator = new AssignmentEvaluator();
             assignmentDB.setFitness(assignmentEvaluator.getFitness(assignment, null));
             this.assignmentsRepository.save(assignmentDB);
-            task.setStatus(MyConstants.TASK_DONE);
+            task.getStatus().setStatusStr(MyConstants.TASK_DONE);
             System.out.println(assignment);
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,10 +140,10 @@ public class AssignmentServiceImpl implements AssignmentService {
         Optional<Task> taskOpt = this.taskRep.findById(assignmentsDB.getTaskId());
         taskOpt.orElseThrow(() -> new EntityNotFoundException("Task " + assignmentsDB.getTaskId() + " not found."));
         long hotelId = taskOpt.get().getHotelId();
-        Optional<Hotel> hotelOpt = this.hotelRepository.findById((int)hotelId);
+        Optional<Hotel> hotelOpt = this.hotelRepository.findById((int) hotelId);
         hotelOpt.orElseThrow(() -> new EntityNotFoundException("Hotel with id " + hotelId + " not found."));
 
-        assignmentDTO.setHotelId((int)hotelId);
+        assignmentDTO.setHotelId((int) hotelId);
         for (ReservationRoomAssignment reservationRoomAssignment : assignmentsDB.getReservationRoomAssignments()) {
             assignmentDTO.getReservationRoomMap().put(
                     Math.toIntExact(reservationRoomAssignment.getReservationNumber()),
