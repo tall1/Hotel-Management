@@ -35,6 +35,12 @@ public class Task {
     @Column(name = "date")
     private LocalDate date;
 
+    @Column(name = "elitism")
+    private Integer elitism;
+
+    @Column(name = "population_size")
+    private Integer populationSize;
+
     @Column(name = "mutation_prob")
     private Double mutationProb;
 
@@ -52,9 +58,6 @@ public class Task {
 
     @Column(name = "generation_limit")
     private Integer generationLimit;
-
-    @Column(name = "natural_fitness")
-    private Boolean naturalFitness;
 
     @Column(name = "target_fitness")
     private Double targetFitness;

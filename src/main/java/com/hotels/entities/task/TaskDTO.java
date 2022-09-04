@@ -11,6 +11,8 @@ public class TaskDTO {
     private long taskId;
     private int userId;
     private String date;
+    private Integer elitism;
+    private Integer populationSize;
     private double mutationProb;
     private int selectionStrategy;
     private double selecDouble;

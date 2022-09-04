@@ -2,6 +2,7 @@ package com.hotels.entities.task;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.SelectionStrategy;
 import org.uncommons.watchmaker.framework.TerminationCondition;
@@ -15,6 +16,8 @@ import java.util.List;
 @Getter
 @Setter
 public class TaskProperties {
+    @Value("${naturalFitness}")
+    Boolean naturalFitness;
     private Probability mutationProb;
     private SelectionStrategy<Object> selectionStrategy;
     private List<TerminationCondition> termCond;
@@ -27,7 +30,6 @@ public class TaskProperties {
                 5000L,
                 1000,
                 1000,
-                true,
                 1000.0
         );
     }
@@ -70,7 +72,6 @@ public class TaskProperties {
             Long maxDuration, // maxDuration for ElapsedTime.
             Integer generationCount, // generationCount for GenerationCount.
             Integer generationLimit, // generationLimit for GenerationCount.
-            Boolean naturalFitness, // naturalFitness for Stagnation and TargetFitness.
             Double targetFitness // targetFitness for TargetFitness.
     ) {
         List<TerminationCondition> termList = new ArrayList<>();

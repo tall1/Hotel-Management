@@ -16,6 +16,7 @@ import com.hotels.exceptions.NoAssignmentsForTaskException;
 import com.hotels.repository.*;
 import com.hotels.utils.MyConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.SelectionStrategy;
@@ -32,6 +33,8 @@ import java.util.*;
 
 @Service
 public class AssignmentServiceImpl implements AssignmentService {
+    @Value("${naturalFitness}")
+    Boolean naturalFitness;
     private final TaskRepository taskRep;
     private final TaskStatusRepository taskStatusRep;
     private final RoomRepository roomRepository;
@@ -178,7 +181,6 @@ public class AssignmentServiceImpl implements AssignmentService {
                         task.getMaxDuration(),
                         task.getGenerationCount(),
                         task.getGenerationLimit(),
-                        task.getNaturalFitness(),
                         task.getTargetFitness()
                 ));
         return taskProperties;
@@ -222,7 +224,6 @@ public class AssignmentServiceImpl implements AssignmentService {
             Long maxDuration, // maxDuration for ElapsedTime.
             Integer generationCount, // generationCount for GenerationCount.
             Integer generationLimit, // generationLimit for GenerationCount.
-            Boolean naturalFitness, // naturalFitness for Stagnation and TargetFitness.
             Double targetFitness // targetFitness for TargetFitness.
     ) {
         List<TerminationCondition> termList = new ArrayList<>();

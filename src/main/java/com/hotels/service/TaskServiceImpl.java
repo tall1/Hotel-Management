@@ -11,7 +11,6 @@ import com.hotels.repository.TaskRepository;
 import com.hotels.repository.UserRepository;
 import com.hotels.utils.MyConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -23,8 +22,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
-    @Value("${naturalFitness}")
-    Boolean naturalFitness;
     private final TaskRepository taskRep;
     private final UserRepository userRepository;
     private final HotelRepository hotelRepository;
@@ -99,7 +96,8 @@ public class TaskServiceImpl implements TaskService {
         task.setUser(user);
         task.setHotelId(user.getHotel().getId());
         task.setDate(LocalDate.parse(taskDTO.getDate()));
-        task.setNaturalFitness(this.naturalFitness);
+        task.setElitism(taskDTO.getElitism());
+        task.setPopulationSize(taskDTO.getPopulationSize());
         task.setMutationProb(taskDTO.getMutationProb());
         task.setSelectionStrategy(taskDTO.getSelectionStrategy());
         task.setSelecDouble(taskDTO.getSelecDouble());
@@ -124,6 +122,8 @@ public class TaskServiceImpl implements TaskService {
         taskDTO.setTaskId(task.getTaskId());
         taskDTO.setUserId(task.getUserId());
         taskDTO.setDate(task.getDate() != null ? task.getDate().toString() : null);
+        taskDTO.setElitism(task.getElitism());
+        taskDTO.setPopulationSize(task.getPopulationSize());
         taskDTO.setMutationProb(task.getMutationProb());
         taskDTO.setSelectionStrategy(task.getSelectionStrategy());
         taskDTO.setSelecDouble(task.getSelecDouble());
