@@ -7,6 +7,7 @@ import com.hotels.entities.room.RoomDTO;
 import com.hotels.repository.FeatureRepository;
 import com.hotels.repository.HotelRepository;
 import com.hotels.repository.RoomRepository;
+import com.hotels.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
     private final HotelRepository hotelRepository;
     private final FeatureRepository featureRepository;
+    private final UserRepository userRepository;
     private final DataSource dataSource;
 
     @PostConstruct
@@ -44,11 +46,12 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Autowired
-    public RoomServiceImpl(RoomRepository roomRepository, HotelRepository hotelRepository, FeatureRepository featureRepository, DataSource dataSource) {
+    public RoomServiceImpl(RoomRepository roomRepository, HotelRepository hotelRepository, FeatureRepository featureRepository, DataSource dataSource, UserRepository userRepository) {
         this.roomRepository = roomRepository;
         this.hotelRepository = hotelRepository;
         this.featureRepository = featureRepository;
         this.dataSource = dataSource;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -57,6 +60,17 @@ public class RoomServiceImpl implements RoomService {
                 stream().
                 map(this::convertRoomToRoomDto).
                 collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RoomDTO> getAllByUserId(int userId) throws EntityNotFoundException {
+        Optional<Integer> hotelId = this.userRepository.findHotelIdByUserId(userId);
+        hotelId.orElseThrow(() -> new EntityNotFoundException("User with id: " + userId + " not found."));
+        return this.roomRepository
+                .findRoomsByHotelId(hotelId.get())
+                .stream()
+                .map(this::convertRoomToRoomDto)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -24,6 +24,11 @@ public class RoomController {
         return this.roomService.getAll();
     }
 
+    @GetMapping("/get_rooms_by_user_id/{userId}")
+    public List<RoomDTO> getAllByUserId(@PathVariable int userId) throws EntityNotFoundException {
+        return this.roomService.getAllByUserId(userId);
+    }
+
     //    localhost:8080/api/v1/person/get1/5
     @GetMapping("/{roomId}")
     public RoomDTO getRoomById(@PathVariable Integer roomId) throws EntityNotFoundException {
