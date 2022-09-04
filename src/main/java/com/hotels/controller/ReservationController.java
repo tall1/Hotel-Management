@@ -24,6 +24,11 @@ public class ReservationController {
         return this.reservationService.getAll();
     }
 
+    @GetMapping("/get_reservations_by_user_id/{userId}")
+    public List<ReservationDTO> getAllByUserId(@PathVariable int userId) throws EntityNotFoundException {
+        return this.reservationService.getAllByUserId(userId);
+    }
+
     //    localhost:8080/api/v1/person/get1/5
     @GetMapping("/{reservationNumber}")
     public ReservationDTO getReservationById(@PathVariable Integer reservationNumber) throws EntityNotFoundException {
