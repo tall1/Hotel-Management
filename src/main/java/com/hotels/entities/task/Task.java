@@ -1,7 +1,7 @@
 package com.hotels.entities.task;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hotels.entities.hotel.Hotel;
+import com.hotels.entities.task.status.TaskStatus;
 import com.hotels.entities.user.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,11 +28,18 @@ public class Task {
     @Column(name = "hotel_id")
     private long hotelId;
 
-    @Column(name = "status")
-    private String status;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "status_id", referencedColumnName = "status_id")
+    private TaskStatus status;
 
     @Column(name = "date")
     private LocalDate date;
+
+    @Column(name = "elitism")
+    private Integer elitism;
+
+    @Column(name = "population_size")
+    private Integer populationSize;
 
     @Column(name = "mutation_prob")
     private Double mutationProb;
@@ -51,9 +58,6 @@ public class Task {
 
     @Column(name = "generation_limit")
     private Integer generationLimit;
-
-    @Column(name = "natural_fitness")
-    private Boolean naturalFitness;
 
     @Column(name = "target_fitness")
     private Double targetFitness;
