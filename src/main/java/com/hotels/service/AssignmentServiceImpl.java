@@ -165,7 +165,6 @@ public class AssignmentServiceImpl implements AssignmentService {
         List<Reservation> reservationList = reservationRep.findReservationsByHotelIdAndCheckinDate((int) task.getHotelId(), task.getDate());
 
         return Main.getAssignment(
-                task.getTaskId(),
                 convertTaskToTaskProperties(task),
                 roomList,
                 reservationList);
@@ -173,6 +172,9 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     private TaskProperties convertTaskToTaskProperties(Task task) throws EntityNotFoundException {
         TaskProperties taskProperties = new TaskProperties();
+        taskProperties.setTaskId(task.getTaskId());
+        taskProperties.setElitism(task.getElitism());
+        taskProperties.setPopSize(task.getPopulationSize());
         taskProperties.setMutationProb(new Probability(task.getMutationProb()));
         taskProperties.setSelectionStrategy(getSelectionStrategy(task.getSelectionStrategy(), task.getSelecDouble()));
         taskProperties.setTermCond(

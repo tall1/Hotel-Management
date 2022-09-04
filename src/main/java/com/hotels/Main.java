@@ -30,20 +30,18 @@ import java.util.*;
 
 @Component
 public class Main {
-
     private final static int numOfRooms = 30;
     private final static int numOfReservations = 20;
-
 
     public static void main(String[] args) {
         List<Room> roomList = new ArrayList<>();
         List<Reservation> resList = new ArrayList<>();
         init(roomList, resList);
-        Assignment assignment = Main.getAssignment(MyConstants.EMPTY_TASK_ID, new TaskProperties(), roomList, resList);
+        Assignment assignment = Main.getAssignment(new TaskProperties(), roomList, resList);
         System.out.println(assignment);
     }
 
-    public static Assignment getAssignment(long taskId, TaskProperties taskProperties, List<Room> roomList, List<Reservation> resList) {
+    public static Assignment getAssignment(TaskProperties taskProperties, List<Room> roomList, List<Reservation> resList) {
         if (roomList.size() == 0) {
             throw new EmptyRoomListException();
         }
@@ -68,7 +66,7 @@ public class Main {
                 lobby.getAmountOfReservations()
         );
 
-        return runEngine(taskId, engine, fitnessEvaluator, maxFitness, taskProperties);
+        return runEngine(taskProperties, engine, fitnessEvaluator, maxFitness);
     }
 
     private static EvolutionaryOperator<Assignment> getPipeline(TaskProperties taskProperties, Lobby lobby) {
@@ -79,11 +77,11 @@ public class Main {
         return new EvolutionPipeline<>(operators);
     }
 
-    public static Assignment runEngine(long taskId, EvolutionEngine<Assignment> engine, AssignmentEvaluator fitnessEvaluator, Double maxFitness, TaskProperties taskProperties) {
-        addEvolutionObservers(taskId, engine, fitnessEvaluator, maxFitness);
+    public static Assignment runEngine(TaskProperties taskProperties, EvolutionEngine<Assignment> engine, AssignmentEvaluator fitnessEvaluator, Double maxFitness) {
+        addEvolutionObservers(taskProperties.getTaskId(), engine, fitnessEvaluator, maxFitness);
         TerminationCondition[] termCondArr = taskProperties.getTermCond().toArray(new TerminationCondition[0]);
         // i = population size, i1 = elitism:
-        return engine.evolve(50, 5, termCondArr);
+        return engine.evolve(taskProperties.getPopSize(), taskProperties.getElitism(), termCondArr);
     }
 
     private static void addEvolutionObservers(long taskId, EvolutionEngine<Assignment> engine, AssignmentEvaluator fitnessEvaluator, Double maxFitness) {
