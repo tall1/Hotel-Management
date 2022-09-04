@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -90,8 +89,8 @@ public class TaskServiceImpl implements TaskService {
         TaskStatus taskStatus = new TaskStatus();
         taskStatus.setStatusStr(MyConstants.TASK_NEW);
         taskStatus.setBestFitness(0.0);
-        taskStatus.setBeginTime(LocalDateTime.now());
-
+        taskStatus.setCurGeneration(0);
+        taskStatus.setElapsedTime(0L);
         Task task = new Task();
         if (setTaskId) {
             task.setTaskId(taskDTO.getTaskId());

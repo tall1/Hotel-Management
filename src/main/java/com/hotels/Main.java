@@ -1,31 +1,36 @@
 package com.hotels;
 
-import com.hotels.entities.assignment.Assignment;
 import com.hotels.assignment.evolutionary.entities.AssignmentCrossover;
 import com.hotels.assignment.evolutionary.entities.AssignmentEvaluator;
 import com.hotels.assignment.evolutionary.entities.AssignmentFactory;
 import com.hotels.assignment.evolutionary.entities.AssignmentMutation;
-import com.hotels.entities.lobby.Lobby;
+import com.hotels.entities.assignment.Assignment;
 import com.hotels.entities.feature.Feature;
-import com.hotels.entities.reservation.Reservation;
-import com.hotels.entities.roomreservationfeature.ReservationFeature;
-import com.hotels.entities.room.Room;
 import com.hotels.entities.hotel.Hotel;
+import com.hotels.entities.lobby.Lobby;
+import com.hotels.entities.reservation.Reservation;
+import com.hotels.entities.room.Room;
+import com.hotels.entities.roomreservationfeature.ReservationFeature;
+import com.hotels.entities.task.Task;
 import com.hotels.entities.task.TaskProperties;
+import com.hotels.entities.task.status.TaskStatus;
 import com.hotels.exceptions.EmptyReservationListException;
 import com.hotels.exceptions.EmptyRoomListException;
+import com.hotels.repository.TaskRepository;
+import com.hotels.repository.TaskStatusRepository;
+import com.hotels.utils.MyConstants;
+import org.springframework.stereotype.Component;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 import org.uncommons.watchmaker.framework.*;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
-
+@Component
 public class Main {
+
     private final static int numOfRooms = 30;
     private final static int numOfReservations = 20;
 
@@ -34,11 +39,11 @@ public class Main {
         List<Room> roomList = new ArrayList<>();
         List<Reservation> resList = new ArrayList<>();
         init(roomList, resList);
-        Assignment assignment = Main.getAssignment(new TaskProperties(), roomList, resList);
+        Assignment assignment = Main.getAssignment(MyConstants.EMPTY_TASK_ID, new TaskProperties(), roomList, resList);
         System.out.println(assignment);
     }
 
-    public static Assignment getAssignment(TaskProperties taskProperties, List<Room> roomList, List<Reservation> resList) {
+    public static Assignment getAssignment(long taskId, TaskProperties taskProperties, List<Room> roomList, List<Reservation> resList) {
         if (roomList.size() == 0) {
             throw new EmptyRoomListException();
         }
@@ -63,7 +68,7 @@ public class Main {
                 lobby.getAmountOfReservations()
         );
 
-        return runEngine(engine, fitnessEvaluator, maxFitness, taskProperties);
+        return runEngine(taskId, engine, fitnessEvaluator, maxFitness, taskProperties);
     }
 
     private static EvolutionaryOperator<Assignment> getPipeline(TaskProperties taskProperties, Lobby lobby) {
@@ -74,20 +79,33 @@ public class Main {
         return new EvolutionPipeline<>(operators);
     }
 
-    public static Assignment runEngine(
-            EvolutionEngine<Assignment> engine,
-            AssignmentEvaluator fitnessEvaluator,
-            Double maxFitness,
-            TaskProperties taskProperties) {
+    public static Assignment runEngine(long taskId, EvolutionEngine<Assignment> engine, AssignmentEvaluator fitnessEvaluator, Double maxFitness, TaskProperties taskProperties) {
+        addEvolutionObservers(taskId, engine, fitnessEvaluator, maxFitness);
+        TerminationCondition[] termCondArr = taskProperties.getTermCond().toArray(new TerminationCondition[0]);
+        // i = population size, i1 = elitism:
+        return engine.evolve(50, 5, termCondArr);
+    }
+
+    private static void addEvolutionObservers(long taskId, EvolutionEngine<Assignment> engine, AssignmentEvaluator fitnessEvaluator, Double maxFitness) {
         /*engine.addEvolutionObserver(data ->
                 System.out.printf("Generation %d: Best candidate fitness: %s / %f\n",
                         data.getGenerationNumber(),
                         fitnessEvaluator.getFitness(data.getBestCandidate(), null),
                         maxFitness));*/
+        if (taskId != MyConstants.EMPTY_TASK_ID) {
+            engine.addEvolutionObserver(data ->
+            {
+                Optional<Task> taskOpt = MainAccessor.getBean(TaskRepository.class).findById(taskId);
+                taskOpt.orElseThrow(() -> new EntityNotFoundException("Task " + taskId + " status not found for adding evolution observer."));
 
-        TerminationCondition[] termCondArr = taskProperties.getTermCond().toArray(new TerminationCondition[0]);
-        // i = population size, i1 = elitism:
-        return engine.evolve(50, 5, termCondArr);
+                TaskStatus taskStatus = taskOpt.get().getStatus();
+                taskStatus.setBestFitness(data.getBestCandidateFitness());
+                taskStatus.setCurGeneration(data.getGenerationNumber());
+                taskStatus.setElapsedTime(data.getElapsedTime());
+
+                MainAccessor.getBean(TaskStatusRepository.class).save(taskStatus);
+            });
+        }
     }
 
     private static void init(List<Room> rooms, List<Reservation> reservations) {

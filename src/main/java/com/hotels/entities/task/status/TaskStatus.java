@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "status")
@@ -30,6 +29,9 @@ public class TaskStatus {
     @Column(name = "best_fitness")
     private Double bestFitness;
 
-    @Column(name = "begin_time")
-    private LocalDateTime beginTime;
+    @Column(name = "current_generation")
+    private int curGeneration;
+
+    @Column(name = "elapsed_time")
+    private long elapsedTime;
 }
