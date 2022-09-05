@@ -26,8 +26,11 @@ public class TaskStatus {
     @Column(name = "status_str")
     private String statusStr;
 
-    @Column(name = "best_fitness")
-    private Double bestFitness;
+    @Column(name = "max_fitness")
+    private Double maxFitness;
+
+    @Column(name = "cur_fitness")
+    private Double curFitness;
 
     @Column(name = "current_generation")
     private int curGeneration;

@@ -97,7 +97,8 @@ public class Main {
                 taskOpt.orElseThrow(() -> new EntityNotFoundException("Task " + taskId + " status not found for adding evolution observer."));
 
                 TaskStatus taskStatus = taskOpt.get().getStatus();
-                taskStatus.setBestFitness(data.getBestCandidateFitness());
+                taskStatus.setMaxFitness(maxFitness);
+                taskStatus.setCurFitness(data.getBestCandidateFitness());
                 taskStatus.setCurGeneration(data.getGenerationNumber());
                 taskStatus.setElapsedTime(data.getElapsedTime());
 

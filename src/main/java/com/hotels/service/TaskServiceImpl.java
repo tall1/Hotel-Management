@@ -85,7 +85,8 @@ public class TaskServiceImpl implements TaskService {
     private Task toTask(TaskDTO taskDTO, boolean setTaskId) {
         TaskStatus taskStatus = new TaskStatus();
         taskStatus.setStatusStr(MyConstants.TASK_NEW);
-        taskStatus.setBestFitness(0.0);
+        taskStatus.setMaxFitness(0.0);
+        taskStatus.setCurFitness(0.0);
         taskStatus.setCurGeneration(0);
         taskStatus.setElapsedTime(0L);
         Task task = new Task();
