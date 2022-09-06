@@ -50,6 +50,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public List<TaskDTO> getTasksByUserIdAndDate(Integer userId, LocalDate date) {
+        List<Task> tasks = this.taskRep.findTasksByUserIdAndDate(userId, date);
+        return tasks.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional
     public long insertTaskData(TaskDTO taskDTO) {
         Optional<User> userOpt = this.userRepository.findById(taskDTO.getUserId());
@@ -85,10 +91,12 @@ public class TaskServiceImpl implements TaskService {
     private Task toTask(TaskDTO taskDTO, boolean setTaskId) {
         TaskStatus taskStatus = new TaskStatus();
         taskStatus.setStatusStr(MyConstants.TASK_NEW);
+        taskStatus.setProgressPercent(0.0);
         taskStatus.setMaxFitness(0.0);
         taskStatus.setCurFitness(0.0);
         taskStatus.setCurGeneration(0);
         taskStatus.setElapsedTime(0L);
+
         Task task = new Task();
         if (setTaskId) {
             task.setTaskId(taskDTO.getTaskId());

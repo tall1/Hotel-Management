@@ -23,10 +23,14 @@ import org.springframework.stereotype.Component;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 import org.uncommons.watchmaker.framework.*;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
+import org.uncommons.watchmaker.framework.termination.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Supplier;
 
 @Component
 public class Main {
@@ -37,7 +41,7 @@ public class Main {
         List<Room> roomList = new ArrayList<>();
         List<Reservation> resList = new ArrayList<>();
         init(roomList, resList);
-        Assignment assignment = Main.getAssignment(new TaskProperties(), roomList, resList);
+        Assignment assignment = Main.getAssignment(new TaskProperties(true), roomList, resList);
         System.out.println(assignment);
     }
 
@@ -66,7 +70,7 @@ public class Main {
                 lobby.getAmountOfReservations()
         );
 
-        return runEngine(taskProperties, engine, fitnessEvaluator, maxFitness);
+        return runEngine(taskProperties, engine, maxFitness);
     }
 
     private static EvolutionaryOperator<Assignment> getPipeline(TaskProperties taskProperties, Lobby lobby) {
@@ -77,26 +81,51 @@ public class Main {
         return new EvolutionPipeline<>(operators);
     }
 
-    public static Assignment runEngine(TaskProperties taskProperties, EvolutionEngine<Assignment> engine, AssignmentEvaluator fitnessEvaluator, Double maxFitness) {
-        addEvolutionObservers(taskProperties.getTaskId(), engine, fitnessEvaluator, maxFitness);
+    public static Assignment runEngine(TaskProperties taskProperties, EvolutionEngine<Assignment> engine, Double maxFitness) {
+        addEvolutionObservers(taskProperties, engine, maxFitness);
         TerminationCondition[] termCondArr = taskProperties.getTermCond().toArray(new TerminationCondition[0]);
         // i = population size, i1 = elitism:
         return engine.evolve(taskProperties.getPopSize(), taskProperties.getElitism(), termCondArr);
     }
 
-    private static void addEvolutionObservers(long taskId, EvolutionEngine<Assignment> engine, AssignmentEvaluator fitnessEvaluator, Double maxFitness) {
+    private static void addEvolutionObservers(TaskProperties taskProps, EvolutionEngine<Assignment> engine, Double maxFitness) {
         /*engine.addEvolutionObserver(data ->
                 System.out.printf("Generation %d: Best candidate fitness: %s / %f\n",
                         data.getGenerationNumber(),
                         fitnessEvaluator.getFitness(data.getBestCandidate(), null),
                         maxFitness));*/
-        if (taskId != MyConstants.EMPTY_TASK_ID) {
+        if (taskProps.getTaskId() != MyConstants.EMPTY_TASK_ID) {
             engine.addEvolutionObserver(data ->
             {
-                Optional<Task> taskOpt = MainAccessor.getBean(TaskRepository.class).findById(taskId);
-                taskOpt.orElseThrow(() -> new EntityNotFoundException("Task " + taskId + " status not found for adding evolution observer."));
-
+                Optional<Task> taskOpt = MainAccessor.getBean(TaskRepository.class).findById(taskProps.getTaskId());
+                taskOpt.orElseThrow(() -> new EntityNotFoundException("Task " + taskProps.getTaskId() + " status not found for adding evolution observer."));
                 TaskStatus taskStatus = taskOpt.get().getStatus();
+
+                Supplier<Double> calculateProgressPercentage = () -> {
+                    double maxProgressPercent = 0.0;
+                    double percent = 0.0;
+                    for (TerminationCondition termCond : taskProps.getTermCond()) {
+                        String termName = termCond.getClass().getSimpleName();
+                        if (termName.equals(ElapsedTime.class.getSimpleName())) {
+                            percent = ((double) taskStatus.getElapsedTime() / taskProps.getMaxDuration()) * 100.0;
+                        } else if (termName.equals(GenerationCount.class.getSimpleName())) {
+                            percent = ((double) taskStatus.getCurGeneration() / taskProps.getGenerationCount()) * 100.0;
+                        } else if (termName.equals(Stagnation.class.getSimpleName())) {
+                            percent = 0;
+                        } else if (termName.equals(TargetFitness.class.getSimpleName())) {
+                            percent = (taskStatus.getCurFitness() / taskProps.getTargetFitness()) * 100.0;
+                        } else if (termName.equals(UserAbort.class.getSimpleName())) {
+                            percent = 0;
+                        }
+                        maxProgressPercent = Math.max(percent, maxProgressPercent);
+                    }
+                    return maxProgressPercent > 99.0 ? 100.0 : maxProgressPercent;
+                };
+                double roundedDouble = BigDecimal.valueOf(calculateProgressPercentage.get())
+                        .setScale(1, RoundingMode.HALF_UP)
+                        .doubleValue();
+                taskStatus.setProgressPercent(Math.max(taskStatus.getProgressPercent(), roundedDouble));
+                System.out.println("Generation:" + taskStatus.getCurGeneration() + " Percent: " + taskStatus.getProgressPercent());
                 taskStatus.setMaxFitness(maxFitness);
                 taskStatus.setCurFitness(data.getBestCandidateFitness());
                 taskStatus.setCurGeneration(data.getGenerationNumber());

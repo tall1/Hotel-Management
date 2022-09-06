@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -28,6 +29,11 @@ public class TaskController {
     @GetMapping("/get_tasks_by_user/{userId}")
     public List<TaskDTO> getTasks(@PathVariable Integer userId) throws EntityNotFoundException {
         return taskService.getTasksByUserId(userId);
+    }
+
+    @GetMapping("/get_tasks_by_date/")
+    public List<TaskDTO> getTasksByUserAndDate(@RequestParam int userID, @RequestParam String date) {
+        return this.taskService.getTasksByUserIdAndDate(userID, LocalDate.parse(date));
     }
 
     @PostMapping

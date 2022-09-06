@@ -2,6 +2,7 @@ package com.hotels.entities.task;
 
 import com.hotels.utils.MyConstants;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.SelectionStrategy;
@@ -15,28 +16,39 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class TaskProperties {
     private long taskId;
     private int elitism;
     private int popSize;
+    private long maxDuration; // maxDuration for ElapsedTime.
+    private int generationCount; // generationCount for GenerationCount.
+    private int generationLimit; // generationLimit for GenerationCount.
+    private double targetFitness; // targetFitness for TargetFitness.
     private Probability mutationProb;
     private SelectionStrategy<Object> selectionStrategy;
     private List<TerminationCondition> termCond;
 
-    public TaskProperties() {
-        taskId = MyConstants.EMPTY_TASK_ID;
-        elitism = 5;
-        popSize = 50;
-        mutationProb = new Probability(0.2);
-        this.selectionStrategy = getSelectionStrategy(2, 0.51);
-        int[] termConds = {1};
-        this.termCond = getTerminationConditions(
-                termConds,
-                5000L,
-                1000,
-                1000,
-                1000.0
-        );
+    public TaskProperties(boolean defaultProperties) {
+        if(defaultProperties){
+            taskId = MyConstants.EMPTY_TASK_ID;
+            elitism = 5;
+            popSize = 50;
+            maxDuration = 5000L;
+            generationCount = 1000;
+            generationLimit = 1000;
+            targetFitness = 1000.0;
+            mutationProb = new Probability(0.2);
+            this.selectionStrategy = getSelectionStrategy(2, 0.51);
+            int[] termConds = {1};
+            this.termCond = getTerminationConditions(
+                    termConds,
+                    this.maxDuration,
+                    this.generationCount,
+                    this.generationLimit,
+                    this.targetFitness
+            );
+        }
     }
 
     /* SelectionStrategy Integers:
@@ -47,7 +59,7 @@ public class TaskProperties {
      * 5. TournamentSelection
      * 6. TruncationSelection
      * */
-    private SelectionStrategy<Object> getSelectionStrategy(
+    public static SelectionStrategy<Object> getSelectionStrategy(
             Integer selectionStrategyInteger, Double selecDouble) {
         switch (selectionStrategyInteger) {
             case 1:
@@ -72,12 +84,12 @@ public class TaskProperties {
      * 4. TargetFitness
      * 5. UserAbort
      * */
-    private List<TerminationCondition> getTerminationConditions(
+    public static List<TerminationCondition> getTerminationConditions(
             int[] termConds, // Array of the termination conditions ints as described above.
-            Long maxDuration, // maxDuration for ElapsedTime.
-            Integer generationCount, // generationCount for GenerationCount.
-            Integer generationLimit, // generationLimit for GenerationCount.
-            Double targetFitness // targetFitness for TargetFitness.
+            long maxDuration, // maxDuration for ElapsedTime.
+            int generationCount, // generationCount for GenerationCount.
+            int generationLimit, // generationLimit for Stagnation.
+            double targetFitness // targetFitness for TargetFitness.
     ) {
         List<TerminationCondition> termList = new ArrayList<>();
         for (int i : termConds) {
