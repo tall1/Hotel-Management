@@ -26,6 +26,9 @@ public class TaskStatus {
     @Column(name = "status_str")
     private String statusStr;
 
+    @Column(name = "progress_percent")
+    private Double progressPercent;
+
     @Column(name = "max_fitness")
     private Double maxFitness;
 

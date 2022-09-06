@@ -6,11 +6,11 @@ import com.hotels.entities.assignment.Assignment;
 import com.hotels.entities.assignment.AssignmentDTO;
 import com.hotels.entities.assignment.db.AssignmentsDB;
 import com.hotels.entities.assignment.db.ReservationRoomAssignment;
-import com.hotels.entities.task.Task;
-import com.hotels.entities.task.TaskProperties;
 import com.hotels.entities.hotel.Hotel;
 import com.hotels.entities.reservation.Reservation;
 import com.hotels.entities.room.Room;
+import com.hotels.entities.task.Task;
+import com.hotels.entities.task.TaskProperties;
 import com.hotels.entities.task.status.TaskStatus;
 import com.hotels.exceptions.NoAssignmentsForTaskException;
 import com.hotels.repository.*;
@@ -19,17 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.uncommons.maths.random.Probability;
-import org.uncommons.watchmaker.framework.SelectionStrategy;
-import org.uncommons.watchmaker.framework.TerminationCondition;
-import org.uncommons.watchmaker.framework.selection.*;
-import org.uncommons.watchmaker.framework.termination.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AssignmentServiceImpl implements AssignmentService {
@@ -175,10 +173,14 @@ public class AssignmentServiceImpl implements AssignmentService {
         taskProperties.setTaskId(task.getTaskId());
         taskProperties.setElitism(task.getElitism());
         taskProperties.setPopSize(task.getPopulationSize());
+        taskProperties.setMaxDuration(task.getMaxDuration());
+        taskProperties.setGenerationCount(task.getGenerationCount());
+        taskProperties.setGenerationLimit(task.getGenerationLimit());
+        taskProperties.setTargetFitness(task.getTargetFitness());
         taskProperties.setMutationProb(new Probability(task.getMutationProb()));
-        taskProperties.setSelectionStrategy(getSelectionStrategy(task.getSelectionStrategy(), task.getSelecDouble()));
+        taskProperties.setSelectionStrategy(TaskProperties.getSelectionStrategy(task.getSelectionStrategy(), task.getSelecDouble()));
         taskProperties.setTermCond(
-                getTerminationConditions(
+                TaskProperties.getTerminationConditions(
                         task.getTerminationInts(),
                         task.getMaxDuration(),
                         task.getGenerationCount(),
@@ -186,71 +188,6 @@ public class AssignmentServiceImpl implements AssignmentService {
                         task.getTargetFitness()
                 ));
         return taskProperties;
-    }
-
-    /* SelectionStrategy Integers:
-     * 1. RankSelection
-     * 2. RouletteWheelSelection
-     * 3. SigmaScaling
-     * 4. StochasticUniversalSampling
-     * 5. TournamentSelection
-     * 6. TruncationSelection
-     * */
-    private SelectionStrategy<Object> getSelectionStrategy(
-            Integer selectionStrategyInteger, Double selectionDouble) {
-        switch (selectionStrategyInteger) {
-            case 1:
-                return new RankSelection();
-            case 3:
-                return new SigmaScaling();
-            case 4:
-                return new StochasticUniversalSampling();
-            case 5:
-                return new TournamentSelection(new Probability(selectionDouble)); // Has 2 b: 0.5 < d < 1.0
-            case 6:
-                return new TruncationSelection(selectionDouble); // Has 2 b: 0.0 < d < 1.0
-            default:
-                return new RouletteWheelSelection();
-        }
-    }
-
-    /* TerminationCondition Integers:
-     * 1. ElapsedTime
-     * 2. GenerationCount
-     * 3. Stagnation
-     * 4. TargetFitness
-     * 5. UserAbort
-     * */
-    private List<TerminationCondition> getTerminationConditions(
-            int[] termConditions, // Array of the termination conditions ints as described above.
-            Long maxDuration, // maxDuration for ElapsedTime.
-            Integer generationCount, // generationCount for GenerationCount.
-            Integer generationLimit, // generationLimit for GenerationCount.
-            Double targetFitness // targetFitness for TargetFitness.
-    ) {
-        List<TerminationCondition> termList = new ArrayList<>();
-        for (int i : termConditions) {
-            switch (i) {
-                case 1:
-                    termList.add(new ElapsedTime(maxDuration));
-                    break;
-                case 2:
-                    termList.add(new GenerationCount(generationCount));
-                    break;
-                case 3:
-                    termList.add(new Stagnation(generationLimit, naturalFitness));
-                    break;
-                case 4:
-                    termList.add(new TargetFitness(targetFitness, naturalFitness));
-                    break;
-                case 5:
-                    termList.add(new UserAbort());
-                    break;
-                default:
-                    break;
-            }
-        }
-        return termList;
     }
 
     private LocalDate getReservationCheckoutDateByResNum(int reservationNum) throws EntityNotFoundException {
