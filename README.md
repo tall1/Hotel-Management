@@ -12,7 +12,7 @@ This is a MySql relational DB based project.
 this project at src\main\resources\DB\Dump20220806.sql
 To Install `hoteldb`DB Schema, make sure to have MySql relational DB installed on you computer.
 Run command line: <br>
-`mysql -h localhost -uroot -proot  < src\main\resources\DB\Dump20220806.sql`
+`mysql -h localhost -uroot -proot  < src\main\resources\DB\Dump.sql`
 
 
 You might have to remove any <br>
