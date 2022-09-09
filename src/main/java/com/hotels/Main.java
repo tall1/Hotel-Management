@@ -125,7 +125,6 @@ public class Main {
                         .setScale(1, RoundingMode.HALF_UP)
                         .doubleValue();
                 taskStatus.setProgressPercent(Math.max(taskStatus.getProgressPercent(), roundedDouble));
-                System.out.println("Generation:" + taskStatus.getCurGeneration() + " Percent: " + taskStatus.getProgressPercent());
                 taskStatus.setMaxFitness(maxFitness);
                 taskStatus.setCurFitness(data.getBestCandidateFitness());
                 taskStatus.setCurGeneration(data.getGenerationNumber());
