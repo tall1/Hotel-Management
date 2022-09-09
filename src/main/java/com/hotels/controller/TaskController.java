@@ -31,7 +31,7 @@ public class TaskController {
         return taskService.getTasksByUserId(userId);
     }
 
-    @GetMapping("/get_tasks_by_date/")
+    @GetMapping("/get_tasks_by_date")
     public List<TaskDTO> getTasksByUserAndDate(@RequestParam int userID, @RequestParam String date) {
         return this.taskService.getTasksByUserIdAndDate(userID, LocalDate.parse(date));
     }

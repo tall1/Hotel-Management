@@ -119,8 +119,8 @@ public class UserServiceImpl implements UserService {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setEmail(user.getEmail());
-        /*userDTO.setFirstName(user.getFirstName());
-        userDTO.setLastName(user.getLastName());*/
+        userDTO.setFirstName(user.getFirstName());
+        userDTO.setLastName(user.getLastName());
         if (user.getHotel() != null) {
             userDTO.setHotelId(user.getHotel().getId());
         }
